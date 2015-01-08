@@ -1,0 +1,31 @@
+{
+  "name": "keycloak-auth-utils",
+  "version": "0.0.5",
+  "description": "General Keycloak Utilities",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/jasmine/bin/jasmine.js",
+    "build": "node_modules/grunt-cli/bin/grunt"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-docco": "^0.3.3",
+    "grunt-doxx": "^0.1.2",
+    "grunt-gh-pages": "^0.9.1",
+    "grunt-touch": "^0.1.0",
+    "jasmine": "^2.1.1"
+  },
+  "dependencies": {
+    "q": "^1.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bobmcwhirter/keycloak-auth-utils.git"
+  },
+  "bugs": "http://github.com/bobmcwhirter/keycloak-auth-utils/issues"
+}
