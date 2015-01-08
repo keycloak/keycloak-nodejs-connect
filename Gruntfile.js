@@ -62,6 +62,9 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask( 'finish-site', 'Finish assembling the site', function() {
+    if ( fs.existsSync(path.join('.', 'site', 'index.md' ) ) ) {
+      fs.unlinkSync(path.join('.','site','index.md'));
+    }
     fs.linkSync( path.join('.', 'README.md'), path.join( '.', 'site', 'index.md' ) );
   } );
 
