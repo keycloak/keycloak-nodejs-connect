@@ -1,0 +1,23 @@
+{
+  "name": "keycloak-nodejs",
+  "version": "0.0.5",
+  "description": "Keycloak Node.js modules",
+  "scripts": {
+    "build": "node_modules/grunt-cli/bin/grunt"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-gh-pages": "^0.9.1",
+    "grunt-markdown": "^0.6.1",
+    "grunt-run-grunt": "^0.1.4",
+    "grunt-touch": "^0.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/keycloak/keycloak-nodejs.git"
+  },
+  "bugs": "http://github.com/keycloak/keycloak-nodejs/issues"
+}

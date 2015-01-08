@@ -1,0 +1,6 @@
+site/
+doc/
+node_modules/
+.grunt
+.idea
+*.swp
