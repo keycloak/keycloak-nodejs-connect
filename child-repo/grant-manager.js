@@ -397,7 +397,7 @@ GrantManager.prototype.getAccount = function(token, callback) {
   options.headers = {
     'Authorization': 'Bearer ' + t,
     'Accept': 'application/json',
-  }
+  };
 
   var req = http.request( options, function(response) {
     console.log( "RESPONSE", response.statusCode );
@@ -421,7 +421,6 @@ GrantManager.prototype.getAccount = function(token, callback) {
   req.end();
 
   return deferred.promise.nodeify( callback );
-  
-}
+};
 
 module.exports = GrantManager;
