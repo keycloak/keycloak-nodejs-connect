@@ -375,4 +375,53 @@ GrantManager.prototype.validateToken = function(token) {
   return token;
 };
 
+GrantManager.prototype.getAccount = function(token, callback) {
+  var deferred = Q.defer();
+
+  var self = this;
+
+  var url = this.realmUrl + '/account';
+
+  var options = URL.parse( url );
+
+  options.method = 'GET';
+
+  var t;
+
+  if ( typeof token == 'string' ) {
+    t = token;
+  } else {
+    t = token.token;
+  }
+
+  options.headers = {
+    'Authorization': 'Bearer ' + t,
+    'Accept': 'application/json',
+  }
+
+  var req = http.request( options, function(response) {
+    console.log( "RESPONSE", response.statusCode );
+    if ( response.statusCode < 200 || response.statusCode >= 300 ) {
+      return deferred.reject( "Error fetching account" );
+    }
+    var json = '';
+    response.on('data', function(d) {
+      json += d.toString();
+    });
+    response.on( 'end', function() {
+      var data = JSON.parse( json );
+      if ( data.error ) {
+        return deferred.reject( data );
+      }
+      console.log( "ACCOUNT", data );
+      return deferred.resolve( data );
+    });
+  });
+
+  req.end();
+
+  return deferred.promise.nodeify( callback );
+  
+}
+
 module.exports = GrantManager;
