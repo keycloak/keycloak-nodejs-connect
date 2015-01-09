@@ -283,6 +283,9 @@ Keycloak.prototype.logoutUrl = function(redirectUrl) {
   return this.config.realmUrl + '/tokens/logout?redirect_uri=' + encodeURIComponent( redirectUrl );
 };
 
+Keycloak.prototype.accountUrl = function() {
+  return this.config.realmUrl + '/account';
+};
 
 Keycloak.prototype.getAccount = function(token) {
   return this.grantManager.getAccount(token);

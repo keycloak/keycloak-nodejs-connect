@@ -26,7 +26,11 @@ module.exports = function(keycloak) {
         var cleanUrl = URL.format( urlParts );
         
         request.auth.grant = grant;
-        keycloak.authenticated( request );
+        try {
+          keycloak.authenticated( request );
+        } catch (err) {
+          console.log( err );
+        }
         response.redirect( cleanUrl );
       });
   };
