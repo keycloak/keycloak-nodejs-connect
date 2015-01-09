@@ -24,9 +24,10 @@ module.exports = function(keycloak) {
         delete urlParts.query.state;
 
         var cleanUrl = URL.format( urlParts );
-
+        
+        request.auth.grant = grant;
+        keycloak.authenticated( request );
         response.redirect( cleanUrl );
       });
-
   };
 };

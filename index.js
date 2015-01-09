@@ -15,6 +15,7 @@ var path = require('path');
 var url  = require('url');
 var http = require('http');
 
+var Setup         = require('./middleware/setup');
 var AdminLogout   = require('./middleware/admin-logout');
 var Logout        = require('./middleware/logout');
 var PostAuth      = require('./middleware/post-auth' );
@@ -98,6 +99,7 @@ Keycloak.prototype.middleware = function(options) {
 
   var middlewares = [];
 
+  middlewares.push( Setup );
   middlewares.push( PostAuth(this) );
   middlewares.push( AdminLogout(this, options.admin) );
   middlewares.push( GrantAttacher(this) );
@@ -169,6 +171,39 @@ Keycloak.prototype.protect = function(spec) {
   return Protect( this, spec );
 };
 
+/** 
+ * Callback made upon successful authentication of a user.
+ *
+ * By default, this a no-op, but may assigned to another 
+ * function for application-specific login which may be useful
+ * for linking authentication information from Keycloak to 
+ * application-maintained user information.
+ *
+ * The `request.auth.grant` object contains the relevant tokens
+ * which may be inspected.
+ *
+ * For instance, to obtain the unique subject ID:
+ *
+ *     request.auth.grant.id_token.sub => bf2056df-3803-4e49-b3ba-ff2b07d86995
+ *
+ * @param {Object} request The HTTP request.
+ */
+Keycloak.prototype.authenticated = function(request) {
+  // no-op
+}
+
+/**
+ * Callback made upon successful de-authentication of a user.
+ *
+ * By default, this is a no-op, but may be used by the application
+ * in the case it needs to remove information from the user's session
+ * or otherwise perform additional logic once a user is logged out.
+ *
+ * @param {Object} request The HTTP request.
+ */
+Keycloak.prototype.deauthenticated = function(request) {
+  // no-op
+}
 
 /*! ignore */
 Keycloak.prototype.getGrant = function(request, response) {
@@ -249,6 +284,9 @@ Keycloak.prototype.logoutUrl = function(redirectUrl) {
 };
 
 
+Keycloak.prototype.getAccount = function(token) {
+  return this.grantManager.getAccount(token);
+}
 
 
 
