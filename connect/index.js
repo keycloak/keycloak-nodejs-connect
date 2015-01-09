@@ -190,7 +190,7 @@ Keycloak.prototype.protect = function(spec) {
  */
 Keycloak.prototype.authenticated = function(request) {
   // no-op
-}
+};
 
 /**
  * Callback made upon successful de-authentication of a user.
@@ -203,7 +203,7 @@ Keycloak.prototype.authenticated = function(request) {
  */
 Keycloak.prototype.deauthenticated = function(request) {
   // no-op
-}
+};
 
 /*! ignore */
 Keycloak.prototype.getGrant = function(request, response) {
@@ -286,7 +286,7 @@ Keycloak.prototype.logoutUrl = function(redirectUrl) {
 
 Keycloak.prototype.getAccount = function(token) {
   return this.grantManager.getAccount(token);
-}
+};
 
 
 
