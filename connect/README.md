@@ -10,7 +10,7 @@ application that uses Keycloak for its authentication and authorization needs.
 
 ## Install
 
-    npm install --save-dev connect-keycloak
+    npm install --save connect-keycloak
 
 ## Instantiate a Keycloak
 

@@ -5,7 +5,7 @@ Provides grant-management utilities.
 
 ## Install
 
-    npm install --save-dev keycloak-auth-utils
+    npm install --save keycloak-auth-utils
 
 ## `GrantManager`
 
