@@ -362,7 +362,7 @@ GrantManager.prototype.validateToken = function(token) {
     return;
   }
 
-  if ( token.content.issuedAt < this.notBefore ) {
+  if ( token.content.iat < this.notBefore ) {
     return;
   }
 
@@ -400,7 +400,6 @@ GrantManager.prototype.getAccount = function(token, callback) {
   };
 
   var req = http.request( options, function(response) {
-    console.log( "RESPONSE", response.statusCode );
     if ( response.statusCode < 200 || response.statusCode >= 300 ) {
       return deferred.reject( "Error fetching account" );
     }
@@ -413,7 +412,6 @@ GrantManager.prototype.getAccount = function(token, callback) {
       if ( data.error ) {
         return deferred.reject( data );
       }
-      console.log( "ACCOUNT", data );
       return deferred.resolve( data );
     });
   });
