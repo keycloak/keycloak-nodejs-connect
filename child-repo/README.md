@@ -3,6 +3,10 @@
 
 Provides grant-management utilities.
 
+## Install
+
+  npm install --save-dev keycloak-auth-utils
+
 ## `GrantManager`
 
 * Can obtain a grant through the direct API using name/password.
