@@ -8,6 +8,10 @@ and OAuth providers (G+, Facebook, etc).
 This module makes it simple to implement a Node.js Connect-friendly
 application that uses Keycloak for its authentication and authorization needs.
 
+## Install
+
+  npm install --save-dev connect-keycloak
+
 ## Instantiate a Keycloak
 
 The `Keycloak` class provides a central point for configuration

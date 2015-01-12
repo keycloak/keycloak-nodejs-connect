@@ -9,7 +9,7 @@ server.
 
 - [Documentation](http://keycloak.github.io/keycloak-nodejs/auth-utils/)
 
-## keycloak-connect
+## connect-keycloak
 
 Connect middleware supporting adding Keycloak to a web-app.
 
