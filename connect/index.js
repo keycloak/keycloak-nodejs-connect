@@ -207,9 +207,6 @@ Keycloak.prototype.deauthenticated = function(request) {
 
 /*! ignore */
 Keycloak.prototype.getGrant = function(request, response) {
-
-  var deferred = Q.defer();
-
   var rawData;
 
   for ( var i = 0 ; i < this.stores.length ; ++i ) {
@@ -220,21 +217,18 @@ Keycloak.prototype.getGrant = function(request, response) {
     }
   }
 
-  if ( rawData ) {
+  if ( rawData && ! rawData.error ) {
     var grant = this.grantManager.createGrant( rawData );
     var self = this;
 
-    this.grantManager.ensureFreshness(grant)
+    return this.grantManager.ensureFreshness(grant)
       .then( function(grant) {
         self.storeGrant( grant, request, response );
-        deferred.resolve( grant );
+        return grant;
       });
-
-    return deferred.promise;
   }
 
-  deferred.reject();
-  return deferred.promise;
+  return Q.reject();
 };
 
 Keycloak.prototype.storeGrant = function(grant, request, response) {

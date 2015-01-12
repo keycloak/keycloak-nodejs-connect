@@ -35,9 +35,11 @@ module.exports = function(keycloak, spec) {
   return function(request, response, next) {
     if ( request.auth && request.auth.grant ) {
       if ( ! guard || guard( response.auth.grant.access_token, request, response ) ) {
+        console.log( "protection passed" );
         return next();
       }
 
+      console.log( "protection failed" );
       response.status( 403 );
       response.end( "Access denied" );
       return;
