@@ -7,9 +7,7 @@ module.exports = function(keycloak) {
     }
 
     if ( request.query.error ) {
-      response.status( 403 );
-      response.end( "Access denied" );
-      return;
+      return keycloak.accessDenied(request,response,next);
     }
 
     keycloak.getGrantFromCode( request.query.code, request, response )

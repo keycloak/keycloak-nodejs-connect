@@ -205,6 +205,22 @@ Keycloak.prototype.deauthenticated = function(request) {
   // no-op
 };
 
+/**
+ * Replaceable function to handle access-denied responses.
+ *
+ * In the event the Keycloak middleware decides a user may
+ * not access a resource, or has failed to authenticate at all,
+ * this function will be called.
+ *
+ * By default, a simple string of "Access denied" along with 
+ * an HTTP status code for 403 is returned.  Chances are an
+ * application would prefer to render a fancy template.
+ */
+Keycloak.prototype.accessDenied = function(request, response) {
+  response.status( 403 );
+  response.end( "Access denied" );
+}
+
 /*! ignore */
 Keycloak.prototype.getGrant = function(request, response) {
   var rawData;
