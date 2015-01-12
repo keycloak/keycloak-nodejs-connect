@@ -219,7 +219,7 @@ Keycloak.prototype.deauthenticated = function(request) {
 Keycloak.prototype.accessDenied = function(request, response) {
   response.status( 403 );
   response.end( "Access denied" );
-}
+};
 
 /*! ignore */
 Keycloak.prototype.getGrant = function(request, response) {

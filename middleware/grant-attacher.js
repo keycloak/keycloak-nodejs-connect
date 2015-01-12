@@ -8,6 +8,6 @@ module.exports = function(keycloak) {
       .then( next )
       .catch( function() {
         next();
-      } )
+      } );
   };
 };
