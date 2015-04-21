@@ -20,6 +20,7 @@ var Q = require('q');
 
 var URL    = require('url');
 var http   = require('http');
+var https  = require('https');
 var crypto = require('crypto');
 
 var Form = require('./form');
@@ -122,29 +123,40 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
  * @param {String} sessionHost Optional session host for targetted Keycloak console post-backs.
  * @param {Function} callback Optional callback, if not using promises.
  */
-GrantManager.prototype.obtainFromCode = function(code, sessionId, sessionHost, callback) {
+GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessionHost, callback) {
   var deferred = Q.defer();
   var self = this;
 
-  var params = 'code=' + code + '&application_session_state=' + sessionId + '&application_session_host=' + sessionHost;
+  console.log( "request.session", request.session );
+  var redirectUri = encodeURIComponent( request.session.auth_redirect_uri );
+
+  var params = 'code=' + code + '&application_session_state=' + sessionId + '&redirect_uri=' + redirectUri + '&application_session_host=' + sessionHost;
 
   var options = URL.parse( this.realmUrl + '/tokens/access/codes' );
+  var protocol = http;
+
   options.method = 'POST';
-  options.agent = false;
+  if ( options.protocol == 'https:' ) {
+    protocol = https;
+  } else {
+    protocol = http;
+  }
+
   options.headers = {
     'Content-Length': params.length,
     'Content-Type': 'application/x-www-form-urlencoded',
     'Authorization': 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString('base64' ),
   };
 
-  var request = http.request( options, function(response) {
+  var request = protocol.request( options, function(response) {
     var json = '';
     response.on('data', function(d) {
       json += d.toString();
     });
     response.on( 'end', function() {
       try {
-        return deferred.resolve( self.createGrant( json ) );
+        var grant = self.createGrant( json );
+        return deferred.resolve( grant );
       } catch (err) {
         return deferred.reject( err );
       }
@@ -176,7 +188,6 @@ GrantManager.prototype.obtainFromCode = function(code, sessionId, sessionHost, c
  * @param {Function} callback Optional callback if promises are not used.
  */
 GrantManager.prototype.ensureFreshness = function(grant, callback) {
-
   if ( ! grant.isExpired() ) {
     return Q(grant).nodeify( callback );
   }
@@ -196,6 +207,14 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
+  var protocol = http;
+
+  if ( options.protocol == 'https:' ) {
+    protocol = https;
+  } else {
+    protocol = http;
+  }
+
   opts.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
 
   var params = new Form({
@@ -203,7 +222,7 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
     refresh_token: grant.refresh_token.token,
   });
 
-  var request = http.request( opts, function(response) {
+  var request = protocol.request( opts, function(response) {
     var json = '';
     response.on( 'data', function(d) {
       json += d.toString();
@@ -394,12 +413,20 @@ GrantManager.prototype.getAccount = function(token, callback) {
     t = token.token;
   }
 
+  var protocol = http;
+
+  if ( options.protocol == 'https:' ) {
+    protocol = https;
+  } else {
+    protocol = http;
+  }
+
   options.headers = {
     'Authorization': 'Bearer ' + t,
     'Accept': 'application/json',
   };
 
-  var req = http.request( options, function(response) {
+  var req = protocol.request( options, function(response) {
     if ( response.statusCode < 200 || response.statusCode >= 300 ) {
       return deferred.reject( "Error fetching account" );
     }
