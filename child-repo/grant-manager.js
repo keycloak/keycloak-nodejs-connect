@@ -199,11 +199,11 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
   var self = this;
   var deferred = Q.defer();
 
-  var opts = URL.parse( this.realmUrl + '/tokens/refresh' );
+  var options = URL.parse( this.realmUrl + '/tokens/refresh' );
 
-  opts.method = 'POST';
+  options.method = 'POST';
 
-  opts.headers = {
+  options.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
@@ -215,14 +215,14 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
     protocol = http;
   }
 
-  opts.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
+  options.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
 
   var params = new Form({
     grant_type: 'refresh_token',
     refresh_token: grant.refresh_token.token,
   });
 
-  var request = protocol.request( opts, function(response) {
+  var request = protocol.request( options, function(response) {
     var json = '';
     response.on( 'data', function(d) {
       json += d.toString();
