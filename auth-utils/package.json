@@ -1,6 +1,6 @@
 {
   "name": "keycloak-auth-utils",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "General Keycloak Utilities",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/keycloak/keycloak-nodejs.git"
+    "url": "http://github.com/bobmcwhirter/keycloak-auth-utils.git"
   },
-  "bugs": "http://github.com/keycloak/keycloak-nodejs/issues"
+  "bugs": "http://github.com/bobmcwhirter/keycloak-auth-utils/issues"
 }

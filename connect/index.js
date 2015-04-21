@@ -276,7 +276,7 @@ Keycloak.prototype.getGrantFromCode = function(code, request, response) {
   var sessionId = this.stores[1].getId( request );
 
   var self = this;
-  return this.grantManager.obtainFromCode( code, sessionId )
+  return this.grantManager.obtainFromCode( request, code, sessionId )
     .then( function(grant) {
       self.storeGrant(grant, request, response);
       return grant;

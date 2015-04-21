@@ -1,6 +1,6 @@
 {
   "name": "connect-keycloak",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "Keycloak Connect Middleware",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "jasmine": "^2.1.1"
   },
   "dependencies": {
-    "keycloak-auth-utils": "0.0.13",
+    "keycloak-auth-utils": "0.0.15",
     "q": "^1.1.2"
   },
   "repository": {
