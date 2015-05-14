@@ -1,11 +1,25 @@
 var UUID = require('./../uuid' );
 
 function forceLogin(keycloak, request, response) {
-  var host = request.hostname;
-  var port = request.app.settings.port || 3000;
+  var host = request.hostname,
+      protocol = request.protocol,
+      port, redirectPort;
+  // check to see if we are behind proxy
+  if (request.app.get('trust proxy')) {
+    port = request.headers['x-forwarded-port'];
+  } else {
+    port = request.app.settings.port || 3000;
+  }
 
-  var redirectUrl = 'http://' + host + ( port == 80 ? '' : ':' + port ) + request.url + '?auth_callback=1';
+  if( port == 80 && protocol == 'http') {
+    redirectPort = '';
+  } else if (port == 443 && protocol == 'https') {
+    redirectPort = '';
+  } else {
+    redirectPort = ':' + port;
+  }
 
+  var redirectUrl = protocol + '://'+ host + redirectPort + request.url + '?auth_callback=1';
   request.session.auth_redirect_uri = redirectUrl;
 
   var uuid = UUID();
