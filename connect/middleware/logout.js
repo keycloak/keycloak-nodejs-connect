@@ -1,3 +1,5 @@
+var proxyUtils = require('./../proxy-utils');
+
 module.exports = function(keycloak, logoutUrl) {
   return function(request, response, next) {
 
@@ -11,10 +13,15 @@ module.exports = function(keycloak, logoutUrl) {
       delete request.auth.grant;
     }
 
-    var host = request.hostname;
-    var port = request.app.settings.port || 3000;
+    var protocol = request.protocol,
+        host = request.hostname,
+        port = request.app.settings.port || 3000;
 
-    var redirectUrl = 'http://' + host + ( port == 80 ? '' : ':' + port ) + '/';
+    if (request.app.get('trust proxy')) {
+        port = request.headers['x-forwarded-port'] || request.app.settings.port ;
+    }
+
+    var redirectUrl = protocol + '://' + host + proxyUtils.portForRedirectUrl(port, protocol) + '/';
 
     var keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
 
