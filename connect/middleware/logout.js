@@ -5,10 +5,10 @@ module.exports = function(keycloak, logoutUrl) {
       return next();
     }
 
-    if ( request.auth.grant ) {
+    if ( request.kauth.grant ) {
       keycloak.deauthenticated( request );
-      request.auth.grant.unstore(request, response);
-      delete request.auth.grant;
+      request.kauth.grant.unstore(request, response);
+      delete request.kauth.grant;
     }
 
     var host = request.hostname;

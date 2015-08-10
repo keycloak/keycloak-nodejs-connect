@@ -35,8 +35,8 @@ module.exports = function(keycloak, spec) {
   }
 
   return function(request, response, next) {
-    if ( request.auth && request.auth.grant ) {
-      if ( ! guard || guard( request.auth.grant.access_token, request, response ) ) {
+    if ( request.kauth && request.kauth.grant ) {
+      if ( ! guard || guard( request.kauth.grant.access_token, request, response ) ) {
         return next();
       }
 

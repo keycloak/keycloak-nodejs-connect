@@ -1,5 +1,5 @@
 
 module.exports = function(request, response, next) {
-  request.auth = {};
+  request.kauth = {};
   next();
 };
