@@ -23,7 +23,7 @@ module.exports = function(keycloak) {
 
         var cleanUrl = URL.format( urlParts );
         
-        request.auth.grant = grant;
+        request.kauth.grant = grant;
         try {
           keycloak.authenticated( request );
         } catch (err) {
