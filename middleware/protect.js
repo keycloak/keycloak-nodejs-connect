@@ -2,9 +2,11 @@ var UUID = require('./../uuid' );
 
 function forceLogin(keycloak, request, response) {
   var host = request.hostname;
-  var port = request.app.settings.port || 3000;
+  var headerHost = request.headers.host.split(':');
+  var port = headerHost[1] || '';
+  var protocol = request.protocol;
 
-  var redirectUrl = 'http://' + host + ( port == 80 ? '' : ':' + port ) + request.url + '?auth_callback=1';
+  var redirectUrl = protocol + '://' + host + ( port == '' ? '' : ':' + port ) + request.url + '?auth_callback=1';
 
   request.session.auth_redirect_uri = redirectUrl;
 
