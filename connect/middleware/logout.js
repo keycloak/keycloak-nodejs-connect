@@ -12,9 +12,10 @@ module.exports = function(keycloak, logoutUrl) {
     }
 
     var host = request.hostname;
-    var port = request.app.settings.port || 3000;
+    var headerHost = request.headers.host.split(':');
+    var port = headerHost[1] || '';
 
-    var redirectUrl = 'http://' + host + ( port == 80 ? '' : ':' + port ) + '/';
+    var redirectUrl = request.protocol + '://' + host + ( port == '' ? '' : ':' + port ) + '/';
 
     var keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
 

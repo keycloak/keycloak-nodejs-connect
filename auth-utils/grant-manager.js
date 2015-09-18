@@ -127,7 +127,6 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
   var deferred = Q.defer();
   var self = this;
 
-  console.log( "request.session", request.session );
   var redirectUri = encodeURIComponent( request.session.auth_redirect_uri );
 
   var params = 'code=' + code + '&application_session_state=' + sessionId + '&redirect_uri=' + redirectUri + '&application_session_host=' + sessionHost;
