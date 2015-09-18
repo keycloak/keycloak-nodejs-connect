@@ -179,12 +179,12 @@ Keycloak.prototype.protect = function(spec) {
  * for linking authentication information from Keycloak to 
  * application-maintained user information.
  *
- * The `request.auth.grant` object contains the relevant tokens
+ * The `request.kauth.grant` object contains the relevant tokens
  * which may be inspected.
  *
  * For instance, to obtain the unique subject ID:
  *
- *     request.auth.grant.id_token.sub => bf2056df-3803-4e49-b3ba-ff2b07d86995
+ *     request.kauth.grant.id_token.sub => bf2056df-3803-4e49-b3ba-ff2b07d86995
  *
  * @param {Object} request The HTTP request.
  */
@@ -234,7 +234,7 @@ Keycloak.prototype.getGrant = function(request, response) {
   }
 
   if ( rawData && ! rawData.error ) {
-    var grant = this.grantManager.createGrant( rawData );
+    var grant = this.grantManager.createGrant( JSON.stringify(rawData) );
     var self = this;
 
     return this.grantManager.ensureFreshness(grant)
