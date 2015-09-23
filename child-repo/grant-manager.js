@@ -309,7 +309,9 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
  */
 GrantManager.prototype.createGrant = function(rawData) {
 
-  var grantData = JSON.parse( rawData );
+  var grantData = rawData;
+  if (!typeof(rawData)==='object')
+    grantData = JSON.parse( grantData );
 
   var access_token;
   var refresh_token;
