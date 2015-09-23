@@ -121,6 +121,13 @@ Config.prototype.configure = function(config) {
   }
 
   this.publicKey += "-----END PUBLIC KEY-----\n";
+
+  /**
+   * If this is a Bearer Only application.
+   * @type {Boolean}
+   */
+  this.bearerOnly = config['bearer-only'] || config.bearerOnly || false;
+
 };
 
 module.exports = Config;
