@@ -45,6 +45,11 @@ module.exports = function(keycloak, spec) {
       return keycloak.accessDenied(request,response,next);
     }
 
-    forceLogin(keycloak, request, response);
+    if (keycloak.config.bearerOnly){
+      return keycloak.accessDenied(request,response,next);
+    }else{
+      forceLogin(keycloak, request, response);
+    }
+
   };
 };
