@@ -234,7 +234,7 @@ Keycloak.prototype.getGrant = function(request, response) {
   }
 
   if ( rawData && ! rawData.error ) {
-    var grant = this.grantManager.createGrant( JSON.stringify(rawData) );
+    var grant = this.grantManager.createGrant( rawData );
     var self = this;
 
     return this.grantManager.ensureFreshness(grant)
