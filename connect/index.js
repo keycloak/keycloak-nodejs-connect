@@ -233,6 +233,9 @@ Keycloak.prototype.getGrant = function(request, response) {
     }
   }
 
+  if (typeof rawData === 'string')
+    rawData = JSON.parse( rawData );
+
   if ( rawData && ! rawData.error ) {
     var grant = this.grantManager.createGrant( rawData );
     var self = this;
