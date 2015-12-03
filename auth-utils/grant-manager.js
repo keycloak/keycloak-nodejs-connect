@@ -228,7 +228,16 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
     });
     response.on( 'end', function() {
       try {
-        grant.update( self.createGrant( json ) );
+        var grantData = JSON.parse( json )
+
+        if(grantData.error) {
+          var description = grantData.error_description || grantData.error;
+
+          throw new Error(description)
+        } else {
+          grant.update( self.createGrant( grantData ) );
+        }
+
         return deferred.resolve(grant);
       } catch (err) {
         return deferred.reject( err );
