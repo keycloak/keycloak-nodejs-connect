@@ -171,12 +171,12 @@ Keycloak.prototype.protect = function(spec) {
   return Protect( this, spec );
 };
 
-/** 
+/**
  * Callback made upon successful authentication of a user.
  *
- * By default, this a no-op, but may assigned to another 
+ * By default, this a no-op, but may assigned to another
  * function for application-specific login which may be useful
- * for linking authentication information from Keycloak to 
+ * for linking authentication information from Keycloak to
  * application-maintained user information.
  *
  * The `request.kauth.grant` object contains the relevant tokens
@@ -212,7 +212,7 @@ Keycloak.prototype.deauthenticated = function(request) {
  * not access a resource, or has failed to authenticate at all,
  * this function will be called.
  *
- * By default, a simple string of "Access denied" along with 
+ * By default, a simple string of "Access denied" along with
  * an HTTP status code for 403 is returned.  Chances are an
  * application would prefer to render a fancy template.
  */
@@ -288,13 +288,18 @@ Keycloak.prototype.getGrantFromCode = function(code, request, response) {
 };
 
 Keycloak.prototype.loginUrl = function(uuid, redirectUrl ) {
-  return this.config.realmUrl + '/tokens/login?client_id=' + encodeURIComponent( this.config.clientId ) +
-    '&state=' + encodeURIComponent( uuid ) +
-    '&redirect_uri=' + encodeURIComponent( redirectUrl );
+  return this.config.realmUrl
+         + '/protocol/openid-connect/auth'
+         + '?client_id=' + encodeURIComponent(this.config.clientId)
+         + '&state=' + encodeURIComponent(uuid)
+         + '&redirect_uri=' + encodeURIComponent(redirectUrl)
+         + '&response_type=code';
 };
 
 Keycloak.prototype.logoutUrl = function(redirectUrl) {
-  return this.config.realmUrl + '/tokens/logout?redirect_uri=' + encodeURIComponent( redirectUrl );
+  return this.config.realmUrl
+         + '/protocol/openid-connect/logout'
+         + '?redirect_uri=' + encodeURIComponent(redirectUrl);
 };
 
 Keycloak.prototype.accountUrl = function() {
