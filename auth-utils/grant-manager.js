@@ -64,6 +64,7 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
   var url = this.realmUrl + '/tokens/grants/access';
 
   var options = URL.parse( url );
+  var protocol = this.getProtocol(options);
 
   options.method = 'POST';
   options.headers = {
@@ -81,7 +82,7 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
     options.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
   }
 
-  var req = http.request( options, function(response) {
+  var req = protocol.request( options, function(response) {
     if ( response.statusCode < 200 || response.statusCode > 299 ) {
       return deferred.reject( response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ] );
     }
@@ -132,14 +133,9 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
   var params = 'code=' + code + '&application_session_state=' + sessionId + '&redirect_uri=' + redirectUri + '&application_session_host=' + sessionHost;
 
   var options = URL.parse( this.realmUrl + '/tokens/access/codes' );
-  var protocol = http;
+  var protocol = this.getProtocol(options);
 
   options.method = 'POST';
-  if ( options.protocol == 'https:' ) {
-    protocol = https;
-  } else {
-    protocol = http;
-  }
 
   options.headers = {
     'Content-Length': params.length,
@@ -206,13 +202,7 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
-  var protocol = http;
-
-  if ( options.protocol == 'https:' ) {
-    protocol = https;
-  } else {
-    protocol = http;
-  }
+  var protocol = this.getProtocol(options);
 
   options.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
 
@@ -259,6 +249,7 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
   var url = this.realmUrl + '/tokens/validate';
 
   var options = URL.parse( url );
+  var protocol = this.getProtocol(options);
 
   options.method = 'GET';
   
@@ -276,7 +267,7 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
   
   options.path = options.path + '?' + params.encode();
 
-  var req = http.request( options, function(response) {
+  var req = protocol.request( options, function(response) {
     var json = '';
     response.on('data', function(d) {
       json += d.toString();
@@ -414,13 +405,7 @@ GrantManager.prototype.getAccount = function(token, callback) {
     t = token.token;
   }
 
-  var protocol = http;
-
-  if ( options.protocol == 'https:' ) {
-    protocol = https;
-  } else {
-    protocol = http;
-  }
+  var protocol = this.getProtocol(options);
 
   options.headers = {
     'Authorization': 'Bearer ' + t,
@@ -448,5 +433,16 @@ GrantManager.prototype.getAccount = function(token, callback) {
 
   return deferred.promise.nodeify( callback );
 };
+
+GrantManager.prototype.getProtocol = function(options) {
+  var protocol = http;
+
+  if ( options.protocol == 'https:' ) {
+    protocol = https;
+  } else {
+    protocol = http;
+  }
+  return protocol;
+}
 
 module.exports = GrantManager;
