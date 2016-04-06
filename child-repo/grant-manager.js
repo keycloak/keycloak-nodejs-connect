@@ -22,6 +22,7 @@ var URL    = require('url');
 var http   = require('http');
 var https  = require('https');
 var crypto = require('crypto');
+var querystring = require('querystring');
 
 var Form = require('./form');
 var Grant = require('./grant');
@@ -127,25 +128,30 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
   var deferred = Q.defer();
   var self = this;
 
-  var redirectUri = encodeURIComponent( request.session.auth_redirect_uri );
+  var queryObj = { 
+    application_session_state: sessionId,
+    application_session_host: sessionHost,
+    code: code,
+    grant_type: 'authorization_code',
+    client_id: this.clientId,
+    redirect_uri: request.session.auth_redirect_uri
+  };  
+  var params = querystring.stringify(queryObj);
 
-  var params = 'code=' + code + '&application_session_state=' + sessionId + '&redirect_uri=' + redirectUri + '&application_session_host=' + sessionHost;
-
-  var options = URL.parse( this.realmUrl + '/tokens/access/codes' );
+  var options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
   var protocol = http;
 
   options.method = 'POST';
-  if ( options.protocol == 'https:' ) {
+  if ( options.protocol == 'https:' ) { 
     protocol = https;
   } else {
     protocol = http;
   }
 
-  options.headers = {
+  options.headers = { 
     'Content-Length': params.length,
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Authorization': 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString('base64' ),
-  };
+    'Content-Type': 'application/x-www-form-urlencoded'
+  };  
 
   var request = protocol.request( options, function(response) {
     var json = '';
