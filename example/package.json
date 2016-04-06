@@ -4,7 +4,7 @@
   "description": "Example page that demonstrates available keycloak functionality",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "Roman Jurkov <winfinit@gmail.com>",
   "license": "Apache-2.0",
