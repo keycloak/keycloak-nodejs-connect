@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js",
-    "test": "node test/index.js",
-    "build": "node_modules/grunt-cli/bin/grunt"
+    "test": "node test/index.js"
   },
   "author": "",
   "license": "Apache-2.0",

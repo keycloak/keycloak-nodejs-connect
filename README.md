@@ -237,3 +237,6 @@ admin console when we provisioned this app.
       }
     }
 
+## Building
+
+    make

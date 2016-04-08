@@ -1,13 +1,13 @@
-lint: node_modules
-	npm run lint 
-
-test: lint
+tests: lint
 	npm test
 
-build: node_modules
-	node build
+lint: node_modules
+	npm run lint
 
-node_modules: package.json
+cleanup:
+	rm -rf node_modules
+
+node_modules: cleanup package.json
 	npm install
 
-.PHONY: build
+.PHONY: node_modules
