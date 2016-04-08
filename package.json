@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js",
+    "prepublish": "./node_modules/nsp/bin/nsp check",
     "test": "node test/index.js"
   },
   "author": "",
@@ -15,7 +16,8 @@
   },
   "devDependencies": {
     "jshint": "^2.9.1",
-    "tape": "^4.5.1"
+    "tape": "^4.5.1",
+    "nsp": "*"
   },
   "repository": {
     "type": "git",
