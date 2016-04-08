@@ -14,10 +14,18 @@
  * the License.
  */
 var test = require('tape');
+var index = require('../index');
 
 test('It should just be a test skeleton', function(expect) {
 
   expect.equal(1,1);
+  expect.end();
+
+});
+
+test('It should just be a test skeleton 2', function(expect) {
+
+  expect.equal(!index, false);
   expect.end();
 
 });

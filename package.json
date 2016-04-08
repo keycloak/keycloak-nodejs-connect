@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js",
     "prepublish": "./node_modules/nsp/bin/nsp check",
-    "test": "node test/index.js"
+    "test": "node test/index.js",
+    "coverage": "istanbul cover tape -- test/index.js"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -15,9 +16,10 @@
     "q": "^1.1.2"
   },
   "devDependencies": {
+    "istanbul": "^0.4.3",
     "jshint": "^2.9.1",
-    "tape": "^4.5.1",
-    "nsp": "*"
+    "nsp": "*",
+    "tape": "^4.5.1"
   },
   "repository": {
     "type": "git",
