@@ -6,7 +6,7 @@ function forceLogin(keycloak, request, response) {
   var port = headerHost[1] || '';
   var protocol = request.protocol;
 
-  var redirectUrl = protocol + '://' + host + ( port == '' ? '' : ':' + port ) + request.url + '?auth_callback=1';
+  var redirectUrl = protocol + '://' + host + ( port === '' ? '' : ':' + port ) + request.url + '?auth_callback=1';
 
   request.session.auth_redirect_uri = redirectUrl;
 

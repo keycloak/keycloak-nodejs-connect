@@ -14,8 +14,8 @@
     "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.6.0",
-    "grunt-doxx": "^0.1.2",
     "grunt-gh-pages": "^0.9.1",
+    "grunt-mrdoc": "^0.1.9",
     "grunt-touch": "^0.1.0",
     "jasmine": "^2.1.1"
   },

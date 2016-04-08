@@ -288,18 +288,18 @@ Keycloak.prototype.getGrantFromCode = function(code, request, response) {
 };
 
 Keycloak.prototype.loginUrl = function(uuid, redirectUrl ) {
-  return this.config.realmUrl
-         + '/protocol/openid-connect/auth'
-         + '?client_id=' + encodeURIComponent(this.config.clientId)
-         + '&state=' + encodeURIComponent(uuid)
-         + '&redirect_uri=' + encodeURIComponent(redirectUrl)
-         + '&response_type=code';
+  return this.config.realmUrl +
+         '/protocol/openid-connect/auth' +
+         '?client_id=' + encodeURIComponent(this.config.clientId) +
+         '&state=' + encodeURIComponent(uuid) +
+         '&redirect_uri=' + encodeURIComponent(redirectUrl) +
+         '&response_type=code';
 };
 
 Keycloak.prototype.logoutUrl = function(redirectUrl) {
-  return this.config.realmUrl
-         + '/protocol/openid-connect/logout'
-         + '?redirect_uri=' + encodeURIComponent(redirectUrl);
+  return this.config.realmUrl +
+         '/protocol/openid-connect/logout' +
+         '?redirect_uri=' + encodeURIComponent(redirectUrl);
 };
 
 Keycloak.prototype.accountUrl = function() {
