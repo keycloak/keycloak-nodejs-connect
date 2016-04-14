@@ -10,7 +10,7 @@ application that uses Keycloak for its authentication and authorization needs.
 
 ## Install
 
-    npm install --save connect-keycloak
+    npm install --save keycloak-connect
 
 ## Instantiate a Keycloak
 
@@ -69,7 +69,7 @@ To secure a resource with a realm role:
 
 ### Advanced authorization
 
-To secure resources based on parts of the URL itself, assuming a role exists 
+To secure resources based on parts of the URL itself, assuming a role exists
 for each section:
 
     function protectBySection(token, request) {
@@ -92,7 +92,7 @@ configuration parameter to the `middleware()` call:
 
 Also, the middleware supports callbacks from the Keycloak console to logout a single
 session or all sessions.  By default, these type of admin callbacks occur relative
-to the root URL of `/` but can be changed by providing an `admin` parameter 
+to the root URL of `/` but can be changed by providing an `admin` parameter
 to the `middleware()` call:
 
     app.use( keycloak.middleware( { admin: '/callbacks' } );
@@ -101,11 +101,11 @@ Normally this does not need to be changed.
 
 # A full example
 
-The `connect-keycloak-example` has this example:
+The `keycloak-connect-example` has this example:
 
 ## `example.js`
 
-    var Keycloak = require('connect-keycloak');
+    var Keycloak = require('keycloak-connect');
 
     var express = require('express');
     var session = require('express-session')
@@ -122,27 +122,27 @@ The `connect-keycloak-example` has this example:
 
     // Create a session-store to be used by both the express-session
     // middleware and the keycloak middleware.
-    
+
     var memoryStore = new session.MemoryStore();
-    
+
     app.use( session({
       secret: 'aaslkdhlkhsd',
       resave: false,
       saveUninitialized: true,
       store: memoryStore,
     } ))
-    
-    
+
+
     // Provide the session store to the Keycloak so that sessions
     // can be invalidated from the Keycloak console callback.
     //
     // Additional configuration is read from keycloak.json file
     // installed from the Keycloak web console.
-    
+
     var keycloak = new Keycloak({
       store: memoryStore
     });
-    
+
     // Install the Keycloak middleware.
     //
     // Specifies that the user-accessible application URL to
@@ -151,20 +151,20 @@ The `connect-keycloak-example` has this example:
     // Specifies that Keycloak console callbacks should target the
     // root URL.  Various permutations, such as /k_logout will ultimately
     // be appended to the admin URL.
-    
+
     app.use( keycloak.middleware( {
       logout: '/logout',
       admin: '/',
     } ));
-    
-    
+
+
     // A normal un-protected public URL.
-    
+
     app.get( '/', function(req,resp) {
       resp.send( "Howdy!" );
     } )
-    
-    
+
+
     // A protection guard can take up to 3 arguments, and is passed
     // the access_token, the HTTP request and the HTTP response.
     //
@@ -177,11 +177,11 @@ The `connect-keycloak-example` has this example:
     // A protection guard can be passed to keycloak.protect(...) for any
     // URL.  If it returns true, then the request is allowed.  If false,
     // access will be denied.
-    
+
     var groupGuard = function(token, req, resp) {
       return token.hasRole( req.params.group );
     }
-    
+
     // The keycloak.protect(...) function can take a guard function to perform
     // advanced protection of a URL.
     //
@@ -202,24 +202,24 @@ The `connect-keycloak-example` has this example:
     // All of the above workflow is transparent to the user, who ultimately will
     // access the requested resource or be denied, modulo an initial login through
     // Keycloak itself.
-    
+
     app.get( '/:group/:page', keycloak.protect( groupGuard ), function(req,resp) {
       resp.send( 'Page: ' + req.params.page + ' for Group: ' + req.params.group + '<br><a href="/logout">logout</a>');
     })
-    
+
     // A simple keycloak.protect() ensures that a user is authenticated
     // but provides no additional RBAC protection.
-    
+
     app.get( '/:page', keycloak.protect(), function(req,resp) {
       resp.send( 'Page: ' + req.params.page + '<br><a href="/logout">logout</a>');
     } );
-    
+
     var server = app.listen(app.settings.port, function () {
       var host = server.address().address
       var port = server.address().port
       console.log('Example app listening at http://%s:%s', host, port)
     })
-    
+
 ## `keycloak.json`
 
 Alongside the `example.js` lives `keycloak.json` obtained from our Keycloak

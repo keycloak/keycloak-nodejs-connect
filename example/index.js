@@ -1,4 +1,4 @@
-var Keycloak = require('connect-keycloak');
+var Keycloak = require('keycloak-connect');
 var hogan = require('hogan-express');
 var express = require('express');
 var session = require('express-session')
