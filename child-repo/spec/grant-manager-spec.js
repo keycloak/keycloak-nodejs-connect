@@ -8,7 +8,7 @@ describe( "grant manager", function() {
 
   beforeEach( function() {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-    var config = new Config();
+    var config = new Config('spec/keycloak.json');
     manager = new GrantManager(config);
   })
 
@@ -67,7 +67,7 @@ describe( "grant manager", function() {
       })
       .done( done );
   })
-  
+
   it( 'should be able to validate a valid token string', function(done) {
     var originalAccessToken;
     manager.obtainDirectly( 'lucy', 'lucy' )
@@ -95,6 +95,6 @@ describe( "grant manager", function() {
       })
       .done( done );
   })
-  
+
 
 });
