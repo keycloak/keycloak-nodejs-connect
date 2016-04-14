@@ -2,16 +2,20 @@
   "name": "keycloak-connect",
   "version": "0.0.16",
   "description": "Keycloak Connect Middleware",
+  "homepage": "http://keycloak.org",
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js",
     "prepublish": "./node_modules/nsp/bin/nsp check",
     "test": "node test/index.js"
   },
-  "author": "",
+  "author": {
+    "name": "Red Hat, Inc.",
+    "url": "http://keycloak.org"
+  },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "0.0.16",
+    "keycloak-auth-utils": "0.0.17",
     "q": "^1.1.2"
   },
   "devDependencies": {
