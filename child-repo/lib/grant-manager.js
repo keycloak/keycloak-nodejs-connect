@@ -153,7 +153,7 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
     'Content-Type': 'application/x-www-form-urlencoded'
   };
 
-  var request = protocol.request( options, function(response) {
+  var req = protocol.request( options, function(response) {
     var json = '';
     response.on('data', function(d) {
       json += d.toString();
@@ -168,8 +168,8 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
     });
   } );
 
-  request.write( params );
-  request.end();
+  req.write( params );
+  req.end();
 
   return deferred.promise.nodeify( callback );
 };
