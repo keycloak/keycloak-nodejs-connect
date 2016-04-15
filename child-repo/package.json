@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/bobmcwhirter/keycloak-auth-utils.git"
+    "url": "http://github.com/keycloak/keycloak-auth-utils.git"
   },
-  "bugs": "http://github.com/bobmcwhirter/keycloak-auth-utils/issues"
+  "bugs": "https://issues.jboss.org/browse/KEYCLOAK"
 }
