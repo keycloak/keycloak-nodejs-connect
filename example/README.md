@@ -10,11 +10,19 @@
 /<Path-To-Keycloak>/bin/standalone.sh
 ```
 
-Open the Keycloak admin console, click on Add Realm, click on 'Choose a JSON file', select nodejs-example-realm.json and click Upload.
+Open the Keycloak admin console, click on Add Realm, click on 'Choose a JSON file', 
+select nodejs-example-realm.json and click Upload.
 
-Start NodeJS Example by running:
+Link the HEAD code of keycloak-connect by running:
 
 ```
+npm link ../
+```
+
+Install the dependencies and start NodeJS example by running:
+
+```
+npm install
 npm start
 ```
 
