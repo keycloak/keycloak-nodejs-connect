@@ -17,7 +17,7 @@ module.exports = function(grunt) {
       src: [ 'doc/.nojekyll' ]
     },
     jshint: {
-      all: ['Gruntfile.js', '*.js', 'test/**/*.js']
+      all: ['Gruntfile.js', '*.js', 'lib/**/*.js', 'test/**/*.js']
     },
     'gh-pages': {
       options: {

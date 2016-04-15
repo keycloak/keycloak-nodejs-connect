@@ -128,30 +128,30 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
   var deferred = Q.defer();
   var self = this;
 
-  var queryObj = { 
+  var queryObj = {
     application_session_state: sessionId,
     application_session_host: sessionHost,
     code: code,
     grant_type: 'authorization_code',
     client_id: this.clientId,
     redirect_uri: request.session.auth_redirect_uri
-  };  
+  };
   var params = querystring.stringify(queryObj);
 
   var options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
   var protocol = http;
 
   options.method = 'POST';
-  if ( options.protocol == 'https:' ) { 
+  if ( options.protocol == 'https:' ) {
     protocol = https;
   } else {
     protocol = http;
   }
 
-  options.headers = { 
+  options.headers = {
     'Content-Length': params.length,
     'Content-Type': 'application/x-www-form-urlencoded'
-  };  
+  };
 
   var request = protocol.request( options, function(response) {
     var json = '';
@@ -267,19 +267,19 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
   var options = URL.parse( url );
 
   options.method = 'GET';
-  
+
   var t;
-  
+
   if ( typeof token == 'string' ) {
     t = token;
   } else {
     t = token.token;
   }
-  
+
   var params = new Form({
     access_token: t,
   });
-  
+
   options.path = options.path + '?' + params.encode();
 
   var req = http.request( options, function(response) {
