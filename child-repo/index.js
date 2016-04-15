@@ -18,8 +18,8 @@
 /** Export all useful things.
  */
 module.exports = {
-  Config:       require('./config'),
-  GrantManager: require('./grant-manager'),
-  Grant:        require('./grant' ),
+  Config:       require('./lib/config'),
+  GrantManager: require('./lib/grant-manager'),
+  Grant:        require('./lib/grant' ),
 };
 
