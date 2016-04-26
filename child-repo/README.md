@@ -24,4 +24,4 @@ Embodies JSON Web Token bits and checking for roles.
 # Resources
 
 * [GitHub](https://github.com/keycloak/keycloak-nodejs-auth-utils)
-
+* [Documentation](http://keycloak.github.io/keycloak-nodejs-auth-utils)
