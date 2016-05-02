@@ -70,13 +70,13 @@ Config.prototype.configure = function(config) {
    * Realm ID
    * @type {String}
    */
-  this.realm          = config['realm']                      || config.realm;
+  this.realm          = config['realm'] || config.realm;
 
   /**
    * Client/Application ID
    * @type {String}
    */
-  this.clientId       = config['resource']                   || config.clientId;
+  this.clientId       = config['client-id'] || config.clientId;
 
   /**
    * Client/Application secret
@@ -94,7 +94,7 @@ Config.prototype.configure = function(config) {
    * Authentication server URL
    * @type {String}
    */
-  this.authServerUrl  = config['auth-server-url']            || config.authServerUrl;
+  this.authServerUrl  = config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl;
 
   /**
    * Root realm URL.

@@ -40,6 +40,7 @@ function GrantManager(config) {
   this.clientId  = config.clientId;
   this.secret    = config.secret;
   this.publicKey = config.publicKey;
+  this.public    = config.public;
   this.notBefore = 0;
 }
 
@@ -62,7 +63,7 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
 
   var self = this;
 
-  var url = this.realmUrl + '/tokens/grants/access';
+  var url = this.realmUrl + '/protocol/openid-connect/token';
 
   var options = URL.parse( url );
 
@@ -72,16 +73,19 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
   };
 
   var params = new Form({
-    username: username,
-    password: password,
+    client_id: this.clientId
   });
 
   if ( this.public ) {
-    params.set( 'client_id', this.clientId );
+    params.set('grant_type', 'password');
+    params.set('username', username);
+    params.set('password', password);
   } else {
+    params.set('grant_type', 'client_credentials');
+    params.set('client_secret', this.secret);
     options.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
   }
-
+  
   var req = http.request( options, function(response) {
     if ( response.statusCode < 200 || response.statusCode > 299 ) {
       return deferred.reject( response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ] );
@@ -204,7 +208,7 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
   var self = this;
   var deferred = Q.defer();
 
-  var options = URL.parse( this.realmUrl + '/tokens/refresh' );
+  var options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
 
   options.method = 'POST';
 
@@ -224,7 +228,7 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
 
   var params = new Form({
     grant_type: 'refresh_token',
-    refresh_token: grant.refresh_token.token,
+    refresh_token: grant.refresh_token.token
   });
 
   var request = protocol.request( options, function(response) {
@@ -262,11 +266,11 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
 
   var self = this;
 
-  var url = this.realmUrl + '/tokens/validate';
+  var url = this.realmUrl + '/protocol/openid-connect/token/introspect';
 
   var options = URL.parse( url );
 
-  options.method = 'GET';
+  options.method = 'POST';
 
   var t;
 
@@ -277,10 +281,15 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
   }
 
   var params = new Form({
-    access_token: t,
+    token: t,
+    client_secret: this.secret,
+    client_id: this.clientId
   });
 
-  options.path = options.path + '?' + params.encode();
+  options.headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' )
+  };
 
   var req = http.request( options, function(response) {
     var json = '';
@@ -289,12 +298,13 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
     });
     response.on( 'end', function() {
       var data = JSON.parse( json );
-      if ( data.error ) {
+      if ( !data.active ) {
         return deferred.resolve( false );
       }
       return deferred.resolve( token );
     });
   });
+  req.write(params.encode());
 
   req.end();
 
