@@ -15,7 +15,7 @@ CookieStore.get = function(request) {
 };
 
 var store = function(request, response) {
-  response.cookie( CookieStore.TOKEN_KEY, JSON.stringify( this ) );
+  response.cookie( CookieStore.TOKEN_KEY, this.__raw );
 };
 
 var unstore = function(request, response) {
