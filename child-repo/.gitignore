@@ -1,4 +1,4 @@
 .idea
 node_modules
 doc
-keycloak*
+./keycloak*
