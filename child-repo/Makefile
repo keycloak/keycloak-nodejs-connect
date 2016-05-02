@@ -1,4 +1,5 @@
 ci: test
+	npm run doc
 
 test: lint
 	npm test
