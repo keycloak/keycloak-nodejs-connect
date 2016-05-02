@@ -16,14 +16,7 @@ function forceLogin(keycloak, request, response) {
 }
 
 function simpleGuard(role,token) {
-  if ( role.indexOf( "app:" ) === 0 ) {
-    return token.hasApplicationRole( role.substring( 4 ) );
-  }
-  if ( role.indexOf( "realm:" ) === 0 ) {
-    return token.hasRealmRole( role.substring( 6 ) );
-  }
-
-  return false;
+  return token.hasRole(role);
 }
 
 module.exports = function(keycloak, spec) {
