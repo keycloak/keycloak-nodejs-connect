@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node_modules/jasmine/bin/jasmine.js",
+    "lint": "jshint *.js lib/*.js spec/*.js",
     "prepublish": "./node_modules/nsp/bin/nsp check",
     "build": "node_modules/grunt-cli/bin/grunt"
   },
@@ -24,6 +25,7 @@
     "grunt-gh-pages": "^0.9.1",
     "grunt-touch": "^0.1.0",
     "jasmine": "^2.1.1",
+    "jshint": "^2.9.2",
     "nsp": "*"
   },
   "dependencies": {

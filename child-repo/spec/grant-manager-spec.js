@@ -97,7 +97,7 @@ describe( "grant manager in confidential mode", function() {
       .delay(3000)
       .then( function(grant) {
         originalAccessToken = grant.access_token.token;
-        return manager.validateAccessToken( grant.access_token.token )
+        return manager.validateAccessToken( grant.access_token.token );
       })
       .then( function(result) {
         expect( result ).toBe( false );
