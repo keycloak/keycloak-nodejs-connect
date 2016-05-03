@@ -40,11 +40,4 @@ $KEYCLOAK/bin/standalone.sh -Djava.net.preferIPv4Stack=true \
                             -Dkeycloak.migration.file=spec/fixtures/keycloak-fixture.json \
                             -Dkeycloak.migration.strategy=OVERWRITE_EXISTING > keycloak.log 2>&1 &
 
-# Try to add an initial admin user, so we can test against
-# the server and not get automatically redirected.
-$KEYCLOAK/bin/add-user.sh -r master -u admin -p admin
-waitForServer
-
-# We have to restart the server for the admin user to load?
-$KEYCLOAK/bin/jboss-cli.sh --connect command=:reload
 waitForServer

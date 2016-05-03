@@ -1,4 +1,5 @@
 {
   "esversion": 5,
-  "node": true
+  "node": true,
+  "sub": true
 }
