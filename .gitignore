@@ -2,3 +2,4 @@
 *.swo
 *.log
 node_modules/
+/coverage
