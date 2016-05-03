@@ -36,7 +36,7 @@ module.exports = function(keycloak, spec) {
     guard = simpleGuard.bind(undefined, spec);
   }
 
-  return function(request, response, next) {
+  return function protect(request, response, next) {
     if ( request.kauth && request.kauth.grant ) {
       if ( ! guard || guard( request.kauth.grant.access_token, request, response ) ) {
         return next();

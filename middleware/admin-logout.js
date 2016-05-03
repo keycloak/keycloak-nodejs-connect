@@ -19,7 +19,7 @@ module.exports = function(keycloak, adminUrl) {
 
   url += 'k_logout';
 
-  return function(request, response, next) {
+  return function adminLogout(request, response, next) {
     if ( request.url != url ) {
       return next();
     }
