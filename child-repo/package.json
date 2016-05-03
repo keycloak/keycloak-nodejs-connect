@@ -6,8 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "node_modules/jasmine/bin/jasmine.js",
+    "lint": "jshint *.js lib/*.js spec/*.js",
     "prepublish": "./node_modules/nsp/bin/nsp check",
-    "build": "node_modules/grunt-cli/bin/grunt"
+    "doc": "./node_modules/.bin/jsdoc --verbose -d doc -t ./node_modules/ink-docstrap/template -R README.md lib"
   },
   "author": {
     "name": "Red Hat, Inc.",
@@ -17,13 +18,12 @@
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-uglify": "^0.6.0",
-    "grunt-docco": "^0.3.3",
-    "grunt-doxx": "^0.1.2",
     "grunt-gh-pages": "^0.9.1",
     "grunt-touch": "^0.1.0",
+    "ink-docstrap": "^1.1.4",
     "jasmine": "^2.1.1",
+    "jsdoc": "^3.4.0",
+    "jshint": "^2.9.2",
     "nsp": "*"
   },
   "dependencies": {
