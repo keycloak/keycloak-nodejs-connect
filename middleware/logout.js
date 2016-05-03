@@ -1,5 +1,5 @@
 module.exports = function(keycloak, logoutUrl) {
-  return function(request, response, next) {
+  return function logout(request, response, next) {
 
     if ( request.url != logoutUrl ) {
       return next();

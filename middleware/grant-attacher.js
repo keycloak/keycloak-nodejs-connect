@@ -1,6 +1,6 @@
 
 module.exports = function(keycloak) {
-  return function(request, response, next) {
+  return function grantAttacher(request, response, next) {
     keycloak.getGrant( request, response )
       .then( function(grant) {
         request.kauth.grant = grant;
