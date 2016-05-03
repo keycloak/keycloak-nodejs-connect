@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/* jshint sub: true */
-
 var Q = require('q');
 
 var URL    = require('url');
