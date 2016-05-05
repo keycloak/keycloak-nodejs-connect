@@ -84,7 +84,7 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
     options.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
   }
   
-  var req = http.request( options, function(response) {
+  var req = getProtocol(options).request( options, function(response) {
     if ( response.statusCode < 200 || response.statusCode > 299 ) {
       return deferred.reject( response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ] );
     }
@@ -144,18 +144,12 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
   var protocol = http;
 
   options.method = 'POST';
-  if ( options.protocol == 'https:' ) {
-    protocol = https;
-  } else {
-    protocol = http;
-  }
-
   options.headers = {
     'Content-Length': params.length,
     'Content-Type': 'application/x-www-form-urlencoded'
   };
 
-  var req = protocol.request( options, function(response) {
+  var req = getProtocol(options).request( options, function(response) {
     var json = '';
     response.on('data', function(d) {
       json += d.toString();
@@ -207,29 +201,18 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
   var deferred = Q.defer();
 
   var options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
-
   options.method = 'POST';
-
   options.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' )
   };
-
-  var protocol = http;
-
-  if ( options.protocol == 'https:' ) {
-    protocol = https;
-  } else {
-    protocol = http;
-  }
-
-  options.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
 
   var params = new Form({
     grant_type: 'refresh_token',
     refresh_token: grant.refresh_token.token
   });
 
-  var request = protocol.request( options, function(response) {
+  var request = getProtocol(options).request( options, function(response) {
     var json = '';
     response.on( 'data', function(d) {
       json += d.toString();
@@ -267,7 +250,6 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
   var url = this.realmUrl + '/protocol/openid-connect/token/introspect';
 
   var options = URL.parse( url );
-
   options.method = 'POST';
 
   var t;
@@ -289,7 +271,7 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
     'Authorization': 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' )
   };
 
-  var req = http.request( options, function(response) {
+  var req = getProtocol(options).request( options, function(response) {
     var json = '';
     response.on('data', function(d) {
       json += d.toString();
@@ -428,20 +410,12 @@ GrantManager.prototype.getAccount = function(token, callback) {
     t = token.token;
   }
 
-  var protocol = http;
-
-  if ( options.protocol == 'https:' ) {
-    protocol = https;
-  } else {
-    protocol = http;
-  }
-
   options.headers = {
     'Authorization': 'Bearer ' + t,
     'Accept': 'application/json',
   };
 
-  var req = protocol.request( options, function(response) {
+  var req = getProtocol(options).request( options, function(response) {
     if ( response.statusCode < 200 || response.statusCode >= 300 ) {
       return deferred.reject( "Error fetching account" );
     }
@@ -462,5 +436,9 @@ GrantManager.prototype.getAccount = function(token, callback) {
 
   return deferred.promise.nodeify( callback );
 };
+
+function getProtocol(opts) {
+  return opts.protocol === 'https:' ? https : http;
+}
 
 module.exports = GrantManager;
