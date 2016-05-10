@@ -1,6 +1,8 @@
 
 # `keycloak-auth-utils`
 
+[![Build Status](https://travis-ci.org/keycloak/keycloak-nodejs-auth-utils.svg?branch=master)](https://travis-ci.org/keycloak/keycloak-nodejs-auth-utils)
+
 Provides grant-management utilities.
 
 ## Install
