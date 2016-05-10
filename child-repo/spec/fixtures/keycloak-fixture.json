@@ -1246,7 +1246,7 @@
   "realm" : "nodejs-test",
   "notBefore" : 1462208947,
   "revokeRefreshToken" : false,
-  "accessTokenLifespan" : 1,
+  "accessTokenLifespan" : 2,
   "accessTokenLifespanForImplicitFlow" : 900,
   "ssoSessionIdleTimeout" : 1800,
   "ssoSessionMaxLifespan" : 36000,
