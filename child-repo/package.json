@@ -4,12 +4,14 @@
   "description": "General Keycloak Utilities",
   "homepage": "http://keycloak.org",
   "main": "index.js",
-  "engines" : { "node" : ">=4.0.0" },
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "scripts": {
-    "test": "node_modules/jasmine/bin/jasmine.js",
+    "test": "tape spec/*-spec.js | tap-spec",
     "lint": "jshint *.js lib/*.js spec/*.js",
-    "prepublish": "./node_modules/nsp/bin/nsp check",
-    "doc": "./node_modules/.bin/jsdoc --verbose -d doc -t ./node_modules/ink-docstrap/template -R README.md lib"
+    "prepublish": "nsp check",
+    "doc": "jsdoc --verbose -d doc -t ./node_modules/ink-docstrap/template -R README.md lib"
   },
   "author": {
     "name": "Red Hat, Inc.",
@@ -22,10 +24,11 @@
     "grunt-gh-pages": "^0.9.1",
     "grunt-touch": "^0.1.0",
     "ink-docstrap": "^1.1.4",
-    "jasmine": "^2.1.1",
     "jsdoc": "^3.4.0",
     "jshint": "^2.9.2",
-    "nsp": "*"
+    "nsp": "*",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.5.1"
   },
   "repository": {
     "type": "git",
