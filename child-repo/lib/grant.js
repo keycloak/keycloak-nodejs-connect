@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+'use strict';
 
 /**
  * Construct a new grant.
@@ -40,7 +40,7 @@ function Grant(grant) {
  * This is used to avoid making client perform extra-bookkeeping
  * to maintain the up-to-date/refreshed grant-set.
  */
-Grant.prototype.update = function(grant) {
+Grant.prototype.update = function update (grant) {
   // intentional naming with under_scores instead of
   // CamelCase to match both Keycloak's grant JSON
   // and to allow new Grant(new Grant(kc)) copy-ctor
@@ -60,7 +60,7 @@ Grant.prototype.update = function(grant) {
  * If the raw string is unavailable (due to programatic construction)
  * then `undefined` is returned.
  */
-Grant.prototype.toString = function() {
+Grant.prototype.toString = function toString() {
   return this.__raw;
 };
 
@@ -74,7 +74,7 @@ Grant.prototype.toString = function() {
  *
  * @return {boolean} `true` if expired, otherwise `false`.
  */
-Grant.prototype.isExpired = function() {
+Grant.prototype.isExpired = function isExpired() {
   if ( ! this.access_token ) {
     return true;
   }

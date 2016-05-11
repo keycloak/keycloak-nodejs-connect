@@ -15,9 +15,10 @@
  */
 
 /* jshint sub: true */
+'use strict';
 
-var path = require('path');
-var fs   = require('fs');
+const path = require('path');
+const fs   = require('fs');
 
 /**
  * Construct a configuration object.
@@ -48,9 +49,9 @@ function Config(config) {
  *
  * @param {String} configPath Path to a `keycloak.json` configuration.
  */
-Config.prototype.loadConfiguration = function(configPath) {
-  var json = fs.readFileSync( configPath );
-  var config = JSON.parse( json.toString() );
+Config.prototype.loadConfiguration = function loadConfiguration (configPath) {
+  const json = fs.readFileSync( configPath );
+  const config = JSON.parse( json.toString() );
   this.configure( config );
 };
 
@@ -64,7 +65,7 @@ Config.prototype.loadConfiguration = function(configPath) {
  *
  * @param {Object} config The configuration to instill.
  */
-Config.prototype.configure = function(config) {
+Config.prototype.configure = function configure (config) {
 
   /**
    * Realm ID
@@ -107,7 +108,7 @@ Config.prototype.configure = function(config) {
    * @type {String} */
   this.realmAdminUrl = this.authServerUrl + '/admin/realms/' + this.realm;
 
-  var plainKey = config['realm-public-key'];
+  const plainKey = config['realm-public-key'];
 
   /**
    * Formatted public-key.
@@ -115,7 +116,7 @@ Config.prototype.configure = function(config) {
    */
   this.publicKey = "-----BEGIN PUBLIC KEY-----\n";
 
-  for ( i = 0 ; i < plainKey.length ; i = i + 64 ) {
+  for ( let i = 0 ; i < plainKey.length ; i = i + 64 ) {
     this.publicKey += plainKey.substring( i, i + 64 );
     this.publicKey += "\n";
   }
