@@ -27,17 +27,16 @@
  * @param {String} token The JSON Web Token formatted token string.
  * @param {String} clientId Optional clientId if this is an `access_token`.
  */
-function Token(token, clientId) {
-
+function Token (token, clientId) {
   this.token = token;
   this.clientId = clientId;
 
-  if ( token ) {
+  if (token) {
     try {
       const parts = token.split('.');
-      this.header = JSON.parse( new Buffer( parts[0], 'base64' ).toString() );
-      this.content = JSON.parse( new Buffer( parts[1], 'base64' ).toString() );
-      this.signature = new Buffer( parts[2], 'base64' );
+      this.header = JSON.parse(new Buffer(parts[0], 'base64').toString());
+      this.content = JSON.parse(new Buffer(parts[1], 'base64').toString());
+      this.signature = new Buffer(parts[2], 'base64');
       this.signed = parts[0] + '.' + parts[1];
     } catch (err) {
       this.content = {
@@ -53,7 +52,7 @@ function Token(token, clientId) {
  * @return {boolean} `true` if it is expired, otherwise `false`.
  */
 Token.prototype.isExpired = function isExpired () {
-  return ( ( this.content.exp * 1000 ) < Date.now() );
+  return ((this.content.exp * 1000) < Date.now());
 };
 
 /**
@@ -78,20 +77,20 @@ Token.prototype.isExpired = function isExpired () {
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
 Token.prototype.hasRole = function hasRole (name) {
-  if ( ! this.clientId ) {
+  if (!this.clientId) {
     return false;
   }
 
   const parts = name.split(':');
-  if ( parts.length == 1 ) {
-    return this.hasApplicationRole( this.clientId, parts[0] );
+  if (parts.length === 1) {
+    return this.hasApplicationRole(this.clientId, parts[0]);
   }
 
-  if ( parts[0] == 'realm' ) {
-    return this.hasRealmRole( parts[1] );
+  if (parts[0] === 'realm') {
+    return this.hasRealmRole(parts[1]);
   }
 
-  return this.hasApplicationRole( parts[0], parts[1] );
+  return this.hasApplicationRole(parts[0], parts[1]);
 };
 
 /**
@@ -105,14 +104,14 @@ Token.prototype.hasRole = function hasRole (name) {
  *
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
-Token.prototype.hasApplicationRole = function hasApplicationRole(appName, roleName) {
+Token.prototype.hasApplicationRole = function hasApplicationRole (appName, roleName) {
   var appRoles = this.content.resource_access[appName];
 
-  if ( ! appRoles ) {
+  if (!appRoles) {
     return false;
   }
 
-  return ( appRoles.roles.indexOf( roleName ) >= 0 );
+  return (appRoles.roles.indexOf(roleName) >= 0);
 };
 
 /**
@@ -126,8 +125,8 @@ Token.prototype.hasApplicationRole = function hasApplicationRole(appName, roleNa
  *
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
-Token.prototype.hasRealmRole = function hasRealmRole(roleName) {
-  return ( this.content.realm_access.roles.indexOf( roleName ) >= 0 );
+Token.prototype.hasRealmRole = function hasRealmRole (roleName) {
+  return (this.content.realm_access.roles.indexOf(roleName) >= 0);
 };
 
 module.exports = Token;

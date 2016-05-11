@@ -18,7 +18,7 @@
 'use strict';
 
 const path = require('path');
-const fs   = require('fs');
+const fs = require('fs');
 
 /**
  * Construct a configuration object.
@@ -32,15 +32,15 @@ const fs   = require('fs');
  *
  * @constructor
  */
-function Config(config) {
-  if ( ! config ) {
-    config = path.join( process.cwd(), 'keycloak.json' );
+function Config (config) {
+  if (!config) {
+    config = path.join(process.cwd(), 'keycloak.json');
   }
 
-  if ( typeof config == 'string' ) {
-    this.loadConfiguration( config );
+  if (typeof config === 'string') {
+    this.loadConfiguration(config);
   } else {
-    this.configure( config );
+    this.configure(config);
   }
 }
 
@@ -50,9 +50,9 @@ function Config(config) {
  * @param {String} configPath Path to a `keycloak.json` configuration.
  */
 Config.prototype.loadConfiguration = function loadConfiguration (configPath) {
-  const json = fs.readFileSync( configPath );
-  const config = JSON.parse( json.toString() );
-  this.configure( config );
+  const json = fs.readFileSync(configPath);
+  const config = JSON.parse(json.toString());
+  this.configure(config);
 };
 
 /**
@@ -66,42 +66,41 @@ Config.prototype.loadConfiguration = function loadConfiguration (configPath) {
  * @param {Object} config The configuration to instill.
  */
 Config.prototype.configure = function configure (config) {
-
   /**
    * Realm ID
    * @type {String}
    */
-  this.realm          = config['realm'] || config.realm;
+  this.realm = config['realm'] || config.realm;
 
   /**
    * Client/Application ID
    * @type {String}
    */
-  this.clientId       = config['client-id'] || config.clientId;
+  this.clientId = config['client-id'] || config.clientId;
 
   /**
    * Client/Application secret
    * @type {String}
    */
-  this.secret         = (config['credentials'] || {}).secret || config.secret;
+  this.secret = (config['credentials'] || {}).secret || config.secret;
 
   /**
    * If this is a public application or confidential.
    * @type {String}
    */
-  this.public         = config['public-client'] || config.public || false;
+  this.public = config['public-client'] || config.public || false;
 
   /**
    * Authentication server URL
    * @type {String}
    */
-  this.authServerUrl  = config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl;
+  this.authServerUrl = config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl;
 
   /**
    * Root realm URL.
    * @type {String}
    */
-  this.realmUrl      = this.authServerUrl + '/realms/' + this.realm;
+  this.realmUrl = this.authServerUrl + '/realms/' + this.realm;
 
   /**
    * Root realm admin URL.
@@ -114,21 +113,20 @@ Config.prototype.configure = function configure (config) {
    * Formatted public-key.
    * @type {String}
    */
-  this.publicKey = "-----BEGIN PUBLIC KEY-----\n";
+  this.publicKey = '-----BEGIN PUBLIC KEY-----\n';
 
-  for ( let i = 0 ; i < plainKey.length ; i = i + 64 ) {
-    this.publicKey += plainKey.substring( i, i + 64 );
-    this.publicKey += "\n";
+  for (let i = 0; i < plainKey.length; i = i + 64) {
+    this.publicKey += plainKey.substring(i, i + 64);
+    this.publicKey += '\n';
   }
 
-  this.publicKey += "-----END PUBLIC KEY-----\n";
+  this.publicKey += '-----END PUBLIC KEY-----\n';
 
   /**
    * If this is a Bearer Only application.
    * @type {Boolean}
    */
   this.bearerOnly = config['bearer-only'] || config.bearerOnly || false;
-
 };
 
 module.exports = Config;

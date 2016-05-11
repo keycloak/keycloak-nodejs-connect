@@ -1,6 +1,4 @@
-
-module.exports = function(grunt) {
-
+module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -10,7 +8,7 @@ module.exports = function(grunt) {
     'gh-pages': {
       options: {
         base: 'doc',
-        dotfiles: true,
+        dotfiles: true
       },
       src: ['**']
     }
@@ -20,7 +18,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-touch');
 
   // Default task(s).
-  grunt.registerTask('default', [ 'touch']);
-
+  grunt.registerTask('default', ['touch']);
 };
-

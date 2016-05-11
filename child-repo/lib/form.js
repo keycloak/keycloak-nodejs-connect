@@ -16,10 +16,10 @@
 
 'use strict';
 
-function Form(params) {
+function Form (params) {
   this._params = {};
-  if ( params ) {
-    for ( let k in params ) {
+  if (params) {
+    for (let k in params) {
       this._params[k] = params[k];
     }
   }
@@ -33,12 +33,12 @@ Form.prototype.encode = function encode () {
   let s = '';
   let first = true;
 
-  for ( let k in this._params ) {
-    if ( ! first ) {
+  for (let k in this._params) {
+    if (!first) {
       s += '&';
     }
     first = false;
-    s = s + k + '=' + encodeURIComponent( this._params[k] );
+    s = s + k + '=' + encodeURIComponent(this._params[k]);
   }
 
   return s;

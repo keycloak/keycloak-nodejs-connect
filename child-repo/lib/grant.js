@@ -30,8 +30,8 @@
  *
  * @constructor
  */
-function Grant(grant) {
-  this.update( grant );
+function Grant (grant) {
+  this.update(grant);
 }
 
 /**
@@ -45,13 +45,13 @@ Grant.prototype.update = function update (grant) {
   // CamelCase to match both Keycloak's grant JSON
   // and to allow new Grant(new Grant(kc)) copy-ctor
 
-  this.access_token  = grant.access_token;
+  this.access_token = grant.access_token;
   this.refresh_token = grant.refresh_token;
-  this.id_token      = grant.id_token;
+  this.id_token = grant.id_token;
 
-  this.token_type    = grant.token_type;
-  this.expires_in    = grant.expires_in;
-  this.__raw         = grant.__raw;
+  this.token_type = grant.token_type;
+  this.expires_in = grant.expires_in;
+  this.__raw = grant.__raw;
 };
 
 /**
@@ -60,7 +60,7 @@ Grant.prototype.update = function update (grant) {
  * If the raw string is unavailable (due to programatic construction)
  * then `undefined` is returned.
  */
-Grant.prototype.toString = function toString() {
+Grant.prototype.toString = function toString () {
   return this.__raw;
 };
 
@@ -74,8 +74,8 @@ Grant.prototype.toString = function toString() {
  *
  * @return {boolean} `true` if expired, otherwise `false`.
  */
-Grant.prototype.isExpired = function isExpired() {
-  if ( ! this.access_token ) {
+Grant.prototype.isExpired = function isExpired () {
+  if (!this.access_token) {
     return true;
   }
   return this.access_token.isExpired();

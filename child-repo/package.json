@@ -10,6 +10,7 @@
   "scripts": {
     "test": "tape spec/*-spec.js | tap-spec",
     "lint": "jshint *.js lib/*.js spec/*.js",
+    "format": "semistandard",
     "prepublish": "nsp check",
     "doc": "jsdoc --verbose -d doc -t ./node_modules/ink-docstrap/template -R README.md lib"
   },
@@ -27,6 +28,7 @@
     "jsdoc": "^3.4.0",
     "jshint": "^2.9.2",
     "nsp": "*",
+    "semistandard": "^7.0.5",
     "tap-spec": "^4.1.1",
     "tape": "^4.5.1"
   },
