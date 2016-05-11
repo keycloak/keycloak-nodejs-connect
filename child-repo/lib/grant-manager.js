@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-var Q = require('q');
+'use strict';
 
 var URL    = require('url');
 var http   = require('http');
@@ -57,20 +56,15 @@ function GrantManager(config) {
  * @param {Function} callback Optional callback, if not using promises.
  */
 GrantManager.prototype.obtainDirectly = function(username, password, callback) {
-  var deferred = Q.defer();
-
-  var self = this;
-
-  var url = this.realmUrl + '/protocol/openid-connect/token';
-
-  var options = URL.parse( url );
+  const url = this.realmUrl + '/protocol/openid-connect/token';
+  const options = URL.parse( url );
 
   options.method = 'POST';
   options.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
-  var params = new Form({
+  const params = new Form({
     client_id: this.clientId
   });
 
@@ -83,28 +77,28 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
     params.set('client_secret', this.secret);
     options.headers['Authorization'] = 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' );
   }
-  
-  var req = getProtocol(options).request( options, function(response) {
-    if ( response.statusCode < 200 || response.statusCode > 299 ) {
-      return deferred.reject( response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ] );
-    }
-    var json = '';
-    response.on('data', function(d) {
-      json += d.toString();
-    });
-    response.on( 'end', function() {
-      try {
-        return deferred.resolve( self.createGrant( json ) );
-      } catch (err) {
-        return deferred.reject( err );
+
+  const promise = new Promise((resolve, reject) => {
+    const req = getProtocol(options).request( options, (response) => {
+      if ( response.statusCode < 200 || response.statusCode > 299 ) {
+        return reject( response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ] );
       }
+      let json = '';
+      response.on('data', (d) => json += d.toString());
+      response.on( 'end', () => {
+        try {
+          resolve( this.createGrant( json ) );
+        } catch (err) {
+          reject( err );
+        }
+      });
     });
+
+    req.write( params.encode() );
+    req.end();
   });
 
-  req.write( params.encode() );
-  req.end();
-
-  return deferred.promise.nodeify( callback );
+  return nodeify( promise, callback );
 };
 
 
@@ -127,10 +121,7 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
  * @param {Function} callback Optional callback, if not using promises.
  */
 GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessionHost, callback) {
-  var deferred = Q.defer();
-  var self = this;
-
-  var queryObj = {
+  const queryObj = {
     application_session_state: sessionId,
     application_session_host: sessionHost,
     code: code,
@@ -138,10 +129,8 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
     client_id: this.clientId,
     redirect_uri: request.session.auth_redirect_uri
   };
-  var params = querystring.stringify(queryObj);
-
-  var options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
-  var protocol = http;
+  const params = querystring.stringify(queryObj);
+  const options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
 
   options.method = 'POST';
   options.headers = {
@@ -149,25 +138,24 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
     'Content-Type': 'application/x-www-form-urlencoded'
   };
 
-  var req = getProtocol(options).request( options, function(response) {
-    var json = '';
-    response.on('data', function(d) {
-      json += d.toString();
+  const promise = new Promise((resolve, reject) => {
+    const req = getProtocol(options).request( options, (response) => {
+      let json = '';
+      response.on('data', (d) => json += d.toString());
+      response.on( 'end', () => {
+        try {
+          const grant = this.createGrant( json );
+          resolve( grant );
+        } catch (err) {
+          reject( err );
+        }
+      });
     });
-    response.on( 'end', function() {
-      try {
-        var grant = self.createGrant( json );
-        return deferred.resolve( grant );
-      } catch (err) {
-        return deferred.reject( err );
-      }
-    });
-  } );
+    req.write( params );
+    req.end();
+  });
 
-  req.write( params );
-  req.end();
-
-  return deferred.promise.nodeify( callback );
+  return nodeify( promise, callback );
 };
 
 
@@ -190,48 +178,43 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
  */
 GrantManager.prototype.ensureFreshness = function(grant, callback) {
   if ( ! grant.isExpired() ) {
-    return Q(grant).nodeify( callback );
+    return nodeify( Promise.resolve(grant), callback );
   }
 
   if ( ! grant.refresh_token ) {
-    return Q.reject( new Error( "Unable to refresh without a refresh token" )).nodeify( callback );
+    return nodeify( Promise.reject( new Error( "Unable to refresh without a refresh token" )), callback );
   }
 
-  var self = this;
-  var deferred = Q.defer();
-
-  var options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
+  const options = URL.parse( this.realmUrl + '/protocol/openid-connect/token' );
   options.method = 'POST';
   options.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Authorization': 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' )
   };
 
-  var params = new Form({
+  const params = new Form({
     grant_type: 'refresh_token',
     refresh_token: grant.refresh_token.token
   });
 
-  var request = getProtocol(options).request( options, function(response) {
-    var json = '';
-    response.on( 'data', function(d) {
-      json += d.toString();
-    });
-    response.on( 'end', function() {
-      try {
-        grant.update( self.createGrant( json ) );
-        return deferred.resolve(grant);
-      } catch (err) {
-        return deferred.reject( err );
-      }
+  const promise = new Promise((resolve, reject) => {
+    const request = getProtocol(options).request( options, (response) => {
+      let json = '';
+      response.on( 'data', (d) => json += d.toString() );
+      response.on( 'end', () => {
+        try {
+          grant.update( this.createGrant( json ) );
+          resolve(grant);
+        } catch (err) {
+          reject( err );
+        }
+      });
     });
 
+    request.write( params.encode() );
+    request.end();
   });
-
-  request.write( params.encode() );
-  request.end();
-
-  return deferred.promise.nodeify(callback);
+  return nodeify(promise, callback);
 };
 
 /**
@@ -243,24 +226,16 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
  * @return {boolean} `false` if the token is invalid, or the same token if valid.
  */
 GrantManager.prototype.validateAccessToken = function(token, callback) {
-  var deferred = Q.defer();
-
-  var self = this;
-
-  var url = this.realmUrl + '/protocol/openid-connect/token/introspect';
-
-  var options = URL.parse( url );
-  options.method = 'POST';
-
-  var t;
-
-  if ( typeof token == 'string' ) {
-    t = token;
-  } else {
+  let t = token;
+  if ( typeof token === 'object' ) {
     t = token.token;
   }
 
-  var params = new Form({
+  const url = this.realmUrl + '/protocol/openid-connect/token/introspect';
+  const options = URL.parse( url );
+  options.method = 'POST';
+
+  const params = new Form({
     token: t,
     client_secret: this.secret,
     client_id: this.clientId
@@ -271,25 +246,22 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
     'Authorization': 'Basic ' + new Buffer( this.clientId + ':' + this.secret ).toString( 'base64' )
   };
 
-  var req = getProtocol(options).request( options, function(response) {
-    var json = '';
-    response.on('data', function(d) {
-      json += d.toString();
+  const promise = new Promise((resolve, reject) => {
+    const req = getProtocol(options).request( options, function(response) {
+      let json = '';
+      response.on('data', (d) =>json += d.toString());
+      response.on( 'end', () => {
+        const data = JSON.parse( json );
+        if ( !data.active )
+          resolve( false );
+        else
+          resolve( token );
+      });
     });
-    response.on( 'end', function() {
-      var data = JSON.parse( json );
-      if ( !data.active ) {
-        return deferred.resolve( false );
-      }
-      return deferred.resolve( token );
-    });
+    req.write(params.encode());
+    req.end();
   });
-  req.write(params.encode());
-
-  req.end();
-
-  return deferred.promise.nodeify( callback );
-
+  return nodeify( promise, callback );
 };
 
 /**
@@ -304,38 +276,17 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
  * @return {Grant} A validated Grant.
  */
 GrantManager.prototype.createGrant = function(rawData) {
+  let grantData = rawData;
+  if (typeof rawData !== 'object') grantData = JSON.parse( grantData );
 
-  var grantData = rawData;
-  if (typeof rawData !== 'object')
-    grantData = JSON.parse( grantData );
-
-  var access_token;
-  var refresh_token;
-  var id_token;
-
-  if ( grantData.access_token ) {
-    access_token = new Token( grantData.access_token, this.clientId );
-  }
-
-  if ( grantData.refresh_token ) {
-    refresh_token = new Token( grantData.refresh_token );
-  }
-
-  if ( grantData.id_token ) {
-    id_token = new Token( grantData.id_token );
-  }
-
-  var grant = new Grant( {
-    access_token: access_token,
-    refresh_token: refresh_token,
-    id_token: id_token,
+  return this.validateGrant( new Grant({
+    access_token: (grantData.access_token ? new Token( grantData.access_token, this.clientId ) : undefined),
+    refresh_token: (grantData.refresh_token ?new Token( grantData.refresh_token ) : undefined),
+    id_token: (grantData.id_token ? new Token( grantData.id_token ) : undefined),
     expires_in: grantData.expires_in,
     token_type: grantData.token_type,
-  });
-
-  grant.__raw = rawData;
-
-  return this.validateGrant( grant );
+    __raw: rawData
+  }));
 };
 
 /**
@@ -351,7 +302,6 @@ GrantManager.prototype.validateGrant = function(grant) {
   grant.access_token  = this.validateToken( grant.access_token );
   grant.refresh_token = this.validateToken( grant.refresh_token );
   grant.id_token      = this.validateToken( grant.id_token );
-
   return grant;
 };
 
@@ -370,75 +320,57 @@ GrantManager.prototype.validateGrant = function(grant) {
  * @return {Token} The same token passed in, or `undefined`
  */
 GrantManager.prototype.validateToken = function(token) {
-  if ( ! token ) {
-    return;
-  }
-
-  if ( token.isExpired() ) {
-    return;
-  }
-
-  if ( token.content.iat < this.notBefore ) {
-    return;
-  }
-
-  var verify = crypto.createVerify('RSA-SHA256');
+  if ( !token || token.isExpired() || token.content.iat < this.notBefore ) return;
+  const verify = crypto.createVerify('RSA-SHA256');
   verify.update( token.signed );
-  if ( ! verify.verify( this.publicKey, token.signature, 'base64' ) ) {
-    return;
-  }
-
+  if ( ! verify.verify( this.publicKey, token.signature, 'base64' ) ) return;
   return token;
 };
 
 GrantManager.prototype.getAccount = function(token, callback) {
-  var deferred = Q.defer();
-
-  var self = this;
-
-  var url = this.realmUrl + '/account';
-
-  var options = URL.parse( url );
-
+  const url = this.realmUrl + '/account';
+  const options = URL.parse( url );
   options.method = 'GET';
 
-  var t;
-
-  if ( typeof token == 'string' ) {
-    t = token;
-  } else {
-    t = token.token;
-  }
+  let t = token;
+  if ( typeof token === 'object' ) t = token.token;
 
   options.headers = {
     'Authorization': 'Bearer ' + t,
     'Accept': 'application/json',
   };
 
-  var req = getProtocol(options).request( options, function(response) {
-    if ( response.statusCode < 200 || response.statusCode >= 300 ) {
-      return deferred.reject( "Error fetching account" );
-    }
-    var json = '';
-    response.on('data', function(d) {
-      json += d.toString();
-    });
-    response.on( 'end', function() {
-      var data = JSON.parse( json );
-      if ( data.error ) {
-        return deferred.reject( data );
+  const promise = new Promise((resolve, reject) => {
+    const req = getProtocol(options).request( options, function(response) {
+      if ( response.statusCode < 200 || response.statusCode >= 300 ) {
+        return reject( "Error fetching account" );
       }
-      return deferred.resolve( data );
+      let json = '';
+      response.on('data', (d) => json += d.toString());
+      response.on( 'end', () => {
+        const data = JSON.parse( json );
+        if ( data.error ) reject( data );
+        else resolve( data );
+      });
     });
+    req.end();
   });
 
-  req.end();
-
-  return deferred.promise.nodeify( callback );
+  return nodeify( promise, callback );
 };
 
 function getProtocol(opts) {
   return opts.protocol === 'https:' ? https : http;
+}
+
+function nodeify(promise, cb) {
+  if (typeof cb !== 'function') return promise;
+  return promise
+    .then(function (res) {
+      cb(null, res);
+    }, function (err) {
+      cb(err);
+    });
 }
 
 module.exports = GrantManager;

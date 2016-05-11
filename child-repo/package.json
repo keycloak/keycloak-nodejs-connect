@@ -4,6 +4,7 @@
   "description": "General Keycloak Utilities",
   "homepage": "http://keycloak.org",
   "main": "index.js",
+  "engines" : { "node" : ">=4.0.0" },
   "scripts": {
     "test": "node_modules/jasmine/bin/jasmine.js",
     "lint": "jshint *.js lib/*.js spec/*.js",
@@ -25,9 +26,6 @@
     "jsdoc": "^3.4.0",
     "jshint": "^2.9.2",
     "nsp": "*"
-  },
-  "dependencies": {
-    "q": "^1.1.2"
   },
   "repository": {
     "type": "git",
