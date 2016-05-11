@@ -3,10 +3,7 @@ dist: trusty
 language: node_js
 node_js:
   - "5"
-  - "5.1"
-  - "4.2"
-  - "4.1"
-  - "4.0"
+  - "4"
 before_script:
    - ./scripts/start-server.sh
 script:
