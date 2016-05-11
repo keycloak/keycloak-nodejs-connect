@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-
 /**
  * @module keycloak-nodejs-auth-utils
  */
 module.exports = {
-  Config:       require('./lib/config'),
+  Config: require('./lib/config'),
   GrantManager: require('./lib/grant-manager'),
-  Grant:        require('./lib/grant' ),
+  Grant: require('./lib/grant')
 };
-
