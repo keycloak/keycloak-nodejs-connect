@@ -15,7 +15,8 @@
  */
 
 
-/** Export all useful things.
+/**
+ * @module keycloak-nodejs-auth-utils
  */
 module.exports = {
   Config:       require('./lib/config'),
