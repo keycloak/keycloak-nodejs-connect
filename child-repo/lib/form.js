@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
+'use strict';
+
 function Form(params) {
   this._params = {};
   if ( params ) {
-    for ( var k in params ) {
+    for ( let k in params ) {
       this._params[k] = params[k];
     }
   }
 }
 
-Form.prototype.set = function(name, value) {
+Form.prototype.set = function set (name, value) {
   this._params[name] = value;
 };
 
-Form.prototype.encode = function() {
-  var s = '';
-  var first = true;
+Form.prototype.encode = function encode () {
+  let s = '';
+  let first = true;
 
-  for ( var k in this._params ) {
+  for ( let k in this._params ) {
     if ( ! first ) {
       s += '&';
     }

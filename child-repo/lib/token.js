@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+'use strict';
 
 /**
  * Construct a token.
@@ -33,7 +34,7 @@ function Token(token, clientId) {
 
   if ( token ) {
     try {
-      var parts = token.split('.');
+      const parts = token.split('.');
       this.header = JSON.parse( new Buffer( parts[0], 'base64' ).toString() );
       this.content = JSON.parse( new Buffer( parts[1], 'base64' ).toString() );
       this.signature = new Buffer( parts[2], 'base64' );
@@ -51,10 +52,8 @@ function Token(token, clientId) {
  *
  * @return {boolean} `true` if it is expired, otherwise `false`.
  */
-Token.prototype.isExpired = function() {
-  if ( ( this.content.exp * 1000 ) < Date.now() ) {
-    return true;
-  }
+Token.prototype.isExpired = function isExpired () {
+  return ( ( this.content.exp * 1000 ) < Date.now() );
 };
 
 /**
@@ -78,13 +77,12 @@ Token.prototype.isExpired = function() {
  *
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
-Token.prototype.hasRole = function(name) {
+Token.prototype.hasRole = function hasRole (name) {
   if ( ! this.clientId ) {
     return false;
   }
 
-  var parts = name.split(':');
-
+  const parts = name.split(':');
   if ( parts.length == 1 ) {
     return this.hasApplicationRole( this.clientId, parts[0] );
   }
@@ -107,7 +105,7 @@ Token.prototype.hasRole = function(name) {
  *
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
-Token.prototype.hasApplicationRole = function(appName, roleName) {
+Token.prototype.hasApplicationRole = function hasApplicationRole(appName, roleName) {
   var appRoles = this.content.resource_access[appName];
 
   if ( ! appRoles ) {
@@ -128,7 +126,7 @@ Token.prototype.hasApplicationRole = function(appName, roleName) {
  *
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
-Token.prototype.hasRealmRole = function(roleName) {
+Token.prototype.hasRealmRole = function hasRealmRole(roleName) {
   return ( this.content.realm_access.roles.indexOf( roleName ) >= 0 );
 };
 

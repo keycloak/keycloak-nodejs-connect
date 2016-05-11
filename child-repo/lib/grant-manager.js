@@ -15,15 +15,15 @@
  */
 'use strict';
 
-var URL    = require('url');
-var http   = require('http');
-var https  = require('https');
-var crypto = require('crypto');
-var querystring = require('querystring');
+const URL    = require('url');
+const http   = require('http');
+const https  = require('https');
+const crypto = require('crypto');
+const querystring = require('querystring');
 
-var Form = require('./form');
-var Grant = require('./grant');
-var Token = require('./token');
+const Form = require('./form');
+const Grant = require('./grant');
+const Token = require('./token');
 
 /**
  * Construct a grant manager.
@@ -55,7 +55,7 @@ function GrantManager(config) {
  * @param {String} password The cleartext password.
  * @param {Function} callback Optional callback, if not using promises.
  */
-GrantManager.prototype.obtainDirectly = function(username, password, callback) {
+GrantManager.prototype.obtainDirectly = function obtainDirectly (username, password, callback) {
   const url = this.realmUrl + '/protocol/openid-connect/token';
   const options = URL.parse( url );
 
@@ -120,7 +120,7 @@ GrantManager.prototype.obtainDirectly = function(username, password, callback) {
  * @param {String} sessionHost Optional session host for targetted Keycloak console post-backs.
  * @param {Function} callback Optional callback, if not using promises.
  */
-GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessionHost, callback) {
+GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, sessionId, sessionHost, callback) {
   const queryObj = {
     application_session_state: sessionId,
     application_session_host: sessionHost,
@@ -176,7 +176,7 @@ GrantManager.prototype.obtainFromCode = function(request, code, sessionId, sessi
  * @param {Grant} grant The grant object to ensure freshness of.
  * @param {Function} callback Optional callback if promises are not used.
  */
-GrantManager.prototype.ensureFreshness = function(grant, callback) {
+GrantManager.prototype.ensureFreshness = function ensureFreshness(grant, callback) {
   if ( ! grant.isExpired() ) {
     return nodeify( Promise.resolve(grant), callback );
   }
@@ -225,7 +225,7 @@ GrantManager.prototype.ensureFreshness = function(grant, callback) {
  *
  * @return {boolean} `false` if the token is invalid, or the same token if valid.
  */
-GrantManager.prototype.validateAccessToken = function(token, callback) {
+GrantManager.prototype.validateAccessToken = function validateAccessToken (token, callback) {
   let t = token;
   if ( typeof token === 'object' ) {
     t = token.token;
@@ -247,7 +247,7 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
   };
 
   const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request( options, function(response) {
+    const req = getProtocol(options).request( options, (response) => {
       let json = '';
       response.on('data', (d) =>json += d.toString());
       response.on( 'end', () => {
@@ -275,7 +275,7 @@ GrantManager.prototype.validateAccessToken = function(token, callback) {
  * @param {String} rawData The raw JSON string received from the Keycloak server or from a client.
  * @return {Grant} A validated Grant.
  */
-GrantManager.prototype.createGrant = function(rawData) {
+GrantManager.prototype.createGrant = function createGrant(rawData) {
   let grantData = rawData;
   if (typeof rawData !== 'object') grantData = JSON.parse( grantData );
 
@@ -298,7 +298,7 @@ GrantManager.prototype.createGrant = function(rawData) {
  *
  * @param {Grant} The grant to validate.
  */
-GrantManager.prototype.validateGrant = function(grant) {
+GrantManager.prototype.validateGrant = function validateGrant (grant) {
   grant.access_token  = this.validateToken( grant.access_token );
   grant.refresh_token = this.validateToken( grant.refresh_token );
   grant.id_token      = this.validateToken( grant.id_token );
@@ -319,7 +319,7 @@ GrantManager.prototype.validateGrant = function(grant) {
  *
  * @return {Token} The same token passed in, or `undefined`
  */
-GrantManager.prototype.validateToken = function(token) {
+GrantManager.prototype.validateToken = function validateToken (token) {
   if ( !token || token.isExpired() || token.content.iat < this.notBefore ) return;
   const verify = crypto.createVerify('RSA-SHA256');
   verify.update( token.signed );
@@ -327,7 +327,7 @@ GrantManager.prototype.validateToken = function(token) {
   return token;
 };
 
-GrantManager.prototype.getAccount = function(token, callback) {
+GrantManager.prototype.getAccount = function getAccount (token, callback) {
   const url = this.realmUrl + '/account';
   const options = URL.parse( url );
   options.method = 'GET';
@@ -341,7 +341,7 @@ GrantManager.prototype.getAccount = function(token, callback) {
   };
 
   const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request( options, function(response) {
+    const req = getProtocol(options).request( options, (response) => {
       if ( response.statusCode < 200 || response.statusCode >= 300 ) {
         return reject( "Error fetching account" );
       }
@@ -365,12 +365,7 @@ function getProtocol(opts) {
 
 function nodeify(promise, cb) {
   if (typeof cb !== 'function') return promise;
-  return promise
-    .then(function (res) {
-      cb(null, res);
-    }, function (err) {
-      cb(err);
-    });
+  return promise.then( (res) => cb(null, res), (err) =>  cb(err) );
 }
 
 module.exports = GrantManager;
