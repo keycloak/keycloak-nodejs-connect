@@ -1,20 +1,20 @@
 'use strict';
 
-const GrantManager = require('./../index').GrantManager;
-const Config = require('./../index').Config;
+const GrantManager = require('../../index').GrantManager;
+const Config = require('../../index').Config;
 const test = require('tape');
 
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const getManager = (fixture) => new GrantManager(new Config(fixture));
 
 test('GrantManager in public mode should be able to obtain a grant', (t) => {
-  const manager = getManager('spec/fixtures/keycloak-public.json');
+  const manager = getManager('test/fixtures/keycloak-public.json');
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => t.notEqual(grant.access_token, undefined))
     .then(t.end);
 });
 
-const manager = getManager('spec/fixtures/keycloak-confidential.json');
+const manager = getManager('test/fixtures/keycloak-confidential.json');
 
 test('GrantManager in confidential mode should be able to obtain a grant', (t) => {
   manager.obtainDirectly('test-user', 'tiger')

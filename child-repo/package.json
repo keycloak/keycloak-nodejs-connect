@@ -8,8 +8,8 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "test": "tape spec/*-spec.js | tap-spec",
-    "lint": "jshint *.js lib/*.js spec/*.js",
+    "test": "tape test/integration/*-spec.js | tap-spec && tape test/unit/*-test.js | tap-spec",
+    "lint": "jshint *.js lib/*.js test/**/*.js",
     "format": "semistandard",
     "prepublish": "nsp check",
     "doc": "jsdoc --verbose -d doc -t ./node_modules/ink-docstrap/template -R README.md lib"
@@ -27,6 +27,7 @@
     "ink-docstrap": "^1.1.4",
     "jsdoc": "^3.4.0",
     "jshint": "^2.9.2",
+    "nock": "^8.0.0",
     "nsp": "*",
     "semistandard": "^7.0.5",
     "tap-spec": "^4.1.1",

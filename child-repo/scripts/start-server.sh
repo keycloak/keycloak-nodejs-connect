@@ -37,7 +37,7 @@ fi
 $KEYCLOAK/bin/standalone.sh -Djava.net.preferIPv4Stack=true \
                             -Dkeycloak.migration.action=import \
                             -Dkeycloak.migration.provider=singleFile \
-                            -Dkeycloak.migration.file=spec/fixtures/keycloak-fixture.json \
+                            -Dkeycloak.migration.file=test/fixtures/keycloak-fixture.json \
                             -Dkeycloak.migration.strategy=OVERWRITE_EXISTING > keycloak.log 2>&1 &
 
 waitForServer
