@@ -7,15 +7,18 @@ const nock = require('nock');
 
 const getManager = (fixture) => new GrantManager(new Config(fixture));
 const reply = {
-  "access_token":"Dummy access token",
-  "expires_in":2,
-  "refresh_expires_in":1800,"refresh_token":"Dummy refresh token",
-  "token_type":"bearer","id_token":"Dummy id token",
-  "not-before-policy":1462208947,
-  "session_state":"22e0b5bd-fb0f-4f99-93aa-a60c4b934c88"};
+  'access_token': 'Dummy access token',
+  'expires_in': 2,
+  'refresh_expires_in': 1800,
+  'refresh_token': 'Dummy refresh token',
+  'token_type': 'bearer',
+  'id_token': 'Dummy id token',
+  'not-before-policy': 1462208947,
+  'session_state': '22e0b5bd-fb0f-4f99-93aa-a60c4b934c88'
+};
 
 test('GrantManager#obtainDirectly should work with https', (t) => {
-  const keycloak = nock('https://localhost:8080')
+  nock('https://localhost:8080')
     .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
       client_id: 'public-client',
       username: 'test-user',
@@ -27,6 +30,6 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
   manager.validateToken = (t) => t;
 
   manager.obtainDirectly('test-user', 'tiger')
-    .then((grant) => t.equal(grant.access_token.token, "Dummy access token"))
+    .then((grant) => t.equal(grant.access_token.token, 'Dummy access token'))
     .then(t.end);
 });
