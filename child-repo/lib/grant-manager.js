@@ -316,7 +316,7 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
  * @return {Token} The same token passed in, or `undefined`
  */
 GrantManager.prototype.validateToken = function validateToken (token) {
-  if (!token || token.isExpired() || token.content.iat < this.notBefore) return;
+  if (!token || token.isExpired() || !token.signed || token.content.iat < this.notBefore) return;
   const verify = crypto.createVerify('RSA-SHA256');
   verify.update(token.signed);
   if (!verify.verify(this.publicKey, token.signature, 'base64')) return;

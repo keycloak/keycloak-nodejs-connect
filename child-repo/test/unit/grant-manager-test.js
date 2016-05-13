@@ -33,3 +33,29 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
     .then((grant) => t.equal(grant.access_token.token, 'Dummy access token'))
     .then(t.end);
 });
+
+test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
+  const expiredToken = {
+    isExpired: () => true
+  };
+  const unsignedToken = {
+    isExpired: () => false,
+    signed: undefined
+  };
+  const notBeforeToken = {
+    isExpired: () => false,
+    signed: true,
+    content: { iat: -1 }
+  };
+  const manager = getManager('test/fixtures/keycloak-https.json');
+  const tokens = [
+    undefined,
+    expiredToken,
+    unsignedToken,
+    notBeforeToken
+  ];
+  for (const token of tokens) {
+    t.equal(manager.validateToken(token), undefined);
+  }
+  t.end();
+});
