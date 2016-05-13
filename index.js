@@ -278,7 +278,7 @@ Keycloak.prototype.getGrantFromCode = function(code, request, response) {
     throw new Error( "Cannot exchange code for grant in bearer-only mode" );
   }
 
-  var sessionId = this.stores[1].getId( request );
+  var sessionId = request.session.id;
 
   var self = this;
   return this.grantManager.obtainFromCode( request, code, sessionId )
