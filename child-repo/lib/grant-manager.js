@@ -21,7 +21,6 @@ const https = require('https');
 const crypto = require('crypto');
 const querystring = require('querystring');
 
-const Form = require('./form');
 const Grant = require('./grant');
 const Token = require('./token');
 
@@ -56,49 +55,16 @@ function GrantManager (config) {
  * @param {Function} callback Optional callback, if not using promises.
  */
 GrantManager.prototype.obtainDirectly = function obtainDirectly (username, password, callback) {
-  const url = this.realmUrl + '/protocol/openid-connect/token';
-  const options = URL.parse(url);
-
-  options.method = 'POST';
-  options.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
+  const params = {
+    client_id: this.clientId,
+    username: username,
+    password: password,
+    grant_type: 'password'
   };
+  const handler = createHandler(this);
+  const options = getOptions(this);
 
-  const params = new Form({
-    client_id: this.clientId
-  });
-
-  if (this.public) {
-    params.set('grant_type', 'password');
-    params.set('username', username);
-    params.set('password', password);
-  } else {
-    params.set('grant_type', 'client_credentials');
-    params.set('client_secret', this.secret);
-    options.headers['Authorization'] = 'Basic ' + new Buffer(this.clientId + ':' + this.secret).toString('base64');
-  }
-
-  const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode > 299) {
-        return reject(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]);
-      }
-      let json = '';
-      response.on('data', (d) => json += d.toString());
-      response.on('end', () => {
-        try {
-          resolve(this.createGrant(json));
-        } catch (err) {
-          reject(err);
-        }
-      });
-    });
-
-    req.write(params.encode());
-    req.end();
-  });
-
-  return nodeify(promise, callback);
+  return nodeify(fetch(this, handler, options, params), callback);
 };
 
 /**
@@ -120,7 +86,7 @@ GrantManager.prototype.obtainDirectly = function obtainDirectly (username, passw
  * @param {Function} callback Optional callback, if not using promises.
  */
 GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, sessionId, sessionHost, callback) {
-  const queryObj = {
+  const params = {
     application_session_state: sessionId,
     application_session_host: sessionHost,
     code: code,
@@ -128,33 +94,10 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
     client_id: this.clientId,
     redirect_uri: request.session.auth_redirect_uri
   };
-  const params = querystring.stringify(queryObj);
-  const options = URL.parse(this.realmUrl + '/protocol/openid-connect/token');
+  const handler = createHandler(this);
+  const options = getOptions(this);
 
-  options.method = 'POST';
-  options.headers = {
-    'Content-Length': params.length,
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
-
-  const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request(options, (response) => {
-      let json = '';
-      response.on('data', (d) => json += d.toString());
-      response.on('end', () => {
-        try {
-          const grant = this.createGrant(json);
-          resolve(grant);
-        } catch (err) {
-          reject(err);
-        }
-      });
-    });
-    req.write(params);
-    req.end();
-  });
-
-  return nodeify(promise, callback);
+  return nodeify(fetch(this, handler, options, params), callback);
 };
 
 /**
@@ -183,36 +126,14 @@ GrantManager.prototype.ensureFreshness = function ensureFreshness (grant, callba
     return nodeify(Promise.reject(new Error('Unable to refresh without a refresh token')), callback);
   }
 
-  const options = URL.parse(this.realmUrl + '/protocol/openid-connect/token');
-  options.method = 'POST';
-  options.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Authorization': 'Basic ' + new Buffer(this.clientId + ':' + this.secret).toString('base64')
-  };
-
-  const params = new Form({
+  const params = {
     grant_type: 'refresh_token',
     refresh_token: grant.refresh_token.token
-  });
+  };
+  const handler = refreshHandler(this, grant);
+  const options = getOptions(this);
 
-  const promise = new Promise((resolve, reject) => {
-    const request = getProtocol(options).request(options, (response) => {
-      let json = '';
-      response.on('data', (d) => json += d.toString());
-      response.on('end', () => {
-        try {
-          grant.update(this.createGrant(json));
-          resolve(grant);
-        } catch (err) {
-          reject(err);
-        }
-      });
-    });
-
-    request.write(params.encode());
-    request.end();
-  });
-  return nodeify(promise, callback);
+  return nodeify(fetch(this, handler, options, params));
 };
 
 /**
@@ -228,35 +149,46 @@ GrantManager.prototype.validateAccessToken = function validateAccessToken (token
   if (typeof token === 'object') {
     t = token.token;
   }
-
-  const url = this.realmUrl + '/protocol/openid-connect/token/introspect';
-  const options = URL.parse(url);
-  options.method = 'POST';
-
-  const params = new Form({
+  const params = {
     token: t,
     client_secret: this.secret,
     client_id: this.clientId
-  });
+  };
+  const options = getOptions(this, '/protocol/openid-connect/token/introspect');
+  const handler = validationHandler(this, token);
+
+  return nodeify(fetch(this, handler, options, params));
+};
+
+GrantManager.prototype.getAccount = function getAccount (token, callback) {
+  const url = this.realmUrl + '/account';
+  const options = URL.parse(url);
+  options.method = 'GET';
+
+  let t = token;
+  if (typeof token === 'object') t = token.token;
 
   options.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Authorization': 'Basic ' + new Buffer(this.clientId + ':' + this.secret).toString('base64')
+    'Authorization': 'Bearer ' + t,
+    'Accept': 'application/json'
   };
 
   const promise = new Promise((resolve, reject) => {
     const req = getProtocol(options).request(options, (response) => {
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        return reject('Error fetching account');
+      }
       let json = '';
       response.on('data', (d) => json += d.toString());
       response.on('end', () => {
         const data = JSON.parse(json);
-        if (!data.active) resolve(false);
-        else resolve(token);
+        if (data.error) reject(data);
+        else resolve(data);
       });
     });
-    req.write(params.encode());
     req.end();
   });
+
   return nodeify(promise, callback);
 };
 
@@ -323,45 +255,71 @@ GrantManager.prototype.validateToken = function validateToken (token) {
   return token;
 };
 
-GrantManager.prototype.getAccount = function getAccount (token, callback) {
-  const url = this.realmUrl + '/account';
-  const options = URL.parse(url);
-  options.method = 'GET';
+const getProtocol = (opts) => {
+  return opts.protocol === 'https:' ? https : http;
+};
 
-  let t = token;
-  if (typeof token === 'object') t = token.token;
+const nodeify = (promise, cb) => {
+  if (typeof cb !== 'function') return promise;
+  return promise.then((res) => cb(null, res)).catch((err) => cb(err));
+};
 
-  options.headers = {
-    'Authorization': 'Bearer ' + t,
-    'Accept': 'application/json'
+const createHandler = (manager) => (resolve, reject, json) => {
+  try {
+    resolve(manager.createGrant(json));
+  } catch (err) {
+    reject(err);
+  }
+};
+
+const refreshHandler = (manager, grant) => (resolve, reject, json) => {
+  try {
+    grant.update(manager.createGrant(json));
+    resolve(grant);
+  } catch (err) {
+    reject(err);
+  }
+};
+
+const validationHandler = (manager, token) => (resolve, reject, json) => {
+  const data = JSON.parse(json);
+  if (!data.active) resolve(false);
+  else resolve(token);
+};
+
+const getOptions = (manager, path) => {
+  const realPath = path || '/protocol/openid-connect/token';
+  const opts = URL.parse(manager.realmUrl + realPath);
+  opts.headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'X-Client': 'keycloak-nodejs-auth-utils'
   };
+  if (!manager.public) {
+    opts.headers['Authorization'] = 'Basic ' + new Buffer(manager.clientId + ':' + manager.secret).toString('base64');
+  }
+  opts.method = 'POST';
+  return opts;
+};
 
-  const promise = new Promise((resolve, reject) => {
+const fetch = (manager, handler, options, params) => {
+  return new Promise((resolve, reject) => {
+    const data = (typeof params === 'string' ? params : querystring.stringify(params));
+    options.headers['Content-Length'] = data.length;
+
     const req = getProtocol(options).request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        return reject('Error fetching account');
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        return reject(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]);
       }
       let json = '';
       response.on('data', (d) => json += d.toString());
       response.on('end', () => {
-        const data = JSON.parse(json);
-        if (data.error) reject(data);
-        else resolve(data);
+        handler(resolve, reject, json);
       });
     });
+
+    req.write(data);
     req.end();
   });
-
-  return nodeify(promise, callback);
 };
-
-function getProtocol (opts) {
-  return opts.protocol === 'https:' ? https : http;
-}
-
-function nodeify (promise, cb) {
-  if (typeof cb !== 'function') return promise;
-  return promise.then((res) => cb(null, res), (err) => cb(err));
-}
 
 module.exports = GrantManager;
