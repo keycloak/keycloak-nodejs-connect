@@ -14,7 +14,22 @@ test('GrantManager in public mode should be able to obtain a grant', (t) => {
     .then(t.end);
 });
 
+test('GrantManager in public mode should be able to get userinfo', (t) => {
+  const manager = getManager('test/fixtures/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => manager.userInfo(grant.access_token))
+    .then((user) => t.equal(user.preferred_username, 'test-user'))
+    .then(t.end);
+});
+
 const manager = getManager('test/fixtures/keycloak-confidential.json');
+
+test('GrantManager in confidential mode should be able to get userinfo', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => manager.userInfo(grant.access_token))
+    .then((user) => t.equal(user.preferred_username, 'test-user'))
+    .then(t.end);
+});
 
 test('GrantManager in confidential mode should be able to obtain a grant', (t) => {
   manager.obtainDirectly('test-user', 'tiger')

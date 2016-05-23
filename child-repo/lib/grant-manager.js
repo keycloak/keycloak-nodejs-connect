@@ -62,7 +62,7 @@ GrantManager.prototype.obtainDirectly = function obtainDirectly (username, passw
     grant_type: 'password'
   };
   const handler = createHandler(this);
-  const options = getOptions(this);
+  const options = postOptions(this);
 
   return nodeify(fetch(this, handler, options, params), callback);
 };
@@ -95,7 +95,7 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
     redirect_uri: request.session.auth_redirect_uri
   };
   const handler = createHandler(this);
-  const options = getOptions(this);
+  const options = postOptions(this);
 
   return nodeify(fetch(this, handler, options, params), callback);
 };
@@ -131,7 +131,7 @@ GrantManager.prototype.ensureFreshness = function ensureFreshness (grant, callba
     refresh_token: grant.refresh_token.token
   };
   const handler = refreshHandler(this, grant);
-  const options = getOptions(this);
+  const options = postOptions(this);
 
   return nodeify(fetch(this, handler, options, params));
 };
@@ -154,14 +154,14 @@ GrantManager.prototype.validateAccessToken = function validateAccessToken (token
     client_secret: this.secret,
     client_id: this.clientId
   };
-  const options = getOptions(this, '/protocol/openid-connect/token/introspect');
+  const options = postOptions(this, '/protocol/openid-connect/token/introspect');
   const handler = validationHandler(this, token);
 
   return nodeify(fetch(this, handler, options, params));
 };
 
-GrantManager.prototype.getAccount = function getAccount (token, callback) {
-  const url = this.realmUrl + '/account';
+GrantManager.prototype.userInfo = function userInfo (token, callback) {
+  const url = this.realmUrl + '/protocol/openid-connect/userinfo';
   const options = URL.parse(url);
   options.method = 'GET';
 
@@ -170,7 +170,8 @@ GrantManager.prototype.getAccount = function getAccount (token, callback) {
 
   options.headers = {
     'Authorization': 'Bearer ' + t,
-    'Accept': 'application/json'
+    'Accept': 'application/json',
+    'X-Client': 'keycloak-nodejs-auth-utils'
   };
 
   const promise = new Promise((resolve, reject) => {
@@ -190,6 +191,11 @@ GrantManager.prototype.getAccount = function getAccount (token, callback) {
   });
 
   return nodeify(promise, callback);
+};
+
+GrantManager.prototype.getAccount = function getAccount () {
+  console.error('GrantManager#getAccount is deprecated. See GrantManager#userInfo');
+  return this.userInfo.apply(this, arguments);
 };
 
 /**
@@ -287,7 +293,7 @@ const validationHandler = (manager, token) => (resolve, reject, json) => {
   else resolve(token);
 };
 
-const getOptions = (manager, path) => {
+const postOptions = (manager, path) => {
   const realPath = path || '/protocol/openid-connect/token';
   const opts = URL.parse(manager.realmUrl + realPath);
   opts.headers = {
