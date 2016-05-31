@@ -1,21 +1,36 @@
 {
   "name": "keycloak-connect",
-  "version": "0.0.17",
+  "version": "0.1.0",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js",
-    "prepublish": "./node_modules/nsp/bin/nsp check",
+    "prepublish": "nsp check",
     "test": "node test/index.js"
   },
+  "keywords": [
+    "sso",
+    "keycloak",
+    "oauth",
+    "oauth2.0",
+    "authentication"
+  ],
+  "files": [
+    "example",
+    "middleware",
+    "stores",
+    "test",
+    "index.js",
+    "uuid.js"
+  ],
   "author": {
     "name": "Red Hat, Inc.",
     "url": "http://keycloak.org"
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "0.0.17",
+    "keycloak-auth-utils": "0.1.0",
     "q": "^1.1.2"
   },
   "devDependencies": {

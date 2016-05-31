@@ -7,7 +7,7 @@ lint: node_modules
 cleanup:
 	rm -rf node_modules
 
-node_modules: cleanup package.json
+node_modules: package.json
 	npm install
 
 .PHONY: node_modules
