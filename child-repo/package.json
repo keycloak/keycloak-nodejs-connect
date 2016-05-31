@@ -1,7 +1,17 @@
 {
   "name": "keycloak-auth-utils",
-  "version": "0.0.17",
-  "description": "General Keycloak Utilities",
+  "version": "0.1.0",
+  "description": "Keycloak OAuth client.",
+  "keywords": [
+    "keycloak",
+    "authentication",
+    "oauth",
+    "oauth2.0",
+    "sso",
+    "openid",
+    "jwt",
+    "saml"
+  ],
   "homepage": "http://keycloak.org",
   "main": "index.js",
   "engines": {
