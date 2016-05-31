@@ -40,7 +40,7 @@ function Token (token, clientId) {
       this.signed = parts[0] + '.' + parts[1];
     } catch (err) {
       this.content = {
-        expiresAt: 0
+        exp: 0
       };
     }
   }
