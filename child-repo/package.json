@@ -24,6 +24,12 @@
     "prepublish": "nsp check",
     "doc": "jsdoc --verbose -d doc -t ./node_modules/ink-docstrap/template -R README.md lib"
   },
+  "files": [
+    "index.js",
+    "lib",
+    "test",
+    "doc"
+  ],
   "author": {
     "name": "Red Hat, Inc.",
     "url": "http://keycloak.org"
