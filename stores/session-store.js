@@ -5,10 +5,6 @@ function SessionStore(store) {
 
 SessionStore.TOKEN_KEY = 'keycloak-token';
 
-SessionStore.prototype.getId = function(request) {
-  return request.session.id;
-};
-
 SessionStore.prototype.get = function(request) {
   return request.session[ SessionStore.TOKEN_KEY ];
 };
