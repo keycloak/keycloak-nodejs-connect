@@ -94,6 +94,10 @@ function Keycloak(config, keycloakConfig) {
  */
 Keycloak.prototype.middleware = function(options) {
 
+  if (!options) {
+    options = {logout: '', admin: ''};
+  }
+
   options.logout = options.logout || '/logout';
   options.admin  = options.admin  || '/';
 
