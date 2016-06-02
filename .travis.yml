@@ -17,5 +17,8 @@ branches:
 
 install:
   - npm install
-
+before_script:
+   - ./build/start-server.sh
 script: make
+after_script:
+   - ./build/stop-server.sh
