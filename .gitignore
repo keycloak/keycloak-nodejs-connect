@@ -2,3 +2,5 @@
 *.swo
 *.log
 node_modules/
+keycloak-*
+!keycloak-connect-test.js
