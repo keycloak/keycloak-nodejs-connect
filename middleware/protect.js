@@ -8,7 +8,9 @@ function forceLogin(keycloak, request, response) {
 
   var redirectUrl = protocol + '://' + host + ( port === '' ? '' : ':' + port ) + request.url + '?auth_callback=1';
 
-  request.session.auth_redirect_uri = redirectUrl;
+  if ( request.session ) {
+    request.session.auth_redirect_uri = redirectUrl;
+  }
 
   var uuid = UUID();
   var loginURL = keycloak.loginUrl( uuid, redirectUrl );
