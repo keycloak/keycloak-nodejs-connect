@@ -1,7 +1,7 @@
 var Keycloak = require('keycloak-connect');
 var hogan = require('hogan-express');
 var express = require('express');
-var session = require('express-session')
+var session = require('express-session');
 
 var app = express();
 
@@ -15,12 +15,12 @@ app.engine('html', hogan);
 
 var memoryStore = new session.MemoryStore();
 
-app.use( session({
+app.use(session({
   secret: 'mySecret',
   resave: false,
   saveUninitialized: true,
   store: memoryStore,
-} ))
+}));
 
 
 // Provide the session store to the Keycloak so that sessions
@@ -42,20 +42,20 @@ var keycloak = new Keycloak({
 // root URL.  Various permutations, such as /k_logout will ultimately
 // be appended to the admin URL.
 
-app.use( keycloak.middleware( {
+app.use(keycloak.middleware({
   logout: '/logout',
   admin: '/',
-} ));
+}));
 
 
 // A normal un-protected public URL.
 
-app.get( '/', function(req,res) {
-	res.render('index');
-} )
+app.get('/', function (req, res) {
+  res.render('index');
+});
 
 
-app.get('/login', keycloak.protect(), function(req, res) {
+app.get('/login', keycloak.protect(), function (req, res) {
   res.render('index', {
     result: JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4),
     event: "1. Authentication\n2. Login"
@@ -64,7 +64,7 @@ app.get('/login', keycloak.protect(), function(req, res) {
 
 
 var server = app.listen(3000, function () {
-  var host = server.address().address
-  var port = server.address().port
-  console.log('Example app listening at http://%s:%s', host, port)
-})
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
+});
