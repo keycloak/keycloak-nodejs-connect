@@ -5,7 +5,8 @@
   "homepage": "http://keycloak.org",
   "main": "index.js",
   "scripts": {
-    "lint": "jshint *.js stores/*.js middleware/*.js",
+    "lint": "jshint *.js stores/*.js middleware/*.js example/*.js",
+    "coverage": "./node_modules/.bin/istanbul cover tape -- test/**.js",
     "prepublish": "nsp check",
     "test": "node test/*.js"
   },
@@ -34,9 +35,10 @@
     "q": "^1.1.2"
   },
   "devDependencies": {
+    "istanbul": "^0.4.3",
     "jshint": "^2.9.1",
-    "tape": "^4.5.1",
-    "nsp": "*"
+    "nsp": "*",
+    "tape": "^4.5.1"
   },
   "repository": {
     "type": "git",

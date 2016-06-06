@@ -1,8 +1,7 @@
 #Basic NodeJS Example
-========================
+
 
 ##Start and configure Keycloak
-----------------------------
 
 ###Start Keycloak:
 
@@ -10,8 +9,8 @@
 /<Path-To-Keycloak>/bin/standalone.sh
 ```
 
-Open the Keycloak admin console, click on Add Realm, click on 'Choose a JSON file', 
-select nodejs-example-realm.json and click Upload.
+Open the Keycloak admin console, click on Add Realm, click on import 'Select file', 
+select nodejs-example-realm.json and click Create.
 
 Link the HEAD code of keycloak-connect by running:
 
