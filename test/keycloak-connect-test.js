@@ -96,9 +96,23 @@ test('Should test protected route.', function (t) {
   request(app)
     .get('/login')
     .end(function (err, res) {
-      console.log(res.text);
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
       t.equal(res.statusCode, 302);
       t.end();
     });
+});
+
+test('Should verify logout feature.', function (t) {
+  request(app)
+    .get('/logout')
+    .end(function (err, res) {
+      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
+      t.equal(res.statusCode, 302);
+      t.end();
+    });
+});
+
+test('Should produce correct account url.', function (t) {
+  t.equal(kc.accountUrl(), 'http://localhost:8080/auth/realms/test-realm/account');
+  t.end();
 });
