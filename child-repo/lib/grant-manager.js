@@ -133,7 +133,7 @@ GrantManager.prototype.ensureFreshness = function ensureFreshness (grant, callba
   const handler = refreshHandler(this, grant);
   const options = postOptions(this);
 
-  return nodeify(fetch(this, handler, options, params));
+  return nodeify(fetch(this, handler, options, params), callback);
 };
 
 /**
