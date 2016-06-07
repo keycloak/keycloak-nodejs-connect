@@ -243,7 +243,12 @@ admin console when we provisioned this app.
 
 # Contributing
 
+  1. Start the server running `./build/start-server.sh`
+  2. Make some changes as well add test(s).
+  3. Type `make`
+  4. After finish your changes you can stop the server running `./build/stop-server.sh`
+
+**`./build/start-server.sh` will download, configure and start Keycloak, then you can run the tests using make command.**
+
 * [User Mailing List](https://lists.jboss.org/mailman/listinfo/keycloak-user) - Mailing list to ask for help and general questions about Keycloak
 * [JIRA](https://issues.jboss.org/projects/KEYCLOAK) - Issue tracker for bugs and feature requests
-
-
