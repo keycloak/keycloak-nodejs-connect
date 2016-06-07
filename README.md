@@ -18,7 +18,7 @@ The `Keycloak` class provides a central point for configuration
 and integration with your application.  The simplest creation
 involves no arguments.
 
-    var keycloak = new Keycloak()
+    var keycloak = new Keycloak();
 
 By default, this will locate a file named `keycloak.json` alongside
 the main executable of your application to initialize keycloak-specific
@@ -65,7 +65,7 @@ To secure a resource with an application role for a *different* app:
 
 To secure a resource with a realm role:
 
-    app.get( '/amin', keycloak.protect( 'realm:admin' ), adminHandler );
+    app.get( '/admin', keycloak.protect( 'realm:admin' ), adminHandler );
 
 ### Advanced authorization
 
