@@ -15,6 +15,12 @@
  */
 var test = require('tape');
 var Keycloak = require('../index');
+var UUID = require('../uuid');
+var express = require('express');
+var session = require('express-session');
+var request = require('supertest');
+
+var app = express();
 
 var kc = null;
 
@@ -30,6 +36,29 @@ test('setup', function (t) {
   };
 
   kc = new Keycloak({}, kcConfig);
+
+  var memoryStore = new session.MemoryStore();
+
+  app.use(session({
+    secret: 'mySecret',
+    resave: false,
+    saveUninitialized: true,
+    store: memoryStore,
+  }));
+
+  app.use(kc.middleware({
+    logout: '/logout',
+    admin: '/',
+  }));
+
+  app.get('/', function (req, res) {
+    res.status(200).json({ name: 'unprotected' });
+  });
+
+  app.get('/login', kc.protect(), function (req, res) {
+    res.json(JSON.stringify(JSON.parse(req.session['keycloak-token'])));
+  });
+
   t.end();
 });
 
@@ -46,4 +75,30 @@ test('Should verify if login URL has the configured realm.', function (t) {
 test('Should verify if logout URL has the configured realm.', function (t) {
   t.equal(kc.logoutUrl().indexOf(kc.config.realm) > 0, true);
   t.end();
+});
+
+test('Should generate a correct UUID.', function (t) {
+  var rgx = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+  t.equal(rgx.test(UUID()), true);
+  t.end();
+});
+
+test('Should test unprotected route.', function (t) {
+  request(app)
+    .get('/')
+    .end(function (err, res) {
+      t.equal(res.statusCode, 200);
+      t.end();
+    });
+});
+
+test('Should test protected route.', function (t) {
+  request(app)
+    .get('/login')
+    .end(function (err, res) {
+      console.log(res.text);
+      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
+      t.equal(res.statusCode, 302);
+      t.end();
+    });
 });
