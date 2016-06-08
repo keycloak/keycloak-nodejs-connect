@@ -48,11 +48,15 @@ test('setup', function (t) {
 
   app.use(kc.middleware({
     logout: '/logout',
-    admin: '/',
+    admin: '/callbacks',
   }));
 
   app.get('/', function (req, res) {
     res.status(200).json({ name: 'unprotected' });
+  });
+
+  app.get('/complain', kc.protect(), function (req, res) {
+    res.status(200).json({ foo: 'bar' });
   });
 
   app.get('/login', kc.protect(), function (req, res) {
@@ -112,7 +116,35 @@ test('Should verify logout feature.', function (t) {
     });
 });
 
+test('Should verify custom logout.', function (t) {
+  app.use(kc.middleware({ logout: '/logoff' }));
+  request(app)
+    .get('/logoff')
+    .end(function (err, res) {
+      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
+      t.equal(res.statusCode, 302);
+      t.end();
+    });
+});
+
 test('Should produce correct account url.', function (t) {
   t.equal(kc.accountUrl(), 'http://localhost:8080/auth/realms/test-realm/account');
   t.end();
 });
+
+test('Should call complain after logout.', function (t) {
+  request(app)
+    .get('/logout')
+    .end(function (err, res) {
+      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
+      t.equal(res.statusCode, 302);
+    });
+
+  request(app)
+    .get('/complain')
+    .end(function (err, res) {
+      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
+      t.end();
+    });
+});
+
