@@ -1,5 +1,7 @@
 # Keycloak
 
+[![Build Status](https://travis-ci.org/keycloak/keycloak-nodejs-connect.svg?branch=master)](https://travis-ci.org/keycloak/keycloak-nodejs-connect)
+
 [Keycloak](http://keycloak.jboss.org/) is a standalone authentication
 server, akin to a standalone database.  It provides hooks for federated
 authentication, including authenticating against various social networks
@@ -86,7 +88,7 @@ By default, the middleware catches calls to `/logout` to send the user through a
 Keycloak-centric logout workflow. This can be changed by specifying a `logout`
 configuration parameter to the `middleware()` call:
 
-    app.use( keycloak.middleware( { logout: '/logoff' } );
+    app.use( keycloak.middleware( { logout: '/logoff' } ));
 
 ### Keycloak Admin Callbacks
 
@@ -236,10 +238,6 @@ admin console when we provisioned this app.
         "secret": "89efcbdf-ee95-4292-bbd9-29304e6744c7"
       }
     }
-
-## Building
-
-    make
 
 # Contributing
 
