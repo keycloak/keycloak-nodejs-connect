@@ -75,7 +75,7 @@ Config.prototype.configure = function configure (config) {
    * Client/Application ID
    * @type {String}
    */
-  this.clientId = config['client-id'] || config.clientId;
+  this.clientId = config.resource || config['client-id'] || config.clientId;
 
   /**
    * Client/Application secret
