@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* jshint sub: true */
 'use strict';
 
 const path = require('path');

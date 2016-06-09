@@ -2,4 +2,5 @@
 node_modules
 doc
 ./keycloak*
-keycloak-1.9.*.Final/*
+keycloak-*
+*.log
