@@ -13,20 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var test = require('tape');
-var Keycloak = require('../index');
-var UUID = require('../uuid');
-var express = require('express');
-var session = require('express-session');
-var request = require('supertest');
 
-var app = express();
+'use strict';
 
-var kc = null;
+const test = require('tape');
+const Keycloak = require('../index');
+const UUID = require('../uuid');
+const express = require('express');
+const session = require('express-session');
+const request = require('supertest');
+const app = express();
 
-test('setup', function (t) {
+let kc = null;
 
-  var kcConfig = {
+test('setup', t => {
+
+  let kcConfig = {
     "realm": "test-realm",
     "realm-public-key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQAB",
     "auth-server-url": "http://localhost:8080/auth",
@@ -37,7 +39,7 @@ test('setup', function (t) {
 
   kc = new Keycloak({}, kcConfig);
 
-  var memoryStore = new session.MemoryStore();
+  let memoryStore = new session.MemoryStore();
 
   app.use(session({
     secret: 'mySecret',
@@ -66,83 +68,83 @@ test('setup', function (t) {
   t.end();
 });
 
-test('Should verify the realm name of the config object.', function (t) {
+test('Should verify the realm name of the config object.', t => {
   t.equal(kc.config.realm, 'test-realm');
   t.end();
 });
 
-test('Should verify if login URL has the configured realm.', function (t) {
+test('Should verify if login URL has the configured realm.', t => {
   t.equal(kc.loginUrl().indexOf(kc.config.realm) > 0, true);
   t.end();
 });
 
-test('Should verify if logout URL has the configured realm.', function (t) {
+test('Should verify if logout URL has the configured realm.', t => {
   t.equal(kc.logoutUrl().indexOf(kc.config.realm) > 0, true);
   t.end();
 });
 
-test('Should generate a correct UUID.', function (t) {
-  var rgx = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+test('Should generate a correct UUID.', t => {
+  const rgx = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
   t.equal(rgx.test(UUID()), true);
   t.end();
 });
 
-test('Should test unprotected route.', function (t) {
+test('Should test unprotected route.', t => {
   request(app)
     .get('/')
-    .end(function (err, res) {
+    .end((err, res) => {
       t.equal(res.statusCode, 200);
       t.end();
     });
 });
 
-test('Should test protected route.', function (t) {
+test('Should test protected route.', t => {
   request(app)
     .get('/login')
-    .end(function (err, res) {
+    .end((err, res) => {
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
       t.equal(res.statusCode, 302);
       t.end();
     });
 });
 
-test('Should verify logout feature.', function (t) {
+test('Should verify logout feature.', t => {
   request(app)
     .get('/logout')
-    .end(function (err, res) {
+    .end((err, res) => {
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
       t.equal(res.statusCode, 302);
       t.end();
     });
 });
 
-test('Should verify custom logout.', function (t) {
+test('Should verify custom logout.', t => {
   app.use(kc.middleware({ logout: '/logoff' }));
   request(app)
     .get('/logoff')
-    .end(function (err, res) {
+    .end((err, res) => {
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
       t.equal(res.statusCode, 302);
       t.end();
     });
 });
 
-test('Should produce correct account url.', function (t) {
+test('Should produce correct account url.', t => {
   t.equal(kc.accountUrl(), 'http://localhost:8080/auth/realms/test-realm/account');
   t.end();
 });
 
-test('Should call complain after logout.', function (t) {
+test('Should call complain after logout.', t => {
   request(app)
     .get('/logout')
-    .end(function (err, res) {
+    .end((err, res) => {
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
       t.equal(res.statusCode, 302);
     });
 
   request(app)
     .get('/complain')
-    .end(function (err, res) {
+    .end((err, res) => {
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
       t.end();
     });

@@ -1,34 +1,44 @@
+/*
+ * Copyright 2016 Red Hat Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+'use strict';
 
-function SessionStore(store) {
+function SessionStore (store) {
   this.store = store;
 }
 
 SessionStore.TOKEN_KEY = 'keycloak-token';
 
-SessionStore.prototype.get = function(request) {
-  return request.session[ SessionStore.TOKEN_KEY ];
-};
+SessionStore.prototype.get = (request) => request.session[SessionStore.TOKEN_KEY];
 
-SessionStore.prototype.clear = function(sessionId) {
-  var self = this;
-  this.store.get( sessionId, function(err, session) {
-    if ( session ) {
-      delete session[ SessionStore.TOKEN_KEY ];
-      self.store.set( sessionId, session );
+SessionStore.prototype.clear = (sessionId) => {
+  let self = this;
+  this.store.get(sessionId, (err, session) => {
+    if (session) {
+      delete session[SessionStore.TOKEN_KEY];
+      self.store.set(sessionId, session);
     }
   });
 };
 
-var store = function(request, response) {
-  request.session[ SessionStore.TOKEN_KEY ] = this.__raw;
-};
+let store = (request, response) => request.session[SessionStore.TOKEN_KEY] = this.__raw;
 
-var unstore = function(request, response) {
-  delete request.session[ SessionStore.TOKEN_KEY ];
-};
+let unstore = (request, response) => delete request.session[SessionStore.TOKEN_KEY];
 
-SessionStore.prototype.wrap = function(grant) {
-  grant.store   = store;
+SessionStore.prototype.wrap = (grant) => {
+  grant.store = store;
   grant.unstore = unstore;
 };
 
