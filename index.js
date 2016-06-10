@@ -16,26 +16,19 @@
 
 var Q = require('q');
 
-var crypto = require('crypto');
-
-var BearerStore  = require('./stores/bearer-store');
-var CookieStore  = require('./stores/cookie-store');
+var BearerStore = require('./stores/bearer-store');
+var CookieStore = require('./stores/cookie-store');
 var SessionStore = require('./stores/session-store');
 
-var Config        = require('keycloak-auth-utils').Config;
-var GrantManager  = require('keycloak-auth-utils').GrantManager;
+var Config = require('keycloak-auth-utils').Config;
+var GrantManager = require('keycloak-auth-utils').GrantManager;
 
-var fs   = require('fs');
-var path = require('path');
-var url  = require('url');
-var http = require('http');
-
-var Setup         = require('./middleware/setup');
-var AdminLogout   = require('./middleware/admin-logout');
-var Logout        = require('./middleware/logout');
-var PostAuth      = require('./middleware/post-auth' );
-var GrantAttacher = require('./middleware/grant-attacher' );
-var Protect       = require('./middleware/protect');
+var Setup = require('./middleware/setup');
+var AdminLogout = require('./middleware/admin-logout');
+var Logout = require('./middleware/logout');
+var PostAuth = require('./middleware/post-auth');
+var GrantAttacher = require('./middleware/grant-attacher');
+var Protect = require('./middleware/protect');
 
 /**
  * Instantiate a Keycloak.
@@ -65,26 +58,24 @@ var Protect       = require('./middleware/protect');
  * @return     {Keycloak}  A constructed Keycloak object.
  *
  */
-function Keycloak(config, keycloakConfig) {
-
+function Keycloak (config, keycloakConfig) {
   // If keycloakConfig is null, Config() will search for `keycloak.json`.
   this.config = new Config(keycloakConfig);
 
-  this.grantManager = new GrantManager( this.config );
+  this.grantManager = new GrantManager(this.config);
 
   this.stores = [ BearerStore ];
 
-  if ( config && config.store && config.cookies ) {
-    throw new Error( "Either `store` or `cookies` may be set, but not both" );
+  if (config && config.store && config.cookies) {
+    throw new Error('Either `store` or `cookies` may be set, but not both');
   }
 
-  if ( config && config.store ) {
-    this.stores.push( new SessionStore( config.store ) );
-  } else if ( config && config.cookies ) {
-    this.stores.push( CookieStore );
+  if (config && config.store) {
+    this.stores.push(new SessionStore(config.store));
+  } else if (config && config.cookies) {
+    this.stores.push(CookieStore);
   }
 }
-
 
 /**
  * Obtain an array of middleware for use in your application.
@@ -107,22 +98,21 @@ function Keycloak(config, keycloakConfig) {
  *
  * @param {Object} options Optional options for specifying details.
  */
-Keycloak.prototype.middleware = function(options) {
-
+Keycloak.prototype.middleware = function (options) {
   if (!options) {
     options = {logout: '', admin: ''};
   }
 
   options.logout = options.logout || '/logout';
-  options.admin  = options.admin  || '/';
+  options.admin = options.admin || '/';
 
   var middlewares = [];
 
-  middlewares.push( Setup );
-  middlewares.push( PostAuth(this) );
-  middlewares.push( AdminLogout(this, options.admin) );
-  middlewares.push( GrantAttacher(this) );
-  middlewares.push( Logout(this, options.logout) );
+  middlewares.push(Setup);
+  middlewares.push(PostAuth(this));
+  middlewares.push(AdminLogout(this, options.admin));
+  middlewares.push(GrantAttacher(this));
+  middlewares.push(Logout(this, options.logout));
 
   return middlewares;
 };
@@ -186,8 +176,8 @@ Keycloak.prototype.middleware = function(options) {
  *
  * @param {String} spec The protection spec (optional)
  */
-Keycloak.prototype.protect = function(spec) {
-  return Protect( this, spec );
+Keycloak.prototype.protect = function (spec) {
+  return Protect(this, spec);
 };
 
 /**
@@ -207,7 +197,7 @@ Keycloak.prototype.protect = function(spec) {
  *
  * @param {Object} request The HTTP request.
  */
-Keycloak.prototype.authenticated = function(request) {
+Keycloak.prototype.authenticated = function (request) {
   // no-op
 };
 
@@ -220,7 +210,7 @@ Keycloak.prototype.authenticated = function(request) {
  *
  * @param {Object} request The HTTP request.
  */
-Keycloak.prototype.deauthenticated = function(request) {
+Keycloak.prototype.deauthenticated = function (request) {
   // no-op
 };
 
@@ -235,35 +225,35 @@ Keycloak.prototype.deauthenticated = function(request) {
  * an HTTP status code for 403 is returned.  Chances are an
  * application would prefer to render a fancy template.
  */
-Keycloak.prototype.accessDenied = function(request, response) {
-  response.status( 403 );
-  response.end( "Access denied" );
+Keycloak.prototype.accessDenied = function (request, response) {
+  response.status(403);
+  response.end('Access denied');
 };
 
 /*! ignore */
-Keycloak.prototype.getGrant = function(request, response) {
+Keycloak.prototype.getGrant = function (request, response) {
   var rawData;
 
-  for ( var i = 0 ; i < this.stores.length ; ++i ) {
-    rawData = this.stores[i].get( request );
-    if ( rawData ) {
-      store = this.stores[i];
+  for (var i = 0; i < this.stores.length; ++i) {
+    rawData = this.stores[i].get(request);
+    if (rawData) {
+      // store = this.stores[i];
       break;
     }
   }
 
   var grantData = rawData;
-  if (typeof(grantData)==='string') {
-    grantData = JSON.parse( grantData );
+  if (typeof (grantData) === 'string') {
+    grantData = JSON.parse(grantData);
   }
 
-  if ( grantData && ! grantData.error ) {
-    var grant = this.grantManager.createGrant( JSON.stringify(grantData) );
+  if (grantData && !grantData.error) {
+    var grant = this.grantManager.createGrant(JSON.stringify(grantData));
     var self = this;
 
     return this.grantManager.ensureFreshness(grant)
-      .then( function(grant) {
-        self.storeGrant( grant, request, response );
+      .then(grant => {
+        self.storeGrant(grant, request, response);
         return grant;
       });
   }
@@ -271,66 +261,63 @@ Keycloak.prototype.getGrant = function(request, response) {
   return Q.reject();
 };
 
-Keycloak.prototype.storeGrant = function(grant, request, response) {
-  if ( this.stores.length < 2 ) {
+Keycloak.prototype.storeGrant = function (grant, request, response) {
+  if (this.stores.length < 2) {
     // cannot store, bearer-only, this is weird
     return;
   }
 
-  this.stores[1].wrap( grant );
+  this.stores[1].wrap(grant);
   grant.store(request, response);
   return grant;
 };
 
-Keycloak.prototype.unstoreGrant = function(sessionId) {
-  if ( this.stores.length < 2 ) {
+Keycloak.prototype.unstoreGrant = function (sessionId) {
+  if (this.stores.length < 2) {
     // cannot unstore, bearer-only, this is weird
     return;
   }
 
-  this.stores[1].clear( sessionId );
+  this.stores[1].clear(sessionId);
 };
 
-Keycloak.prototype.getGrantFromCode = function(code, request, response) {
-  if ( this.stores.length < 2 ) {
+Keycloak.prototype.getGrantFromCode = function (code, request, response) {
+  if (this.stores.length < 2) {
     // bearer-only, cannot do this;
-    throw new Error( "Cannot exchange code for grant in bearer-only mode" );
+    throw new Error('Cannot exchange code for grant in bearer-only mode');
   }
 
   var sessionId = request.session.id;
 
   var self = this;
-  return this.grantManager.obtainFromCode( request, code, sessionId )
-    .then( function(grant) {
+  return this.grantManager.obtainFromCode(request, code, sessionId)
+    .then(function (grant) {
       self.storeGrant(grant, request, response);
       return grant;
     });
 };
 
-Keycloak.prototype.loginUrl = function(uuid, redirectUrl ) {
+Keycloak.prototype.loginUrl = function (uuid, redirectUrl) {
   return this.config.realmUrl +
-         '/protocol/openid-connect/auth' +
-         '?client_id=' + encodeURIComponent(this.config.clientId) +
-         '&state=' + encodeURIComponent(uuid) +
-         '&redirect_uri=' + encodeURIComponent(redirectUrl) +
-         '&response_type=code';
+  '/protocol/openid-connect/auth' +
+  '?client_id=' + encodeURIComponent(this.config.clientId) +
+  '&state=' + encodeURIComponent(uuid) +
+  '&redirect_uri=' + encodeURIComponent(redirectUrl) +
+  '&response_type=code';
 };
 
-Keycloak.prototype.logoutUrl = function(redirectUrl) {
+Keycloak.prototype.logoutUrl = function (redirectUrl) {
   return this.config.realmUrl +
-         '/protocol/openid-connect/logout' +
-         '?redirect_uri=' + encodeURIComponent(redirectUrl);
+  '/protocol/openid-connect/logout' +
+  '?redirect_uri=' + encodeURIComponent(redirectUrl);
 };
 
-Keycloak.prototype.accountUrl = function() {
+Keycloak.prototype.accountUrl = function () {
   return this.config.realmUrl + '/account';
 };
 
-Keycloak.prototype.getAccount = function(token) {
+Keycloak.prototype.getAccount = function (token) {
   return this.grantManager.getAccount(token);
 };
-
-
-
 
 module.exports = Keycloak;

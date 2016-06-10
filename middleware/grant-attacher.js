@@ -18,7 +18,9 @@
 module.exports = function (keycloak) {
   return function grantAttacher (request, response, next) {
     keycloak.getGrant(request, response)
-      .then(grant => request.kauth.grant = grant)
+      .then(grant => {
+        request.kauth.grant = grant;
+      })
       .then(next).catch(() => next());
   };
 };

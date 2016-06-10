@@ -27,14 +27,13 @@ const app = express();
 let kc = null;
 
 test('setup', t => {
-
   let kcConfig = {
-    "realm": "test-realm",
-    "realm-public-key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQAB",
-    "auth-server-url": "http://localhost:8080/auth",
-    "ssl-required": "external",
-    "resource": "nodejs-connect",
-    "public-client": true
+    'realm': 'test-realm',
+    'realm-public-key': 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQAB',
+    'auth-server-url': 'http://localhost:8080/auth',
+    'ssl-required': 'external',
+    'resource': 'nodejs-connect',
+    'public-client': true
   };
 
   kc = new Keycloak({}, kcConfig);
@@ -45,23 +44,27 @@ test('setup', t => {
     secret: 'mySecret',
     resave: false,
     saveUninitialized: true,
-    store: memoryStore,
+    store: memoryStore
   }));
 
   app.use(kc.middleware({
     logout: '/logout',
-    admin: '/callbacks',
+    admin: '/callbacks'
   }));
 
-  app.get('/', function (req, res) {
+  app.get('/', (req, res) => {
     res.status(200).json({ name: 'unprotected' });
   });
 
-  app.get('/complain', kc.protect(), function (req, res) {
+  app.get('/complain', kc.protect(), (req, res) => {
     res.status(200).json({ foo: 'bar' });
   });
 
-  app.get('/login', kc.protect(), function (req, res) {
+  app.get('/complain2', kc.protect('special'), (req, res) => {
+    res.status(200).json({ foo: 'bar' });
+  });
+
+  app.get('/login', kc.protect(), (req, res) => {
     res.json(JSON.stringify(JSON.parse(req.session['keycloak-token'])));
   });
 
@@ -93,6 +96,9 @@ test('Should test unprotected route.', t => {
   request(app)
     .get('/')
     .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
       t.equal(res.statusCode, 200);
       t.end();
     });
@@ -102,6 +108,9 @@ test('Should test protected route.', t => {
   request(app)
     .get('/login')
     .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
       t.equal(res.statusCode, 302);
       t.end();
@@ -112,6 +121,9 @@ test('Should verify logout feature.', t => {
   request(app)
     .get('/logout')
     .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
       t.equal(res.statusCode, 302);
       t.end();
@@ -123,6 +135,9 @@ test('Should verify custom logout.', t => {
   request(app)
     .get('/logoff')
     .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
       t.equal(res.statusCode, 302);
       t.end();
@@ -138,6 +153,9 @@ test('Should call complain after logout.', t => {
   request(app)
     .get('/logout')
     .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
       t.equal(res.statusCode, 302);
     });
@@ -145,8 +163,19 @@ test('Should call complain after logout.', t => {
   request(app)
     .get('/complain')
     .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
+    });
+
+  request(app)
+    .get('/complain2')
+    .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
       t.end();
     });
 });
-

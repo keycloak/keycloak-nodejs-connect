@@ -19,7 +19,7 @@ const URL = require('url');
 
 module.exports = function (keycloak) {
   return function postAuth (request, response, next) {
-    if (! request.query.auth_callback) {
+    if (!request.query.auth_callback) {
       return next();
     }
 
@@ -31,7 +31,7 @@ module.exports = function (keycloak) {
       .then(grant => {
         let urlParts = {
           pathname: request.path,
-          query: request.query,
+          query: request.query
         };
 
         delete urlParts.query.code;

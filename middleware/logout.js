@@ -17,7 +17,7 @@
 
 module.exports = function (keycloak, logoutUrl) {
   return function logout (request, response, next) {
-    if (request.url != logoutUrl) {
+    if (request.url !== logoutUrl) {
       return next();
     }
 

@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js example/*.js",
+    "format": "semistandard",
     "coverage": "./node_modules/.bin/istanbul cover tape -- test/**.js",
     "prepublish": "nsp check",
     "test": "node test/*.js"
@@ -31,7 +32,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "0.1.0",
+    "keycloak-auth-utils": "0.1.1",
     "q": "^1.1.2"
   },
   "devDependencies": {
@@ -40,6 +41,7 @@
     "istanbul": "^0.4.3",
     "jshint": "^2.9.1",
     "nsp": "*",
+    "semistandard": "^8.0.0",
     "supertest": "^1.2.0",
     "tape": "^4.5.1"
   },

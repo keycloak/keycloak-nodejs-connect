@@ -4,6 +4,7 @@ tests: lint
 
 lint: node_modules
 	npm run lint
+	npm run format
 
 cleanup:
 	rm -rf node_modules
