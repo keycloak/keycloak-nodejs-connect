@@ -7,7 +7,7 @@ var app = express();
 
 // Register '.mustache' extension with The Mustache Express
 app.set('view engine', 'html');
-app.set('views', __dirname.join('/view'));
+app.set('views', require('path').join(__dirname, '/view'));
 app.engine('html', hogan);
 
 // Create a session-store to be used by both the express-session
