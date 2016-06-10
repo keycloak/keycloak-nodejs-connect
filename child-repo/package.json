@@ -1,6 +1,6 @@
 {
   "name": "keycloak-auth-utils",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Keycloak OAuth client.",
   "keywords": [
     "keycloak",
