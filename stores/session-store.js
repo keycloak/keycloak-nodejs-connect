@@ -26,6 +26,9 @@ SessionStore.prototype.get = (request) => request.session[SessionStore.TOKEN_KEY
 SessionStore.prototype.clear = (sessionId) => {
   let self = this;
   this.store.get(sessionId, (err, session) => {
+    if (err) {
+      console.log(err);
+    }
     if (session) {
       delete session[SessionStore.TOKEN_KEY];
       self.store.set(sessionId, session);
@@ -33,9 +36,13 @@ SessionStore.prototype.clear = (sessionId) => {
   });
 };
 
-let store = (request, response) => request.session[SessionStore.TOKEN_KEY] = this.__raw;
+let store = (request, response) => {
+  request.session[SessionStore.TOKEN_KEY] = this.__raw;
+};
 
-let unstore = (request, response) => delete request.session[SessionStore.TOKEN_KEY];
+let unstore = (request, response) => {
+  delete request.session[SessionStore.TOKEN_KEY];
+};
 
 SessionStore.prototype.wrap = (grant) => {
   grant.store = store;

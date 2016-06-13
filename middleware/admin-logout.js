@@ -17,7 +17,7 @@
 
 function AdminLogout (keycloak, url) {
   this._keycloak = keycloak;
-  if (url[ url.length - 1 ] != '/') {
+  if (url[ url.length - 1 ] !== '/') {
     url += '/;';
   }
   this._url = url + 'k_logout';
@@ -29,7 +29,7 @@ AdminLogout.prototype.getFunction = function () {
 
 module.exports = function (keycloak, adminUrl) {
   let url = adminUrl;
-  if (url[ url.length - 1 ] != '/') {
+  if (url[ url.length - 1 ] !== '/') {
     url = url + '/';
   }
 
@@ -41,16 +41,17 @@ module.exports = function (keycloak, adminUrl) {
     }
 
     let data = '';
-    let self = this;
 
-    request.on('data', d => data += d.toString());
+    request.on('data', d => {
+      data += d.toString();
+    });
 
     request.on('end', function () {
       let parts = data.split('.');
       let payload = JSON.parse(new Buffer(parts[1], 'base64').toString());
-      if (payload.action == 'LOGOUT') {
+      if (payload.action === 'LOGOUT') {
         let sessionIDs = payload.adapterSessionIds;
-        if (! sessionIDs) {
+        if (!sessionIDs) {
           keycloak.grantManager.notBefore = payload.notBefore;
           response.send('ok');
           return;
@@ -60,7 +61,7 @@ module.exports = function (keycloak, adminUrl) {
           sessionIDs.forEach(id => {
             keycloak.unstoreGrant(id);
             ++seen;
-            if (seen == sessionIDs.length) {
+            if (seen === sessionIDs.length) {
               response.send('ok');
             }
           });

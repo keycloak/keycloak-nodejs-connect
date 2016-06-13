@@ -49,7 +49,7 @@ module.exports = function (keycloak, spec) {
 
   return function protect (request, response, next) {
     if (request.kauth && request.kauth.grant) {
-      if (! guard || guard(request.kauth.grant.access_token, request, response)) {
+      if (!guard || guard(request.kauth.grant.access_token, request, response)) {
         return next();
       }
 
@@ -61,6 +61,5 @@ module.exports = function (keycloak, spec) {
     } else {
       forceLogin(keycloak, request, response);
     }
-
   };
 };

@@ -7,7 +7,7 @@ var app = express();
 
 // Register '.mustache' extension with The Mustache Express
 app.set('view engine', 'html');
-app.set('views', __dirname + '/view');
+app.set('views', require('path').join(__dirname, '/view'));
 app.engine('html', hogan);
 
 // Create a session-store to be used by both the express-session
@@ -19,9 +19,8 @@ app.use(session({
   secret: 'mySecret',
   resave: false,
   saveUninitialized: true,
-  store: memoryStore,
+  store: memoryStore
 }));
-
 
 // Provide the session store to the Keycloak so that sessions
 // can be invalidated from the Keycloak console callback.
@@ -44,9 +43,8 @@ var keycloak = new Keycloak({
 
 app.use(keycloak.middleware({
   logout: '/logout',
-  admin: '/',
+  admin: '/'
 }));
-
 
 // A normal un-protected public URL.
 
@@ -54,14 +52,12 @@ app.get('/', function (req, res) {
   res.render('index');
 });
 
-
 app.get('/login', keycloak.protect(), function (req, res) {
   res.render('index', {
     result: JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4),
-    event: "1. Authentication\n2. Login"
+    event: '1. Authentication\n2. Login'
   });
 });
-
 
 var server = app.listen(3000, function () {
   var host = server.address().address;
