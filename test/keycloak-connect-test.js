@@ -22,8 +22,8 @@ const UUID = require('../uuid');
 const express = require('express');
 const session = require('express-session');
 const request = require('supertest');
-const app = express();
 
+let app = express();
 let kc = null;
 
 test('setup', t => {
@@ -36,8 +36,6 @@ test('setup', t => {
     'public-client': true
   };
 
-  kc = new Keycloak({}, kcConfig);
-
   let memoryStore = new session.MemoryStore();
 
   app.use(session({
@@ -46,6 +44,8 @@ test('setup', t => {
     saveUninitialized: true,
     store: memoryStore
   }));
+
+  kc = new Keycloak({store: memoryStore}, kcConfig);
 
   app.use(kc.middleware({
     logout: '/logout',
@@ -176,6 +176,49 @@ test('Should call complain after logout.', t => {
         console.log(err);
       }
       t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
+      t.end();
+    });
+});
+
+test('Should test empty defaults.', t => {
+  let kcConfig = {
+    'realm': 'test-realm',
+    'realm-public-key': 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQAB',
+    'auth-server-url': 'http://localhost:8080/auth',
+    'resource': 'nodejs-connect',
+    'public-client': true
+  };
+
+  kc = new Keycloak({}, kcConfig);
+
+  app = express();
+
+  app.use(kc.middleware({}));
+
+  app.get('/', (req, res) => {
+    res.status(200).json({ name: 'unprotected' });
+  });
+
+  app.get('/foo', kc.protect(), (req, res) => {
+    res.status(200).json({ foo: 'bar' });
+  });
+
+  request(app)
+    .get('/')
+    .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      t.equal(res.statusCode, 200);
+    });
+
+  request(app)
+    .get('/foo')
+    .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      t.equal(res.statusCode, 302);
       t.end();
     });
 });
