@@ -14,8 +14,6 @@
  * the License.
  */
 
-var Q = require('q');
-
 var BearerStore = require('./stores/bearer-store');
 var CookieStore = require('./stores/cookie-store');
 var SessionStore = require('./stores/session-store');
@@ -258,7 +256,7 @@ Keycloak.prototype.getGrant = function (request, response) {
       });
   }
 
-  return Q.reject();
+  return Promise.reject();
 };
 
 Keycloak.prototype.storeGrant = function (grant, request, response) {
