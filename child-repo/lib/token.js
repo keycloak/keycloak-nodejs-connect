@@ -126,6 +126,13 @@ Token.prototype.hasApplicationRole = function hasApplicationRole (appName, roleN
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
 Token.prototype.hasRealmRole = function hasRealmRole (roleName) {
+  // Make sure we have these properties before we check for a certain realm level role!
+  // Without this we attempt to access an undefined property on token
+  // for a user with no realm level roles.
+  if (!this.content.realm_access || !this.content.realm_access.roles) {
+    return false;
+  }
+
   return (this.content.realm_access.roles.indexOf(roleName) >= 0);
 };
 
