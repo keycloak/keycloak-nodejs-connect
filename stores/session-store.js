@@ -36,7 +36,7 @@ SessionStore.prototype.clear = (sessionId) => {
   });
 };
 
-let store = (request, response) => {
+let store = function(request, response) {
   request.session[SessionStore.TOKEN_KEY] = this.__raw;
 };
 
