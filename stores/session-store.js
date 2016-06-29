@@ -36,8 +36,10 @@ SessionStore.prototype.clear = (sessionId) => {
   });
 };
 
-let store = (request, response) => {
-  request.session[SessionStore.TOKEN_KEY] = this.__raw;
+let store = (grant) => {
+  return (request, response) => {
+    request.session[SessionStore.TOKEN_KEY] = grant.__raw;
+  };
 };
 
 let unstore = (request, response) => {
@@ -45,7 +47,7 @@ let unstore = (request, response) => {
 };
 
 SessionStore.prototype.wrap = (grant) => {
-  grant.store = store;
+  grant.store = store(grant);
   grant.unstore = unstore;
 };
 

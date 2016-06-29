@@ -30,8 +30,10 @@ CookieStore.get = (request) => {
   }
 };
 
-let store = (request, response) => {
-  response.cookie(CookieStore.TOKEN_KEY, this.__raw);
+let store = (grant) => {
+  return (request, response) => {
+    request.session[CookieStore.TOKEN_KEY] = grant.__raw;
+  };
 };
 
 let unstore = (request, response) => {
@@ -39,7 +41,7 @@ let unstore = (request, response) => {
 };
 
 CookieStore.wrap = (grant) => {
-  grant.store = store;
+  grant.store = store(grant);
   grant.unstore = unstore;
 };
 
