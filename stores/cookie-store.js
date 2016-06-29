@@ -30,7 +30,7 @@ CookieStore.get = (request) => {
   }
 };
 
-let store = (request, response) => {
+let store = function(request, response) {
   response.cookie(CookieStore.TOKEN_KEY, this.__raw);
 };
 
