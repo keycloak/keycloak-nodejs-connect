@@ -87,8 +87,8 @@ GrantManager.prototype.obtainDirectly = function obtainDirectly (username, passw
  */
 GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, sessionId, sessionHost, callback) {
   const params = {
-    application_session_state: sessionId,
-    application_session_host: sessionHost,
+    client_session_state: sessionId,
+    client_session_host: sessionHost,
     code: code,
     grant_type: 'authorization_code',
     client_id: this.clientId,
