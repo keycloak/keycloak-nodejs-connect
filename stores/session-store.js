@@ -23,7 +23,7 @@ SessionStore.TOKEN_KEY = 'keycloak-token';
 
 SessionStore.prototype.get = (request) => request.session[SessionStore.TOKEN_KEY];
 
-SessionStore.prototype.clear = (sessionId) => {
+SessionStore.prototype.clear = function (sessionId) {
   let self = this;
   this.store.get(sessionId, (err, session) => {
     if (err) {
