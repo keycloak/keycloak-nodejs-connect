@@ -9,7 +9,7 @@
   "author": "Roman Jurkov <winfinit@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-connect": "0.2.0",
+    "keycloak-connect": "file:../",
 	  "hogan-express": "*",
 	  "express": "*",
 	  "express-session": "*"
