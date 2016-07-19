@@ -301,6 +301,7 @@ Keycloak.prototype.loginUrl = function (uuid, redirectUrl) {
   '?client_id=' + encodeURIComponent(this.config.clientId) +
   '&state=' + encodeURIComponent(uuid) +
   '&redirect_uri=' + encodeURIComponent(redirectUrl) +
+  '&scope=openid' +
   '&response_type=code';
 };
 
