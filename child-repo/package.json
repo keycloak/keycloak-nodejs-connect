@@ -22,7 +22,7 @@
     "lint": "jshint *.js lib/*.js test/**/*.js",
     "format": "semistandard",
     "prepublish": "nsp check",
-    "doc": "jsdoc --verbose -d doc -t ./node_modules/ink-docstrap/template -R README.md lib"
+    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js"
   },
   "files": [
     "index.js",
@@ -40,14 +40,15 @@
     "grunt-cli": "^0.1.13",
     "grunt-gh-pages": "^0.9.1",
     "grunt-touch": "^0.1.0",
-    "ink-docstrap": "^1.1.4",
-    "jsdoc": "^3.4.0",
     "jshint": "^2.9.2",
     "nock": "^8.0.0",
     "nsp": "*",
     "semistandard": "^7.0.5",
     "tap-spec": "^4.1.1",
-    "tape": "^4.5.1"
+    "tape": "^4.5.1",
+    "jsdoc": "^3.4.0",
+    "ink-docstrap": "^1.1.4"
+
   },
   "repository": {
     "type": "git",
