@@ -10,6 +10,12 @@ app.set('view engine', 'html');
 app.set('views', require('path').join(__dirname, '/view'));
 app.engine('html', hogan);
 
+// A normal un-protected public URL.
+
+app.get('/', function (req, res) {
+  res.render('index');
+});
+
 // Create a session-store to be used by both the express-session
 // middleware and the keycloak middleware.
 
@@ -45,12 +51,6 @@ app.use(keycloak.middleware({
   logout: '/logout',
   admin: '/'
 }));
-
-// A normal un-protected public URL.
-
-app.get('/', function (req, res) {
-  res.render('index');
-});
 
 app.get('/login', keycloak.protect(), function (req, res) {
   res.render('index', {
