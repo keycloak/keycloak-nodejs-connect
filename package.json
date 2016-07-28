@@ -10,7 +10,7 @@
     "coverage": "./node_modules/.bin/istanbul cover tape -- test/**.js",
     "prepublish": "nsp check",
     "test": "node test/*.js",
-    "docs": "./node_modules/.bin/jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js"
+    "docs": "./node_modules/.bin/jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js"
   },
   "keywords": [
     "sso",
@@ -33,7 +33,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "0.1.1"
+    "keycloak-auth-utils": "0.1.2"
   },
   "devDependencies": {
     "express": "^4.13.4",
