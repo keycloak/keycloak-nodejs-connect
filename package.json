@@ -9,7 +9,8 @@
     "format": "semistandard",
     "coverage": "./node_modules/.bin/istanbul cover tape -- test/**.js",
     "prepublish": "nsp check",
-    "test": "node test/*.js"
+    "test": "node test/*.js",
+    "docs": "./node_modules/.bin/jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js"
   },
   "keywords": [
     "sso",
@@ -42,7 +43,9 @@
     "nsp": "*",
     "semistandard": "^8.0.0",
     "supertest": "^1.2.0",
-    "tape": "^4.5.1"
+    "tape": "^4.5.1",
+    "jsdoc": "^3.4.0",
+    "ink-docstrap": "^1.1.4"
   },
   "repository": {
     "type": "git",
