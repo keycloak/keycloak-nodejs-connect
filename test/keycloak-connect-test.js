@@ -117,6 +117,32 @@ test('Should test protected route.', t => {
     });
 });
 
+test('Should add auth_callback as a new query string to original request without a query string.', t => {
+  request(app)
+      .get('/login')
+      .end((err, res) => {
+        if (err) {
+          console.log(err);
+        }
+        t.equal(res.headers.location.indexOf('%3Fauth_callback%3D1&') > 0, true);
+        t.equal(res.statusCode, 302);
+        t.end();
+      });
+});
+
+test('Should append auth_callback to original request with existing query string.', t => {
+  request(app)
+        .get('/login?foo=bar')
+        .end((err, res) => {
+          if (err) {
+            console.log(err);
+          }
+          t.equal(res.headers.location.indexOf('%26auth_callback%3D1') > 0, true);
+          t.equal(res.statusCode, 302);
+          t.end();
+        });
+});
+
 test('Should verify logout feature.', t => {
   request(app)
     .get('/logout')
