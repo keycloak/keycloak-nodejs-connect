@@ -57,10 +57,10 @@ module.exports = function (keycloak, spec) {
       return keycloak.accessDenied(request, response, next);
     }
 
-    if (keycloak.config.bearerOnly) {
-      return keycloak.accessDenied(request, response, next);
-    } else {
+    if (keycloak.redirectToLogin(request)) {
       forceLogin(keycloak, request, response);
+    } else {
+      return keycloak.accessDenied(request, response, next);
     }
   };
 };
