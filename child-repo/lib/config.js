@@ -66,34 +66,63 @@ Config.prototype.loadConfiguration = function loadConfiguration (configPath) {
  */
 Config.prototype.configure = function configure (config) {
   /**
+   * Tries to resolve environment variables in the given value in case it is of type "string", else the given value is returned.
+   * Environment variable references look like: '${env.MY_ENVIRONMENT_VARIABLE}', optionally one can configure a fallback
+   * if the referenced env variable is not present. E.g. '${env.NOT_SET:http://localhost:8080}' yields 'http://localhost:8080'.
+   *
+   * @param value
+   * @returns {*}
+   */
+  function resolveValue (value) {
+    if (typeof value !== 'string') {
+      return value;
+    }
+
+    // "${env.MY_ENVIRONMENT_VARIABLE:http://localhost:8080}".replace(/\$\{env\.([^:]*):?(.*)?\}/,"$1--split--$2").split("--split--")
+    let regex = /\$\{env\.([^:]*):?(.*)?\}/;
+
+    // is this an environment variable reference with potential fallback?
+    if (!regex.test(value)) {
+      return value;
+    }
+
+    let tokens = value.replace(regex, '$1--split--$2').split('--split--');
+    let envVar = tokens[0];
+    let envVal = process.env[envVar];
+    let fallbackVal = tokens[1];
+
+    return envVal || fallbackVal;
+  }
+
+  /**
    * Realm ID
    * @type {String}
    */
-  this.realm = config['realm'] || config.realm;
+  this.realm = resolveValue(config['realm'] || config.realm);
 
   /**
    * Client/Application ID
    * @type {String}
    */
-  this.clientId = config.resource || config['client-id'] || config.clientId;
+  this.clientId = resolveValue(config.resource || config['client-id'] || config.clientId);
 
   /**
    * Client/Application secret
    * @type {String}
    */
-  this.secret = (config['credentials'] || {}).secret || config.secret;
+  this.secret = resolveValue((config['credentials'] || {}).secret || config.secret);
 
   /**
    * If this is a public application or confidential.
    * @type {String}
    */
-  this.public = config['public-client'] || config.public || false;
+  this.public = resolveValue(config['public-client'] || config.public || false);
 
   /**
    * Authentication server URL
    * @type {String}
    */
-  this.authServerUrl = config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl;
+  this.authServerUrl = resolveValue(config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl);
 
   /**
    * Root realm URL.
@@ -106,7 +135,7 @@ Config.prototype.configure = function configure (config) {
    * @type {String} */
   this.realmAdminUrl = this.authServerUrl + '/admin/realms/' + this.realm;
 
-  const plainKey = config['realm-public-key'];
+  const plainKey = resolveValue(config['realm-public-key']);
 
   /**
    * Formatted public-key.
@@ -125,7 +154,7 @@ Config.prototype.configure = function configure (config) {
    * If this is a Bearer Only application.
    * @type {Boolean}
    */
-  this.bearerOnly = config['bearer-only'] || config.bearerOnly || false;
+  this.bearerOnly = resolveValue(config['bearer-only'] || config.bearerOnly || false);
 };
 
 module.exports = Config;
