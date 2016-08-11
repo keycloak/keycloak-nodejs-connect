@@ -13,4 +13,6 @@ after_script:
    - ./scripts/stop-server.sh
 notifications:
   irc: "chat.freenode.net#brass-monkey"
-
+env:
+  global:
+    - USER: ci
