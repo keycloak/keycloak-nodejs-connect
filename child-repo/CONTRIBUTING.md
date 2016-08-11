@@ -47,6 +47,12 @@ Create a feature branch and start hacking:
 $ git checkout -b KEYCLOAK-12345
 ```
 
+### Code style
+
+We use [semistandard](https://github.com/Flet/semistandard) as linter.
+Please run `semistandard` on your code before sending a PR.
+Note that you can use `semistandard --fix` to automatically fix issues.
+
 ### Commit messages
 
 Writing good commit logs is important. A commit log should describe what
