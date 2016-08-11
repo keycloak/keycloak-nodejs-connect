@@ -1,6 +1,6 @@
 .idea
 node_modules
-doc
+docs
 ./keycloak*
 keycloak-*
 *.log
