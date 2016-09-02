@@ -18,7 +18,6 @@
 
 const test = require('tape');
 const Keycloak = require('../index');
-const UUID = require('../uuid');
 const express = require('express');
 const session = require('express-session');
 const request = require('supertest');
@@ -68,27 +67,6 @@ test('setup', t => {
     res.json(JSON.stringify(JSON.parse(req.session['keycloak-token'])));
   });
 
-  t.end();
-});
-
-test('Should verify the realm name of the config object.', t => {
-  t.equal(kc.config.realm, 'test-realm');
-  t.end();
-});
-
-test('Should verify if login URL has the configured realm.', t => {
-  t.equal(kc.loginUrl().indexOf(kc.config.realm) > 0, true);
-  t.end();
-});
-
-test('Should verify if logout URL has the configured realm.', t => {
-  t.equal(kc.logoutUrl().indexOf(kc.config.realm) > 0, true);
-  t.end();
-});
-
-test('Should generate a correct UUID.', t => {
-  const rgx = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-  t.equal(rgx.test(UUID()), true);
   t.end();
 });
 
@@ -168,11 +146,6 @@ test('Should verify custom logout.', t => {
       t.equal(res.statusCode, 302);
       t.end();
     });
-});
-
-test('Should produce correct account url.', t => {
-  t.equal(kc.accountUrl(), 'http://localhost:8080/auth/realms/test-realm/account');
-  t.end();
 });
 
 test('Should call complain after logout.', t => {

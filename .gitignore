@@ -4,4 +4,5 @@
 node_modules/
 keycloak-*
 !keycloak-connect-test.js
+!keycloak-object-test.js
 coverage
