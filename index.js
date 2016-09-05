@@ -64,6 +64,9 @@ function Keycloak (config, keycloakConfig) {
 
   this.stores = [ BearerStore ];
 
+  // Add the custom scope value
+  this.config.scope = config.scope;
+
   if (config && config.store && config.cookies) {
     throw new Error('Either `store` or `cookies` may be set, but not both');
   }
@@ -301,7 +304,7 @@ Keycloak.prototype.loginUrl = function (uuid, redirectUrl) {
   '?client_id=' + encodeURIComponent(this.config.clientId) +
   '&state=' + encodeURIComponent(uuid) +
   '&redirect_uri=' + encodeURIComponent(redirectUrl) +
-  '&scope=openid' +
+  '&scope=' + encodeURIComponent(this.config.scope ? 'openid ' + this.config.scope : 'openid') +
   '&response_type=code';
 };
 

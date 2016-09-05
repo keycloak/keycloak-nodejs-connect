@@ -33,7 +33,11 @@ settings (public key, realm name, various URLs).  The `keycloak.json` file
 is obtained from the Keycloak Admin Console.
 
 Instantiation with this method results in all of the reasonable defaults
-being used.  Normally, though, if you wish to use web sessions to manage
+being used.
+
+### Configuring a web session store
+
+If you wish to use web sessions to manage
 server-side state for authentication, you will need to initialize the
 `KeyCloak(...)` with at least a `store` parameter, passing in the actual
 session store that `express-session` is using.
@@ -43,6 +47,12 @@ session store that `express-session` is using.
 
     var keycloak = new Keycloak({ store: memoryStore });
 
+### Passing a custom scope value
+
+By default, the scope value `openid` will be passed as query parameter to KeyCloak's login URL but you can add an additional custom value :    
+
+    var keycloak = new Keycloak({ scope: 'offline_access' });
+    
 ## Install middleware
 
 Once instantiated, install the middleware into your connect-capable app:
@@ -243,5 +253,3 @@ admin console when we provisioned this app.
         "secret": "89efcbdf-ee95-4292-bbd9-29304e6744c7"
       }
     }
-
-
