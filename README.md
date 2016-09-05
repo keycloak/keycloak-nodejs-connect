@@ -1,6 +1,7 @@
 # Keycloak
 
 [![Build Status](https://travis-ci.org/keycloak/keycloak-nodejs-connect.svg?branch=master)](https://travis-ci.org/keycloak/keycloak-nodejs-connect)
+[![Dependency Status](https://img.shields.io/david/keycloak/keycloak-nodejs-connect.svg?style=flat-square)](https://david-dm.org/keycloak/keycloak-nodejs-connect)
 
 [Keycloak](http://keycloak.jboss.org/) is a standalone authentication
 server, akin to a standalone database.  It provides hooks for federated
