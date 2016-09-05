@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. build/version.sh
+. scripts/version.sh
 
 function waitForServer {
   C=50
@@ -28,8 +28,13 @@ fi
 
 rm -Rf $KEYCLOAK
 tar xzf $ARCHIVE
-
-$KEYCLOAK/bin/standalone.sh -Djava.net.preferIPv4Stack=true > keycloak.log 2>&1 &
+sleep 1
+$KEYCLOAK/bin/standalone.sh -Djava.net.preferIPv4Stack=true \
+                            -Dkeycloak.migration.action=import \
+                            -Dkeycloak.migration.provider=singleFile \
+                            -Dkeycloak.migration.file=test/keycloak-fixture.json \
+                            -Dkeycloak.migration.strategy=OVERWRITE_EXISTING > keycloak.log 2>&1 &
+sleep 1
 waitForServer
 $KEYCLOAK/bin/add-user-keycloak.sh -r master -u admin -p admin
 $KEYCLOAK/bin/jboss-cli.sh --connect command=:reload

@@ -5,4 +5,6 @@ node_modules/
 keycloak-*
 !keycloak-connect-test.js
 !keycloak-object-test.js
+!keycloak-fixture.json
 coverage
+pid.txt

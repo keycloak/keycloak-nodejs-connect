@@ -17,207 +17,52 @@
 'use strict';
 
 const test = require('tape');
-const Keycloak = require('../index');
-const express = require('express');
-const session = require('express-session');
-const request = require('supertest');
-
-let app = express();
-let kc = null;
-
-test('setup', t => {
-  let kcConfig = {
-    'realm': 'test-realm',
-    'realm-public-key': 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQAB',
-    'auth-server-url': 'http://localhost:8080/auth',
-    'ssl-required': 'external',
-    'resource': 'nodejs-connect',
-    'public-client': true
-  };
-
-  let memoryStore = new session.MemoryStore();
-
-  app.use(session({
-    secret: 'mySecret',
-    resave: false,
-    saveUninitialized: true,
-    store: memoryStore
-  }));
-
-  kc = new Keycloak({store: memoryStore}, kcConfig);
-
-  app.use(kc.middleware({
-    logout: '/logout',
-    admin: '/callbacks'
-  }));
-
-  app.get('/', (req, res) => {
-    res.status(200).json({ name: 'unprotected' });
-  });
-
-  app.get('/complain', kc.protect(), (req, res) => {
-    res.status(200).json({ foo: 'bar' });
-  });
-
-  app.get('/complain2', kc.protect('special'), (req, res) => {
-    res.status(200).json({ foo: 'bar' });
-  });
-
-  app.get('/login', kc.protect(), (req, res) => {
-    res.json(JSON.stringify(JSON.parse(req.session['keycloak-token'])));
-  });
-
-  t.end();
-});
+const roi = require('roi');
 
 test('Should test unprotected route.', t => {
-  request(app)
-    .get('/')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.statusCode, 200);
+  const options = {
+    'endpoint': 'http://localhost:3000/'
+  };
+
+  roi.get(options)
+    .then(x => {
+      t.equal(JSON.parse(x.body).name, 'unprotected');
       t.end();
+    })
+    .catch(e => {
+      console.error(e);
+      t.fail();
     });
 });
 
 test('Should test protected route.', t => {
-  request(app)
-    .get('/login')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
-      t.equal(res.statusCode, 302);
+  const options = {
+    'endpoint': 'http://localhost:3000/login'
+  };
+
+  roi.get(options)
+    .then(x => {
+      t.equal(x.statusCode !== 404, true);
       t.end();
+    })
+    .catch(e => {
+      console.error(e);
+      t.fail();
     });
-});
-
-test('Should add auth_callback as a new query string to original request without a query string.', t => {
-  request(app)
-      .get('/login')
-      .end((err, res) => {
-        if (err) {
-          console.log(err);
-        }
-        t.equal(res.headers.location.indexOf('%3Fauth_callback%3D1&') > 0, true);
-        t.equal(res.statusCode, 302);
-        t.end();
-      });
-});
-
-test('Should append auth_callback to original request with existing query string.', t => {
-  request(app)
-        .get('/login?foo=bar')
-        .end((err, res) => {
-          if (err) {
-            console.log(err);
-          }
-          t.equal(res.headers.location.indexOf('%26auth_callback%3D1') > 0, true);
-          t.equal(res.statusCode, 302);
-          t.end();
-        });
 });
 
 test('Should verify logout feature.', t => {
-  request(app)
-    .get('/logout')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
-      t.equal(res.statusCode, 302);
-      t.end();
-    });
-});
-
-test('Should verify custom logout.', t => {
-  app.use(kc.middleware({ logout: '/logoff' }));
-  request(app)
-    .get('/logoff')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
-      t.equal(res.statusCode, 302);
-      t.end();
-    });
-});
-
-test('Should call complain after logout.', t => {
-  request(app)
-    .get('/logout')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/logout') > 0, true);
-      t.equal(res.statusCode, 302);
-    });
-
-  request(app)
-    .get('/complain')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
-    });
-
-  request(app)
-    .get('/complain2')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.text.indexOf('Redirecting to http://localhost:8080/auth/realms/test-realm/protocol/openid-connect/auth') > 0, true);
-      t.end();
-    });
-});
-
-test('Should test empty defaults.', t => {
-  let kcConfig = {
-    'realm': 'test-realm',
-    'realm-public-key': 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQAB',
-    'auth-server-url': 'http://localhost:8080/auth',
-    'resource': 'nodejs-connect',
-    'public-client': true
+  const options = {
+    'endpoint': 'http://localhost:3000/logout'
   };
 
-  kc = new Keycloak({}, kcConfig);
-
-  app = express();
-
-  app.use(kc.middleware({}));
-
-  app.get('/', (req, res) => {
-    res.status(200).json({ name: 'unprotected' });
-  });
-
-  app.get('/foo', kc.protect(), (req, res) => {
-    res.status(200).json({ foo: 'bar' });
-  });
-
-  request(app)
-    .get('/')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.statusCode, 200);
-    });
-
-  request(app)
-    .get('/foo')
-    .end((err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      t.equal(res.statusCode, 302);
+  roi.get(options)
+    .then(x => {
+      t.equal(JSON.parse(x.body).name, 'unprotected');
       t.end();
+    })
+    .catch(e => {
+      console.error(e);
+      t.fail();
     });
 });
