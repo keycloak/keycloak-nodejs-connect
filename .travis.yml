@@ -1,9 +1,10 @@
+sudo: required
+dist: trusty
 language: node_js
 node_js:
-  - "6"
-  - "5"
   - "4"
-
+  - "5"
+  - "6"
 branches:
   only:
     - master
@@ -11,7 +12,9 @@ branches:
 install:
   - npm install
 before_script:
-   - ./build/start-server.sh
+   - ./scripts/start-server.sh
+   - node test/app-fixture.js &
 script: make
 after_script:
-   - ./build/stop-server.sh
+   - ./scripts/stop-server.sh
+   - kill -9 `cat pid.txt`

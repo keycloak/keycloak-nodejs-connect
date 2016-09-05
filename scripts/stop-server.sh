@@ -1,5 +1,5 @@
 #!/bin/bash
 
-. build/version.sh
+. scripts/version.sh
 
 ${KEYCLOAK}/bin/jboss-cli.sh --connect command=:shutdown
