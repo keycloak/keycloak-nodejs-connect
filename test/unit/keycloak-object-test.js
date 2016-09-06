@@ -34,7 +34,7 @@ test('setup', t => {
   };
 
   let memoryStore = new session.MemoryStore();
-  kc = new Keycloak({store: memoryStore}, kcConfig);
+  kc = new Keycloak({store: memoryStore, scope: 'offline_support'}, kcConfig);
   t.end();
 });
 
@@ -45,6 +45,16 @@ test('Should verify the realm name of the config object.', t => {
 
 test('Should verify if login URL has the configured realm.', t => {
   t.equal(kc.loginUrl().indexOf(kc.config.realm) > 0, true);
+  t.end();
+});
+
+test('Should verify if login URL has the custom scope value.', t => {
+  t.equal(kc.loginUrl().indexOf(kc.config.scope) > 0, true);
+  t.end();
+});
+
+test('Should verify if login URL has the default scope value.', t => {
+  t.equal(kc.loginUrl().indexOf('openid') > 0, true);
   t.end();
 });
 
