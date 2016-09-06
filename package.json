@@ -9,7 +9,8 @@
     "format": "semistandard",
     "test": "tape test/unit/keycloak-object-test.js test/keycloak-connect-test.js",
     "prepublish": "nsp check",
-    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js"
+    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js",
+    "coverage": "istanbul cover tape test/keycloak-connect-test.js tape test/unit/keycloak-object-test.js"
   },
   "keywords": [
     "sso",
