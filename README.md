@@ -253,3 +253,9 @@ admin console when we provisioned this app.
         "secret": "89efcbdf-ee95-4292-bbd9-29304e6744c7"
       }
     }
+
+## Running integration tests
+
+1. `node test/app-fixture.js`
+2. `scripts/start-server.sh`
+3. `make tests` or `npm test`
