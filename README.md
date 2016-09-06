@@ -39,7 +39,7 @@ being used.
 
 If you wish to use web sessions to manage
 server-side state for authentication, you will need to initialize the
-`KeyCloak(...)` with at least a `store` parameter, passing in the actual
+`Keycloak(...)` with at least a `store` parameter, passing in the actual
 session store that `express-session` is using.
 
     var session = require('express-session');
@@ -49,10 +49,10 @@ session store that `express-session` is using.
 
 ### Passing a custom scope value
 
-By default, the scope value `openid` will be passed as query parameter to KeyCloak's login URL but you can add an additional custom value :    
+By default, the scope value `openid` will be passed as query parameter to Keycloak's login URL but you can add an additional custom value :
 
     var keycloak = new Keycloak({ scope: 'offline_access' });
-    
+
 ## Install middleware
 
 Once instantiated, install the middleware into your connect-capable app:
