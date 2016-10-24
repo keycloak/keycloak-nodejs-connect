@@ -9,7 +9,7 @@ authentication, including authenticating against various social networks
 and OAuth providers (G+, Facebook, etc).
 
 This module makes it simple to implement a Node.js Connect-friendly
-application that uses Keycloak for its authentication and authorization needs. For usage instructions, please read the [documentation](https://keycloak.gitbooks.io/securing-client-applications-guide/content/v/2.2/topics/oidc/oidc-overview.html).
+application that uses Keycloak for its authentication and authorization needs. For usage instructions, please read the [documentation](https://keycloak.gitbooks.io/securing-client-applications-guide/content/topics/oidc/nodejs-adapter.html).
 
 ## Contributing
 
