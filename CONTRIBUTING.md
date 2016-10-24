@@ -115,6 +115,12 @@ $ ./build/stop-server.sh
 Make sure the jshint and semistandard are happy and that all tests pass. Please, do not submit
 patches that fail either check.
 
+### Running integration tests
+
+1. `node test/app-fixture.js`
+2. `scripts/start-server.sh`
+3. `make tests` or `npm test`
+
 ### Step 6: Push
 
 ```shell
