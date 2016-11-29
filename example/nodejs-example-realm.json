@@ -47,6 +47,8 @@
             "enabled": true,
             "publicClient": true,
             "baseUrl": "/",
+            "adminUrl" : "http://localhost:3000/",
+            "baseUrl" : "http://localhost:3000/",
             "redirectUris": [
                 "http://localhost:3000/*"
             ],
