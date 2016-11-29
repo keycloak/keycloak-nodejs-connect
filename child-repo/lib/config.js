@@ -144,10 +144,10 @@ Config.prototype.configure = function configure (config) {
   this.publicKey = '-----BEGIN PUBLIC KEY-----\n';
 
   if (plainKey) {
-      for (let i = 0; i < plainKey.length; i = i + 64) {
-          this.publicKey += plainKey.substring(i, i + 64);
-          this.publicKey += '\n';
-      }
+    for (let i = 0; i < plainKey.length; i = i + 64) {
+      this.publicKey += plainKey.substring(i, i + 64);
+      this.publicKey += '\n';
+    }
   } else {
     console.warn('Please configure your keycloak.json file properly. Attribute realm-public-key is missing.\nAborting!');
     process.exit();
