@@ -22,7 +22,7 @@ var Config = require('keycloak-auth-utils').Config;
 var GrantManager = require('keycloak-auth-utils').GrantManager;
 
 var Setup = require('./middleware/setup');
-var AdminLogout = require('./middleware/admin-logout');
+var Admin = require('./middleware/admin');
 var Logout = require('./middleware/logout');
 var PostAuth = require('./middleware/post-auth');
 var GrantAttacher = require('./middleware/grant-attacher');
@@ -111,7 +111,7 @@ Keycloak.prototype.middleware = function (options) {
 
   middlewares.push(Setup);
   middlewares.push(PostAuth(this));
-  middlewares.push(AdminLogout(this, options.admin));
+  middlewares.push(Admin(this, options.admin));
   middlewares.push(GrantAttacher(this));
   middlewares.push(Logout(this, options.logout));
 
