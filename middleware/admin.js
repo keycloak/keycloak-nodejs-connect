@@ -27,7 +27,7 @@ Admin.prototype.getFunction = function () {
   return this._adminRequest.bind(this);
 };
 
-function adminLogout(request, response, keycloak) {
+function adminLogout (request, response, keycloak) {
   let data = '';
 
   request.on('data', d => {
@@ -58,7 +58,7 @@ function adminLogout(request, response, keycloak) {
       }
     }
   });
-};
+}
 
 function adminNotBefore (request, response, keycloak) {
   let data = '';
@@ -71,13 +71,11 @@ function adminNotBefore (request, response, keycloak) {
     let parts = data.split('.');
     let payload = JSON.parse(new Buffer(parts[1], 'base64').toString());
     if (payload.action === 'PUSH_NOT_BEFORE') {
-      let sessionIDs = payload.adapterSessionIds;
       keycloak.grantManager.notBefore = payload.notBefore;
       response.send('ok');
     }
   });
-};
-
+}
 
 module.exports = function (keycloak, adminUrl) {
   let url = adminUrl;
@@ -85,10 +83,10 @@ module.exports = function (keycloak, adminUrl) {
     url = url + '/';
   }
   let urlLogout = url + 'k_logout';
-  let urlNotBefore = url + 'k_push_not_before'
+  let urlNotBefore = url + 'k_push_not_before';
 
   return function adminRequest (request, response, next) {
-    switch(request.url) {
+    switch (request.url) {
       case urlLogout:
         adminLogout(request, response, keycloak);
         break;
