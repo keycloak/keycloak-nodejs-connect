@@ -54,7 +54,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/keycloak/keycloak-auth-utils.git"
+    "url": "http://github.com/keycloak/keycloak-nodejs-auth-utils.git"
   },
   "bugs": "https://issues.jboss.org/browse/KEYCLOAK"
 }
