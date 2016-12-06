@@ -27,7 +27,7 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
     })
     .reply(204, reply);
   const manager = getManager('test/fixtures/keycloak-https.json');
-  manager.validateToken = (t) => t;
+  manager.validateToken = (t) => { return Promise.resolve(t); };
 
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => t.equal(grant.access_token.token, 'Dummy access token'))
@@ -54,8 +54,10 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
     unsignedToken,
     notBeforeToken
   ];
+  const invalidToken = (err) => t.pass(err);
   for (const token of tokens) {
-    t.equal(manager.validateToken(token), undefined);
+    manager.validateToken(token)
+    .catch(invalidToken());
   }
   t.end();
 });

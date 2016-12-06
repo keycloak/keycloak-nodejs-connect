@@ -135,25 +135,11 @@ Config.prototype.configure = function configure (config) {
    * @type {String} */
   this.realmAdminUrl = this.authServerUrl + '/admin/realms/' + this.realm;
 
-  const plainKey = resolveValue(config['realm-public-key']);
-
   /**
-   * Formatted public-key.
-   * @type {String}
+   * How many minutes before retrying getting the keys.
+   * @type {Integer}
    */
-  this.publicKey = '-----BEGIN PUBLIC KEY-----\n';
-
-  if (plainKey) {
-    for (let i = 0; i < plainKey.length; i = i + 64) {
-      this.publicKey += plainKey.substring(i, i + 64);
-      this.publicKey += '\n';
-    }
-  } else {
-    console.warn('Please configure your keycloak.json file properly. Attribute realm-public-key is missing.\nAborting!');
-    process.exit();
-  }
-
-  this.publicKey += '-----END PUBLIC KEY-----\n';
+  this.minTimeBetweenJwksRequests = config['min-time-between-jwks-requests'] || config.minTimeBetweenJwksRequests || 10;
 
   /**
    * If this is a Bearer Only application.
