@@ -20,9 +20,9 @@ const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
 const querystring = require('querystring');
-
 const Grant = require('./grant');
 const Token = require('./token');
+var Rotation = require('./rotation');
 
 /**
  * Construct a grant manager.
@@ -35,9 +35,10 @@ function GrantManager (config) {
   this.realmUrl = config.realmUrl;
   this.clientId = config.clientId;
   this.secret = config.secret;
-  this.publicKey = config.publicKey;
   this.public = config.public;
+  this.bearerOnly = config.bearerOnly;
   this.notBefore = 0;
+  this.rotation = new Rotation(config);
 }
 
 /**
@@ -63,7 +64,6 @@ GrantManager.prototype.obtainDirectly = function obtainDirectly (username, passw
   };
   const handler = createHandler(this);
   const options = postOptions(this);
-
   return nodeify(fetch(this, handler, options, params), callback);
 };
 
@@ -130,6 +130,7 @@ GrantManager.prototype.ensureFreshness = function ensureFreshness (grant, callba
     grant_type: 'refresh_token',
     refresh_token: grant.refresh_token.token
   };
+  console.log(params.refresh_token);
   const handler = refreshHandler(this, grant);
   const options = postOptions(this);
 
@@ -157,7 +158,7 @@ GrantManager.prototype.validateAccessToken = function validateAccessToken (token
   const options = postOptions(this, '/protocol/openid-connect/token/introspect');
   const handler = validationHandler(this, token);
 
-  return nodeify(fetch(this, handler, options, params), callback);
+  return nodeify(fetch(this, handler, options, params));
 };
 
 GrantManager.prototype.userInfo = function userInfo (token, callback) {
@@ -207,7 +208,7 @@ GrantManager.prototype.getAccount = function getAccount () {
  * against the known public-key of the server.
  *
  * @param {String} rawData The raw JSON string received from the Keycloak server or from a client.
- * @return {Grant} A validated Grant.
+ * @return {Promise} A promise reoslving a grant.
  */
 GrantManager.prototype.createGrant = function createGrant (rawData) {
   let grantData = rawData;
@@ -232,11 +233,33 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  *
  * @param {Grant} The grant to validate.
  */
-GrantManager.prototype.validateGrant = function validateGrant (grant) {
-  grant.access_token = this.validateToken(grant.access_token);
-  grant.refresh_token = this.validateToken(grant.refresh_token);
-  grant.id_token = this.validateToken(grant.id_token);
-  return grant;
+GrantManager.prototype.validateGrant = function validateGrant (grant, callback) {
+  var self = this;
+  const promise = this.validateToken(grant.access_token).then(token => {
+    grant.access_token = token;
+  }, () => { console.log('validate access token went wrong'); })
+  .then((token) => {
+    if (self.bearerOnly) {
+      return Promise.resolve(token);
+    } else {
+      return this.validateToken(grant.refresh_token);
+    }
+  })
+  .then(token => {
+    grant.refresh_token = token;
+  }, () => { console.log('validate refresh token went wrong'); })
+  .then((token) => {
+    if (self.bearerOnly) {
+      return Promise.resolve(token);
+    }
+    return this.validateToken(grant.id_token);
+  })
+  .then(token => {
+    grant.id_token = token;
+    return grant;
+  }, () => { console.log('validate id token went wrong'); })
+  .catch(() => { return Promise.reject(); });
+  return nodeify(promise, callback);
 };
 
 /**
@@ -251,14 +274,22 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
  * - The token is not expired, but issued before the current *not before* timestamp.
  * - The token signature does not verify against the known realm public-key.
  *
- * @return {Token} The same token passed in, or `undefined`
+ * @return {Promise} That resolve a token
  */
 GrantManager.prototype.validateToken = function validateToken (token) {
-  if (!token || token.isExpired() || !token.signed || token.content.iat < this.notBefore) return;
+  if (!token || token.isExpired() || !token.signed || token.content.iat < this.notBefore) {
+    return Promise.reject('invalid token');
+  }
   const verify = crypto.createVerify('RSA-SHA256');
-  verify.update(token.signed);
-  if (!verify.verify(this.publicKey, token.signature, 'base64')) return;
-  return token;
+  // retrieve public KEY
+  return this.rotation.getJWK(token.header.kid)
+    .then(key => {
+      verify.update(token.signed);
+      if (!verify.verify(key, token.signature)) {
+        return this.reject();
+      }
+      return token;
+    });
 };
 
 const getProtocol = (opts) => {
@@ -279,12 +310,9 @@ const createHandler = (manager) => (resolve, reject, json) => {
 };
 
 const refreshHandler = (manager, grant) => (resolve, reject, json) => {
-  try {
-    grant.update(manager.createGrant(json));
-    resolve(grant);
-  } catch (err) {
-    reject(err);
-  }
+  manager.createGrant(json)
+  .then((grant) => resolve(grant))
+  .catch((err) => reject(err));
 };
 
 const validationHandler = (manager, token) => (resolve, reject, json) => {

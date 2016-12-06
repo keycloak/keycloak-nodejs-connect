@@ -35,6 +35,9 @@
     "url": "http://keycloak.org"
   },
   "license": "Apache-2.0",
+  "dependencies": {
+    "jwk-to-pem": "^1.2.6"
+  },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
