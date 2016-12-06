@@ -249,14 +249,14 @@ Keycloak.prototype.getGrant = function (request, response) {
   }
 
   if (grantData && !grantData.error) {
-    var grant = this.grantManager.createGrant(JSON.stringify(grantData));
     var self = this;
-
-    return this.grantManager.ensureFreshness(grant)
-      .then(grant => {
-        self.storeGrant(grant, request, response);
-        return grant;
-      });
+    return this.grantManager.createGrant(JSON.stringify(grantData))
+    .then(grant => { return this.grantManager.ensureFreshness(grant); })
+    .then(grant => {
+      self.storeGrant(grant, request, response);
+      return grant;
+    })
+    .catch(() => { return Promise.reject(); });
   }
 
   return Promise.reject();
