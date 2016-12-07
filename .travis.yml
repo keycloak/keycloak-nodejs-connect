@@ -8,13 +8,7 @@ node_js:
 branches:
   only:
     - master
-
-before_install:
-  - git clone https://github.com/keycloak/keycloak-nodejs-auth-utils.git
-  - cd  keycloak-nodejs-auth-utils && npm install && npm link
-
 install:
-  - npm link keycloak-auth-utils
   - npm install
 before_script:
    - ./scripts/start-server.sh
