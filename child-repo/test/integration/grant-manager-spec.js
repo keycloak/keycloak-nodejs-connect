@@ -14,6 +14,13 @@ test('GrantManager in public mode should be able to obtain a grant', (t) => {
     .then(t.end);
 });
 
+test('GrantManager in public mode with public key configured should be able to obtain a grant', (t) => {
+  const manager = getManager('test/fixtures/keycloak-with-public-key.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => t.notEqual(grant.access_token, undefined))
+    .then(t.end);
+});
+
 test('GrantManager in public mode should be able to get userinfo', (t) => {
   const manager = getManager('test/fixtures/keycloak-public.json');
   manager.obtainDirectly('test-user', 'tiger')

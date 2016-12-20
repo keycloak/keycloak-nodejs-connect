@@ -35,6 +35,7 @@ function GrantManager (config) {
   this.realmUrl = config.realmUrl;
   this.clientId = config.clientId;
   this.secret = config.secret;
+  this.publicKey = config.publicKey;
   this.public = config.public;
   this.bearerOnly = config.bearerOnly;
   this.notBefore = 0;
@@ -281,6 +282,20 @@ GrantManager.prototype.validateToken = function validateToken (token) {
     return Promise.reject('invalid token');
   }
   const verify = crypto.createVerify('RSA-SHA256');
+
+  if (this.publicKey) {
+    try {
+      verify.update(token.signed);
+      if (!verify.verify(this.publicKey, token.signature, 'base64')) {
+        return this.reject();
+      }
+    } catch (err) {
+      console.error('Misconfigured parameters. Check your keycloak.json file!', err);
+      return Promise.reject();
+    }
+    return Promise.resolve(token);
+  }
+
   // retrieve public KEY
   return this.rotation.getJWK(token.header.kid)
     .then(key => {

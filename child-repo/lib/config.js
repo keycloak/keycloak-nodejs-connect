@@ -146,6 +146,21 @@ Config.prototype.configure = function configure (config) {
    * @type {Boolean}
    */
   this.bearerOnly = resolveValue(config['bearer-only'] || config.bearerOnly || false);
+
+  /**
+    * Formatted public-key.
+    * @type {String}
+    */
+  const plainKey = resolveValue(config['realm-public-key']);
+
+  if (plainKey) {
+    this.publicKey = '-----BEGIN PUBLIC KEY-----\n';
+    for (let i = 0; i < plainKey.length; i = i + 64) {
+      this.publicKey += plainKey.substring(i, i + 64);
+      this.publicKey += '\n';
+    }
+    this.publicKey += '-----END PUBLIC KEY-----\n';
+  }
 };
 
 module.exports = Config;
