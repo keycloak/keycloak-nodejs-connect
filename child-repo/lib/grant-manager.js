@@ -182,7 +182,7 @@ GrantManager.prototype.userInfo = function userInfo (token, callback) {
         return reject('Error fetching account');
       }
       let json = '';
-      response.on('data', (d) => json += d.toString());
+      response.on('data', (d) => (json += d.toString()));
       response.on('end', () => {
         const data = JSON.parse(json);
         if (data.error) reject(data);
@@ -360,7 +360,7 @@ const fetch = (manager, handler, options, params) => {
         return reject(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]);
       }
       let json = '';
-      response.on('data', (d) => json += d.toString());
+      response.on('data', (d) => (json += d.toString()));
       response.on('end', () => {
         handler(resolve, reject, json);
       });

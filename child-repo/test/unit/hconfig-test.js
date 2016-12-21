@@ -18,6 +18,7 @@ test('Config#configure with boolean', (t) => {
   t.end();
 });
 
+/* eslint-disable no-template-curly-in-string */
 test('Config#configure with env variable reference not set', (t) => {
   let cfg = new Config({'realm': '${env.NOT_SET}'});
 

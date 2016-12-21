@@ -39,18 +39,18 @@
     "jwk-to-pem": "^1.2.6"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-cli": "^0.1.13",
-    "grunt-gh-pages": "^0.9.1",
-    "grunt-touch": "^0.1.0",
-    "jshint": "^2.9.2",
-    "nock": "^8.0.0",
-    "nsp": "*",
-    "semistandard": "^7.0.5",
-    "tap-spec": "^4.1.1",
-    "tape": "^4.5.1",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-gh-pages": "^2.0.0",
+    "grunt-touch": "^1.0.0",
+    "ink-docstrap": "^1.1.4",
     "jsdoc": "^3.4.0",
-    "ink-docstrap": "^1.1.4"
+    "jshint": "^2.9.2",
+    "nock": "^9.0.2",
+    "nsp": "*",
+    "semistandard": "^9.2.1",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.5.1"
   },
   "repository": {
     "type": "git",
