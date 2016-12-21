@@ -39,16 +39,16 @@
     "keycloak-auth-utils"
   ],
   "devDependencies": {
-    "express": "^4.13.4",
-    "express-session": "^1.13.0",
-    "ink-docstrap": "^1.1.4",
-    "istanbul": "^0.4.3",
-    "jsdoc": "^3.4.0",
-    "jshint": "^2.9.1",
-    "nsp": "*",
-    "roi": "^0.12.1",
-    "semistandard": "^8.0.0",
-    "tape": "^4.5.1"
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "ink-docstrap": "^1.3.0",
+    "istanbul": "^0.4.5",
+    "jsdoc": "^3.4.3",
+    "jshint": "^2.9.4",
+    "nsp": "^2.6.2",
+    "roi": "^0.14.1",
+    "semistandard": "^9.2.1",
+    "tape": "^4.6.3"
   },
   "repository": {
     "type": "git",
