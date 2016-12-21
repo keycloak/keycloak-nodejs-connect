@@ -44,7 +44,7 @@ Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
         return reject('Error fetching JWK Keys');
       }
       let json = '';
-      response.on('data', (d) => json += d.toString());
+      response.on('data', (d) => (json += d.toString()));
       response.on('end', () => {
         const data = JSON.parse(json);
         console.log(data);
