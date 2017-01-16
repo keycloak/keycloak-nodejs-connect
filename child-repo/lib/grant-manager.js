@@ -287,7 +287,7 @@ GrantManager.prototype.validateToken = function validateToken (token) {
     try {
       verify.update(token.signed);
       if (!verify.verify(this.publicKey, token.signature, 'base64')) {
-        return this.reject();
+        return Promise.reject();
       }
     } catch (err) {
       console.error('Misconfigured parameters. Check your keycloak.json file!', err);
@@ -301,7 +301,7 @@ GrantManager.prototype.validateToken = function validateToken (token) {
     .then(key => {
       verify.update(token.signed);
       if (!verify.verify(key, token.signature)) {
-        return this.reject();
+        return Promise.reject();
       }
       return token;
     });
