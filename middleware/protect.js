@@ -21,7 +21,7 @@ function forceLogin (keycloak, request, response) {
   let host = request.hostname;
   let headerHost = request.headers.host.split(':');
   let port = headerHost[1] || '';
-  let protocol = request.protocol;
+  let protocol = request.headers['x-forwarded-proto'] || request.protocol;
   let hasQuery = ~(request.originalUrl || request.url).indexOf('?');
 
   let redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
