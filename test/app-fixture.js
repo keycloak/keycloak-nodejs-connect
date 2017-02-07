@@ -1,4 +1,4 @@
-'use strict';
+
 
 const Keycloak = require('../index');
 const express = require('express');
