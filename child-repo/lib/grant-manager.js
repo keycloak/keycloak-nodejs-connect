@@ -189,6 +189,7 @@ GrantManager.prototype.userInfo = function userInfo (token, callback) {
         else resolve(data);
       });
     });
+    req.on('error', reject);
     req.end();
   });
 
@@ -367,6 +368,7 @@ const fetch = (manager, handler, options, params) => {
     });
 
     req.write(data);
+    req.on('error', reject);
     req.end();
   });
 };

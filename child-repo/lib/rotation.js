@@ -52,6 +52,7 @@ Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
         else resolve(data);
       });
     });
+    req.on('error', reject);
     req.end();
   });
   return nodeify(promise, callback);
