@@ -23,12 +23,12 @@ function waitForServer {
 }
 
 ARCHIVE="${KEYCLOAK}.tar.gz"
-URL="http://downloads.jboss.org/keycloak/${VERSION}/${ARCHIVE}"
-
+DIST="keycloak-server-dist"
+URL="https://repo1.maven.org/maven2/org/keycloak/$DIST/${VERSION}/$DIST-${VERSION}.tar.gz"
 # Download keycloak server if we don't already have it
 if [ ! -e $KEYCLOAK ]
 then
-  wget $URL
+  curl -o $ARCHIVE $URL
   tar xzf $ARCHIVE
   rm -f $ARCHIVE
 fi
