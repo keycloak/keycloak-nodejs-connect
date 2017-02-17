@@ -2,8 +2,8 @@ sudo: required
 dist: trusty
 language: node_js
 node_js:
+  - "7"
   - "6"
-  - "5"
   - "4"
 before_script:
    - ./scripts/start-server.sh
