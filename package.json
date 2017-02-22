@@ -1,6 +1,6 @@
 {
   "name": "keycloak-connect",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
   "main": "index.js",
@@ -50,8 +50,8 @@
     "semistandard": "^9.2.1",
     "tape": "^4.6.3"
   },
-  "engines" : {
-    "node" : ">=4.0.0"
+  "engines": {
+    "node": ">=4.0.0"
   },
   "repository": {
     "type": "git",
