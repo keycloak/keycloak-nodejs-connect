@@ -131,7 +131,6 @@ GrantManager.prototype.ensureFreshness = function ensureFreshness (grant, callba
     grant_type: 'refresh_token',
     refresh_token: grant.refresh_token.token
   };
-  console.log(params.refresh_token);
   const handler = refreshHandler(this, grant);
   const options = postOptions(this);
 
