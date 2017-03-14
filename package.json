@@ -33,11 +33,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "keycloak/keycloak-nodejs-auth-utils"
+    "keycloak-auth-utils": "^2.5.1"
   },
-  "bundledDependencies": [
-    "keycloak-auth-utils"
-  ],
   "devDependencies": {
     "express": "^4.14.0",
     "express-session": "^1.14.2",
