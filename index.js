@@ -64,6 +64,10 @@ function Keycloak (config, keycloakConfig) {
 
   this.stores = [ BearerStore ];
 
+  if (!config) {
+    throw new Error('Adapter configuration must be provided.');
+  }
+
   // Add the custom scope value
   this.config.scope = config.scope;
 
