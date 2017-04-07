@@ -24,8 +24,8 @@ const session = require('express-session');
 let kc = null;
 
 test('Should raise an error when no configuration is provided.', t => {
-  t.throws(function() {
-    new Keycloak()
+  t.throws(function () {
+    new Keycloak();
   }, Error, 'Adapter configuration must be provided.');
   t.end();
 });
