@@ -127,6 +127,10 @@ GrantManager.prototype.ensureFreshness = function ensureFreshness (grant, callba
     return nodeify(Promise.reject(new Error('Unable to refresh without a refresh token')), callback);
   }
 
+  if (grant.refresh_token.isExpired()) {
+    return nodeify(Promise.reject(new Error('Unable to refresh with expired refresh token')), callback);
+  }
+
   const params = {
     grant_type: 'refresh_token',
     refresh_token: grant.refresh_token.token
@@ -233,42 +237,41 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  * passed in grant will only contain valid tokens.
  *
  * @param {Grant} The grant to validate.
+ *
+ * @return {Promise} That resolves to a validated grant
  */
 GrantManager.prototype.validateGrant = function validateGrant (grant, callback) {
   var self = this;
-  const promise = this.validateToken(grant.access_token).then(token => {
-    grant.access_token = token;
-  }, () => { console.log('validate access token went wrong'); })
-  .then((token) => {
-    if (self.bearerOnly) {
-      return Promise.resolve(token);
-    } else {
-      return this.validateToken(grant.refresh_token);
+  const updateGrantToken = (grant, tokenName) => {
+    return new Promise((resolve) => {
+    // check the access token
+      this.validateToken(grant[tokenName]).then(token => {
+        grant[tokenName] = token;
+        resolve();
+      });
+    });
+  };
+  return new Promise((resolve, reject) => {
+    var promises = [];
+    promises.push(updateGrantToken(grant, 'access_token'));
+    if (!self.bearerOnly) {
+      promises.push(updateGrantToken(grant, 'refresh_token'));
+      promises.push(updateGrantToken(grant, 'id_token'));
     }
-  })
-  .then(token => {
-    grant.refresh_token = token;
-  }, () => { console.log('validate refresh token went wrong'); })
-  .then((token) => {
-    if (self.bearerOnly) {
-      return Promise.resolve(token);
-    }
-    return this.validateToken(grant.id_token);
-  })
-  .then(token => {
-    grant.id_token = token;
-    return grant;
-  }, () => { console.log('validate id token went wrong'); })
-  .catch(() => { return Promise.reject(); });
-  return nodeify(promise, callback);
+    Promise.all(promises).then(() => {
+      resolve(grant);
+    });
+  });
 };
 
 /**
  * Validate a token.
  *
- * This method accepts a token, and either returns the
- * same token object, if valid, else, it returns `undefined`
- * if any of the following errors are seen:
+ * This method accepts a token, and returns a promise
+ *
+ * If the token is valid the promise will be resolved with the token
+ *
+ * If any of the following errors are seen the promise will resolve with undefined:
  *
  * - The token was undefined in the first place.
  * - The token is expired.
@@ -278,33 +281,53 @@ GrantManager.prototype.validateGrant = function validateGrant (grant, callback) 
  * @return {Promise} That resolve a token
  */
 GrantManager.prototype.validateToken = function validateToken (token) {
-  if (!token || token.isExpired() || !token.signed || token.content.iat < this.notBefore) {
-    return Promise.reject('invalid token');
-  }
-  const verify = crypto.createVerify('RSA-SHA256');
-
-  if (this.publicKey) {
-    try {
-      verify.update(token.signed);
-      if (!verify.verify(this.publicKey, token.signature, 'base64')) {
-        return Promise.reject();
+  return new Promise((resolve) => {
+    if (!token) {
+      console.error('invalid token (missing) ');
+      resolve();
+    } else if (token.isExpired()) {
+      console.error('invalid token (expired) ');
+      resolve();
+    } else if (!token.signed) {
+      console.error('invalid token (not signed) ');
+      resolve();
+    } else if (token.content.iat < this.notBefore) {
+      console.error('invalid token (future dated) ');
+      resolve();
+    } else {
+      const verify = crypto.createVerify('RSA-SHA256');
+      // if public key has been supplied use it to validate token
+      if (this.publicKey) {
+        try {
+          verify.update(token.signed);
+          if (!verify.verify(this.publicKey, token.signature, 'base64')) {
+            console.error('invalid token (signature)');
+            resolve();
+          } else {
+            resolve(token);
+          }
+        } catch (err) {
+          console.error('Misconfigured parameters while validating token. Check your keycloak.json file!', err);
+          console.error('invalid token (config)');
+          resolve();
+        }
+      } else {
+        // retrieve public KEY and use it to validate token
+        this.rotation.getJWK(token.header.kid).then(key => {
+          verify.update(token.signed);
+          if (!verify.verify(key, token.signature)) {
+            console.error('invalid token (public key signature)');
+            resolve();
+          } else {
+            resolve(token);
+          }
+        }, () => {
+          console.error('failed to load public key to verify token');
+          resolve();
+        });
       }
-    } catch (err) {
-      console.error('Misconfigured parameters. Check your keycloak.json file!', err);
-      return Promise.reject();
     }
-    return Promise.resolve(token);
-  }
-
-  // retrieve public KEY
-  return this.rotation.getJWK(token.header.kid)
-    .then(key => {
-      verify.update(token.signed);
-      if (!verify.verify(key, token.signature)) {
-        return Promise.reject();
-      }
-      return token;
-    });
+  });
 };
 
 const getProtocol = (opts) => {
