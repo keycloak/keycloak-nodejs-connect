@@ -151,7 +151,7 @@ Config.prototype.configure = function configure (config) {
     * Formatted public-key.
     * @type {String}
     */
-  const plainKey = resolveValue(config['realm-public-key']);
+  const plainKey = resolveValue(config['realm-public-key'] || config.realmPublicKey);
 
   if (plainKey) {
     this.publicKey = '-----BEGIN PUBLIC KEY-----\n';
