@@ -1,8 +1,8 @@
 'use strict';
 
+const test = require('tape-catch');
+const RSA = require('rsa-compat').RSA;
 const Config = require('../../index').Config;
-
-const test = require('tape');
 
 test('Config#configure', (t) => {
   let cfg = new Config({'realm': 'test-realm'});
@@ -45,4 +45,26 @@ test('Config#configure with env variable reference set with fallback', (t) => {
 
   t.equal(cfg.realm, process.env.USER);
   t.end();
+});
+
+test('Config#configure with realm-public-key', (t) => {
+  t.plan(2);
+  RSA.generateKeypair(2048, 65537, { public: true, pem: true }, (err, keyz) => {
+    t.error(err, 'generated keypair successfully');
+    let plainKey = keyz.publicKeyPem.split(/\r?\n/).filter(item => item && !item.startsWith('---')).join('');
+    let cfg = new Config({ 'realm-public-key': plainKey });
+    t.equal(cfg.publicKey, keyz.publicKeyPem.replace(/\r/g, ''));
+    t.end();
+  });
+});
+
+test('Config#configure with realmPublicKey', (t) => {
+  t.plan(2);
+  RSA.generateKeypair(2048, 65537, { public: true, pem: true }, (err, keyz) => {
+    t.error(err, 'generated keypair successfully');
+    let plainKey = keyz.publicKeyPem.split(/\r?\n/).filter(item => item && !item.startsWith('---')).join('');
+    let cfg = new Config({ realmPublicKey: plainKey });
+    t.equal(cfg.publicKey, keyz.publicKeyPem.replace(/\r/g, ''));
+    t.end();
+  });
 });
