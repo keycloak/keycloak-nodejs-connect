@@ -102,6 +102,25 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
 };
 
 /**
+ * Obtain a service account grant.
+ * Client option 'Service Accounts Enabled' needs to be on.
+ *
+ * This method returns or promise or may optionally take a callback function.
+ *
+ * @param {Function} callback Optional callback, if not using promises.
+ */
+GrantManager.prototype.obtainFromClientCredentials = function obtainFromlientCredentials (callback) {
+  const params = {
+    grant_type: 'client_credentials',
+    client_id: this.clientId
+  };
+  const handler = createHandler(this);
+  const options = postOptions(this);
+
+  return nodeify(fetch(this, handler, options, params), callback);
+};
+
+/**
  * Ensure that a grant is *fresh*, refreshing if required & possible.
  *
  * If the access_token is not expired, the grant is left untouched.
