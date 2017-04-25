@@ -155,6 +155,16 @@ test('GrantManager in confidential mode should be able to validate an invalid to
     .then(t.end);
 });
 
+test('GrantManager in confidential mode should be able to obtain a service account grant', (t) => {
+  manager.obtainFromClientCredentials()
+    .then(delay(3000))
+    .then((grant) => {
+      return manager.validateAccessToken(grant.access_token.token);
+    })
+    .then((result) => t.equal(result, false))
+    .then(t.end);
+});
+
 test('GrantManager should be able to validate tokens in a grant', (t) => {
   let originalAccessToken, originalRefreshToken, orginalIdToken;
   manager.obtainDirectly('test-user', 'tiger')
