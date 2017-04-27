@@ -3,6 +3,7 @@
 
 [![Build Status](https://travis-ci.org/keycloak/keycloak-nodejs-auth-utils.svg?branch=master)](https://travis-ci.org/keycloak/keycloak-nodejs-auth-utils)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
+[![Coverage Status](https://coveralls.io/repos/github/abstractj/keycloak-nodejs-auth-utils/badge.svg?branch=master)](https://coveralls.io/github/abstractj/keycloak-nodejs-auth-utils?branch=master)
 
 ## Contributing
 
