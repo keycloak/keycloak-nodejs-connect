@@ -150,3 +150,59 @@ test('GrantManager should be able to remove invalid tokens from a grant', (t) =>
     })
     .then(t.end);
 });
+
+test('GrantManager validate empty access token', (t) => {
+  manager.validateAccessToken('')
+    .then((result) => {
+      t.equal(result, false);
+    })
+    .then(t.end);
+});
+
+test('GrantManager return user realm role', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      console.log(grant.access_token);
+      t.true(grant.access_token.hasRealmRole('user'));
+    })
+    .then(t.end);
+});
+
+test('GrantManager validate non existent role', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      console.log(grant.access_token);
+      t.false(grant.access_token.hasRealmRole(''));
+    })
+    .then(t.end);
+});
+
+test('GrantManager validate non existent role app', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      console.log(grant.access_token);
+      t.false(grant.access_token.hasRole(''));
+    })
+    .then(t.end);
+});
+
+test('GrantManager validate existent role app', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      console.log(grant.access_token);
+      t.true(grant.access_token.hasRole('test'));
+    })
+    .then(t.end);
+});
+
+test('GrantManager should return empty access token data', (t) => {
+  manager.createGrant('{ }')
+    .then((grant) => {
+      t.equal(grant.access_token, undefined);
+      t.equal(grant.refresh_token, undefined);
+      t.equal(grant.id_token, undefined);
+      t.equal(grant.token_type, undefined);
+      t.equal(grant.expires_in, undefined);
+    })
+    .then(t.end);
+});
