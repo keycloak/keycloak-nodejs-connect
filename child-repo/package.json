@@ -22,7 +22,9 @@
     "lint": "jshint *.js lib/*.js test/**/*.js",
     "format": "semistandard",
     "prepublish": "nsp check",
-    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js"
+    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js",
+    "coverage": "istanbul cover tape -- test/unit/*.js | istanbul cover tape -- test/integration/*.js",
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls"
   },
   "files": [
     "index.js",
@@ -50,7 +52,9 @@
     "nsp": "*",
     "semistandard": "^9.2.1",
     "tap-spec": "^4.1.1",
-    "tape": "^4.5.1"
+    "tape": "^4.5.1",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.4.5"
   },
   "repository": {
     "type": "git",

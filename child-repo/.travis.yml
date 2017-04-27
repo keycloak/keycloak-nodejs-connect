@@ -9,6 +9,8 @@ before_script:
    - ./scripts/start-server.sh
 script:
    - make ci
+after_success:
+   - npm run coveralls
 after_script:
    - ./scripts/stop-server.sh
 notifications:
