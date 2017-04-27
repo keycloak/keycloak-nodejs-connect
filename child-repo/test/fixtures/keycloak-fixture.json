@@ -58,6 +58,12 @@
           "master-realm" : [ "view-identity-providers", "manage-realm", "view-users", "impersonation", "view-clients", "manage-users", "manage-identity-providers", "manage-events", "view-realm", "manage-clients", "create-client", "view-events" ]
         }
       }
+    }, {
+      "id" : "06ac0059-9315-402b-8b55-4c9c020c8e44",
+      "name" : "user",
+      "scopeParamRequired" : false,
+      "composite" : false,
+      "clientRole" : false
     } ],
     "client" : {
       "nodejs-test-realm" : [ {
@@ -1282,7 +1288,14 @@
       "composite" : false
     } ],
     "client" : {
-      "confidential-client" : [ ],
+      "confidential-client" : [ {
+        "id" : "42f1ee59-9f49-41ce-8a67-243ebbacee93",
+        "name" : "test",
+        "scopeParamRequired" : false,
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "d0650a93-8fe2-4524-8020-4531b6276230"
+      } ],
       "realm-management" : [ {
         "id" : "8c33cff2-3997-4063-a8d5-b57597fd29a0",
         "name" : "manage-identity-providers",
@@ -1451,8 +1464,9 @@
       "createdDate" : 1461877502000
     } ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "offline_access" ],
+    "realmRoles" : [ "offline_access", "user" ],
     "clientRoles" : {
+      "confidential-client" : [ "test" ],
       "account" : [ "view-profile", "manage-account" ]
     },
     "groups" : [ ]
