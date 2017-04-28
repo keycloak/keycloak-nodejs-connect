@@ -3,7 +3,7 @@
 const GrantManager = require('../../index').GrantManager;
 const Config = require('../../index').Config;
 const test = require('tape');
-
+const extend = require('util')._extend;
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const getManager = (fixture) => new GrantManager(new Config(fixture));
 
@@ -224,6 +224,22 @@ test('GrantManager return user realm role based on realm name', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       t.true(grant.access_token.hasRole('realm:user'));
+    })
+    .then(t.end);
+});
+
+test('GrantManager should be able to remove expired access_token token and keep others', (t) => {
+  let originalGrant;
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      originalGrant = extend({}, grant);
+      grant.access_token.content.exp = 0;
+      return manager.validateGrant(grant);
+    })
+    .then((grant) => {
+      t.equal(grant.access_token, undefined);
+      t.equal(grant.refresh_token, originalGrant.refresh_token);
+      t.equal(grant.id_token, originalGrant.id_token);
     })
     .then(t.end);
 });
