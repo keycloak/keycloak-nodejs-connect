@@ -21,6 +21,17 @@ test('GrantManager in public mode with public key configured should be able to o
     .then(t.end);
 });
 
+test('GrantManager should return empty with public key configured but invalid signature', (t) => {
+  const manager = getManager('test/fixtures/keycloak-with-public-key.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+      return manager.validateToken(grant.access_token);
+    })
+    .then((result) => t.equal(result, undefined))
+    .then(t.end);
+});
+
 test('GrantManager in public mode should be able to get userinfo', (t) => {
   const manager = getManager('test/fixtures/keycloak-public.json');
   manager.obtainDirectly('test-user', 'tiger')
