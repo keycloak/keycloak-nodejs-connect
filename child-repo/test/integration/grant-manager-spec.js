@@ -221,6 +221,15 @@ test('GrantManager validate non existent role', (t) => {
     .then(t.end);
 });
 
+test('GrantManager should be false for user with no realm level roles', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.content.realm_access = {};
+      t.false(grant.access_token.hasRealmRole('test'));
+    })
+    .then(t.end);
+});
+
 test('GrantManager validate non existent role app', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
