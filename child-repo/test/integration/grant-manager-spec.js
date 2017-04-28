@@ -271,3 +271,15 @@ test('GrantManager should be able to validate invalid ISS', (t) => {
     })
     .then(t.end);
 });
+
+test('GrantManager should be able to validate invalid iat', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.content.iat = -5;
+      return manager.validateGrant(grant);
+    })
+    .then((grant) => {
+      t.equal(grant.access_token, undefined);
+    })
+    .then(t.end);
+});
