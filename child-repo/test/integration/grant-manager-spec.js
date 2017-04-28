@@ -283,3 +283,28 @@ test('GrantManager should be able to validate invalid iat', (t) => {
     })
     .then(t.end);
 });
+test('GrantManager should be ensure that a grant is fresh', (t) => {
+  let originalGrant;
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      originalGrant = extend({}, grant);
+      return manager.ensureFreshness(grant);
+    })
+    .then((result) => {
+      t.notEqual(result, originalGrant);
+    })
+    .then(t.end);
+});
+
+test('GrantManager should raise an error when access token and refresh token do not exist', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant['access_token'] = undefined;
+      grant['refresh_token'] = undefined;
+      return manager.ensureFreshness(grant);
+    })
+    .catch(e => {
+      t.equal(e.toString(), 'Error: Unable to refresh without a refresh token');
+    })
+    .then(t.end);
+});
