@@ -294,6 +294,9 @@ GrantManager.prototype.validateToken = function validateToken (token) {
     } else if (token.content.iat < this.notBefore) {
       console.error('invalid token (future dated) ');
       resolve();
+    } else if (token.content.iss !== this.realmUrl) {
+      console.error('invalid token (wrong ISS) ');
+      resolve();
     } else {
       const verify = crypto.createVerify('RSA-SHA256');
       // if public key has been supplied use it to validate token
