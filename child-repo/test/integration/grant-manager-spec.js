@@ -7,10 +7,33 @@ const extend = require('util')._extend;
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const getManager = (fixture) => new GrantManager(new Config(fixture));
 
+test('GrantManager with empty configuration', (t) => {
+  t.throws(function () {
+    getManager(undefined);
+  }, Error);
+  t.end();
+});
+
+test('GrantManager with rogue configuration', (t) => {
+  const rogueManager = getManager({});
+  t.equal(rogueManager.access_token, undefined);
+  t.equal(rogueManager.client_id, undefined);
+  t.equal(rogueManager.publicKey, undefined);
+  t.equal(rogueManager.secret, undefined);
+  t.end();
+});
+
 test('GrantManager in public mode should be able to obtain a grant', (t) => {
   const manager = getManager('test/fixtures/keycloak-public.json');
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => t.notEqual(grant.access_token, undefined))
+    .then(t.end);
+});
+
+test('GrantManager in public mode should be able to obtain a raw grant', (t) => {
+  const manager = getManager('test/fixtures/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => t.notEqual(grant.toString(), undefined))
     .then(t.end);
 });
 
