@@ -243,3 +243,19 @@ test('GrantManager should be able to remove expired access_token token and keep 
     })
     .then(t.end);
 });
+
+test('GrantManager should return empty when trying to obtain from code with empty params', (t) => {
+  manager.obtainFromCode('', '', '', '', function () {})
+    .then((result) => {
+      t.equal(result, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager should raise an error when trying to obtain from code with rogue params', (t) => {
+  manager.obtainFromCode('', '', '', '', {})
+    .catch((e) => {
+      t.equal(e, '400:Bad Request');
+      t.end();
+    });
+});

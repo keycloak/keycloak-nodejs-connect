@@ -93,7 +93,7 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
     code: code,
     grant_type: 'authorization_code',
     client_id: this.clientId,
-    redirect_uri: request.session.auth_redirect_uri
+    redirect_uri: request.session ? request.session.auth_redirect_uri : {}
   };
   const handler = createHandler(this);
   const options = postOptions(this);
