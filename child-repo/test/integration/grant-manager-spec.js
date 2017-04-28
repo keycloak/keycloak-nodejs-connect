@@ -308,3 +308,33 @@ test('GrantManager should raise an error when access token and refresh token do 
     })
     .then(t.end);
 });
+
+test('GrantManager should validate unsigned token', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.signed = false;
+      return manager.validateToken(grant.access_token);
+    })
+    .then((result) => t.equal(result, undefined))
+    .then(t.end);
+});
+
+test('GrantManager should fail to load public key when kid is empty', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.header.kid = {};
+      return manager.validateToken(grant.access_token);
+    })
+    .then((result) => t.equal(result, undefined))
+    .then(t.end);
+});
+
+test('GrantManager should fail with invalid signature', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+      return manager.validateToken(grant.access_token);
+    })
+    .then((result) => t.equal(result, undefined))
+    .then(t.end);
+});
