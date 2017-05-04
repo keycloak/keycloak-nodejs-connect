@@ -14,7 +14,7 @@
  * the License.
  */
 
-'use strict';
+
 
 const test = require('tape');
 const Keycloak = require('../../index');
