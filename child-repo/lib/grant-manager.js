@@ -226,7 +226,9 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
     expires_in: grantData.expires_in,
     token_type: grantData.token_type,
     __raw: rawData
-  }));
+  })).catch((err) => {
+    console.error(err.message);
+  });
 };
 
 /**
@@ -243,11 +245,13 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
 GrantManager.prototype.validateGrant = function validateGrant (grant, callback) {
   var self = this;
   const updateGrantToken = (grant, tokenName) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
     // check the access token
       this.validateToken(grant[tokenName]).then(token => {
         grant[tokenName] = token;
         resolve();
+      }).catch((err) => {
+        reject(new Error('Grant validation failed. Reason: ' + err.message));
       });
     });
   };
@@ -260,6 +264,9 @@ GrantManager.prototype.validateGrant = function validateGrant (grant, callback) 
     }
     Promise.all(promises).then(() => {
       resolve(grant);
+    }).catch((err) => {
+      console.error('Validate grant failed');
+      reject(new Error(err.message));
     });
   });
 };
@@ -281,22 +288,17 @@ GrantManager.prototype.validateGrant = function validateGrant (grant, callback) 
  * @return {Promise} That resolve a token
  */
 GrantManager.prototype.validateToken = function validateToken (token) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (!token) {
-      console.error('invalid token (missing) ');
-      resolve();
+      reject(new Error('invalid token (missing)'));
     } else if (token.isExpired()) {
-      console.error('invalid token (expired) ');
-      resolve();
+      reject(new Error('invalid token (expired)'));
     } else if (!token.signed) {
-      console.error('invalid token (not signed) ');
-      resolve();
+      reject(new Error('invalid token (not signed)'));
     } else if (token.content.iat < this.notBefore) {
-      console.error('invalid token (future dated) ');
-      resolve();
+      reject(new Error('invalid token (future dated)'));
     } else if (token.content.iss !== this.realmUrl) {
-      console.error('invalid token (wrong ISS) ');
-      resolve();
+      reject(new Error('invalid token (wrong ISS)'));
     } else {
       const verify = crypto.createVerify('RSA-SHA256');
       // if public key has been supplied use it to validate token
@@ -304,29 +306,25 @@ GrantManager.prototype.validateToken = function validateToken (token) {
         try {
           verify.update(token.signed);
           if (!verify.verify(this.publicKey, token.signature, 'base64')) {
-            console.error('invalid token (signature)');
-            resolve();
+            reject(new Error('invalid token (signature)'));
           } else {
             resolve(token);
           }
         } catch (err) {
-          console.error('Misconfigured parameters while validating token. Check your keycloak.json file!', err);
           console.error('invalid token (config)');
-          resolve();
+          reject(new Error('Misconfigured parameters while validating token. Check your keycloak.json file!'));
         }
       } else {
         // retrieve public KEY and use it to validate token
         this.rotation.getJWK(token.header.kid).then(key => {
           verify.update(token.signed);
           if (!verify.verify(key, token.signature)) {
-            console.error('invalid token (public key signature)');
-            resolve();
+            reject(new Error('invalid token (public key signature)'));
           } else {
             resolve(token);
           }
         }, () => {
-          console.error('failed to load public key to verify token');
-          resolve();
+          reject(new Error('failed to load public key to verify token'));
         });
       }
     }

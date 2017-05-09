@@ -54,10 +54,13 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
     unsignedToken,
     notBeforeToken
   ];
-  const invalidToken = (err) => t.pass(err);
+
+  /* jshint loopfunc:true */
   for (const token of tokens) {
     manager.validateToken(token)
-    .catch(invalidToken());
+    .catch((err) => {
+      t.true(err instanceof Error, err.message);
+    });
   }
   t.end();
 });

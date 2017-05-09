@@ -51,7 +51,9 @@ test('GrantManager should return empty with public key configured but invalid si
       grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
       return manager.validateToken(grant.access_token);
     })
-    .then((result) => t.equal(result, undefined))
+    .catch((e) => {
+      t.equal(e.message, 'invalid token (signature)');
+    })
     .then(t.end);
 });
 
@@ -177,22 +179,22 @@ test('GrantManager should be able to remove invalid tokens from a grant', (t) =>
       grant.id_token.signature = Buffer.from('this signature is still invalid');
       return manager.validateGrant(grant);
     })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (public key signature)');
+    })
     .then((grant) => {
-      t.equal(grant.access_token, undefined);
-      t.equal(grant.refresh_token, undefined);
-      t.equal(grant.id_token, undefined);
+      t.equal(grant, undefined);
     })
     .then(t.end);
 });
 
 test('GrantManager should return empty access token data', (t) => {
   manager.createGrant('{ }')
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (public key signature)');
+    })
     .then((grant) => {
-      t.equal(grant.access_token, undefined);
-      t.equal(grant.refresh_token, undefined);
-      t.equal(grant.id_token, undefined);
-      t.equal(grant.token_type, undefined);
-      t.equal(grant.expires_in, undefined);
+      t.equal(grant, undefined);
     })
     .then(t.end);
 });
@@ -272,17 +274,16 @@ test('GrantManager return user realm role based on realm name', (t) => {
 });
 
 test('GrantManager should be able to remove expired access_token token and keep others', (t) => {
-  let originalGrant;
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
-      originalGrant = extend({}, grant);
       grant.access_token.content.exp = 0;
       return manager.validateGrant(grant);
     })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (expired)');
+    })
     .then((grant) => {
-      t.equal(grant.access_token, undefined);
-      t.equal(grant.refresh_token, originalGrant.refresh_token);
-      t.equal(grant.id_token, originalGrant.id_token);
+      t.equal(grant, undefined);
     })
     .then(t.end);
 });
@@ -309,8 +310,8 @@ test('GrantManager should be able to validate invalid ISS', (t) => {
       grant.access_token.content.iss = 'http://wrongiss.com';
       return manager.validateGrant(grant);
     })
-    .then((grant) => {
-      t.equal(grant.access_token, undefined);
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong ISS)');
     })
     .then(t.end);
 });
@@ -321,8 +322,8 @@ test('GrantManager should be able to validate invalid iat', (t) => {
       grant.access_token.content.iat = -5;
       return manager.validateGrant(grant);
     })
-    .then((grant) => {
-      t.equal(grant.access_token, undefined);
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (future dated)');
     })
     .then(t.end);
 });
@@ -347,7 +348,7 @@ test('GrantManager should raise an error when access token and refresh token do 
       return manager.ensureFreshness(grant);
     })
     .catch(e => {
-      t.equal(e.toString(), 'Error: Unable to refresh without a refresh token');
+      t.equal(e.message, 'Unable to refresh without a refresh token');
     })
     .then(t.end);
 });
@@ -358,7 +359,9 @@ test('GrantManager should validate unsigned token', (t) => {
       grant.access_token.signed = false;
       return manager.validateToken(grant.access_token);
     })
-    .then((result) => t.equal(result, undefined))
+    .catch(e => {
+      t.equal(e.message, 'invalid token (not signed)');
+    })
     .then(t.end);
 });
 
@@ -368,7 +371,9 @@ test('GrantManager should fail to load public key when kid is empty', (t) => {
       grant.access_token.header.kid = {};
       return manager.validateToken(grant.access_token);
     })
-    .then((result) => t.equal(result, undefined))
+    .catch(e => {
+      t.equal(e.message, 'failed to load public key to verify token');
+    })
     .then(t.end);
 });
 
@@ -378,6 +383,8 @@ test('GrantManager should fail with invalid signature', (t) => {
       grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
       return manager.validateToken(grant.access_token);
     })
-    .then((result) => t.equal(result, undefined))
+    .catch(e => {
+      t.equal(e.message, 'invalid token (public key signature)');
+    })
     .then(t.end);
 });
