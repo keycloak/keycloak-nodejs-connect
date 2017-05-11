@@ -3,9 +3,11 @@
 const GrantManager = require('../../index').GrantManager;
 const Config = require('../../index').Config;
 const test = require('tape');
+const nock = require('nock');
 const extend = require('util')._extend;
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const getManager = (fixture) => new GrantManager(new Config(fixture));
+const helper = require('./helper');
 
 test('GrantManager with empty configuration', (t) => {
   t.throws(function () {
@@ -387,4 +389,52 @@ test('GrantManager should fail with invalid signature', (t) => {
       t.equal(e.message, 'invalid token (public key signature)');
     })
     .then(t.end);
+});
+
+test('GrantManager#obtainDirectly should work with https', (t) => {
+  nock('https://localhost:8080')
+    .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
+      client_id: 'public-client',
+      username: 'test-user',
+      password: 'tiger',
+      grant_type: 'password'
+    })
+    .reply(204, helper.dummyReply);
+  const manager = getManager('test/fixtures/keycloak-https.json');
+  manager.validateToken = (t) => { return Promise.resolve(t); };
+
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => t.equal(grant.access_token.token, 'Dummy access token'))
+    .then(t.end);
+});
+
+test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
+  const expiredToken = {
+    isExpired: () => true
+  };
+  const unsignedToken = {
+    isExpired: () => false,
+    signed: undefined
+  };
+  const notBeforeToken = {
+    isExpired: () => false,
+    signed: true,
+    content: { iat: -1 }
+  };
+  const manager = getManager('test/fixtures/keycloak-https.json');
+  const tokens = [
+    undefined,
+    expiredToken,
+    unsignedToken,
+    notBeforeToken
+  ];
+
+  /* jshint loopfunc:true */
+  for (const token of tokens) {
+    manager.validateToken(token)
+    .catch((err) => {
+      t.true(err instanceof Error, err.message);
+    });
+  }
+  t.end();
 });
