@@ -1,6 +1,6 @@
 'use strict';
 
-const Keycloak = require('../index');
+const Keycloak = require('../../index');
 const express = require('express');
 const session = require('express-session');
 const fs = require('fs');
@@ -55,10 +55,12 @@ app.get('/login', kc.protect(), (req, res) => {
   res.json(JSON.stringify(JSON.parse(req.session['keycloak-token'])));
 });
 
-app.listen(3000, function () {
-  console.log('app listening on port 3000');
+let server = app.listen(3001, function () {
+  console.log('app listening on port 3001');
   console.log(process.pid);
   fs.writeFile('./pid.txt', process.pid, (error) => {
     if (error) return console.error(error);
   });
 });
+
+module.exports = server;

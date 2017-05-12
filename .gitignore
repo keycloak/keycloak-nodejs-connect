@@ -1,6 +1,8 @@
 *.swp
 *.swo
 *.log
+*.orig
+*.tmp
 node_modules/
 keycloak-*
 !keycloak-connect-test.js
@@ -8,3 +10,5 @@ keycloak-*
 !keycloak-fixture.json
 coverage
 pid.txt
+.idea/
+tmp/
