@@ -34,6 +34,7 @@ then
 fi
 
 # Start the server
+$KEYCLOAK/bin/add-user-keycloak.sh -u admin -p admin
 $KEYCLOAK/bin/standalone.sh -Djava.net.preferIPv4Stack=true \
                             -Dkeycloak.migration.action=import \
                             -Dkeycloak.migration.provider=singleFile \
