@@ -15,7 +15,7 @@ install:
 before_script:
   - ./scripts/start-server.sh
 
-script: make
+script: make tests
 
 after_script:
   - ./scripts/stop-server.sh
