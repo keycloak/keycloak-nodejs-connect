@@ -23,6 +23,14 @@ const session = require('express-session');
 
 let kc = null;
 
+test('Should raise an error when no configuration is provided.', t => {
+  t.throws(function () {
+    var k = new Keycloak();
+    t.notOk(k, 'Variable should be empty');
+  }, Error, 'Adapter configuration must be provided.');
+  t.end();
+});
+
 test('setup', t => {
   let kcConfig = {
     'realm': 'test-realm',

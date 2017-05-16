@@ -64,6 +64,10 @@ function Keycloak (config, keycloakConfig) {
 
   this.stores = [ BearerStore ];
 
+  if (!config) {
+    throw new Error('Adapter configuration must be provided.');
+  }
+
   // Add the custom scope value
   this.config.scope = config.scope;
 
@@ -265,6 +269,10 @@ Keycloak.prototype.getGrant = function (request, response) {
 Keycloak.prototype.storeGrant = function (grant, request, response) {
   if (this.stores.length < 2) {
     // cannot store, bearer-only, this is weird
+    return;
+  }
+  if (!grant) {
+    this.accessDenied(request, response);
     return;
   }
 

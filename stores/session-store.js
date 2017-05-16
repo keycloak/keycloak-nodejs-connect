@@ -47,8 +47,10 @@ let unstore = (request, response) => {
 };
 
 SessionStore.prototype.wrap = (grant) => {
-  grant.store = store(grant);
-  grant.unstore = unstore;
+  if (grant) {
+    grant.store = store(grant);
+    grant.unstore = unstore;
+  }
 };
 
 module.exports = SessionStore;

@@ -18,10 +18,11 @@
 
 const test = require('tape');
 const roi = require('roi');
+const server = require('./fixtures/app-fixture');
 
 test('Should test unprotected route.', t => {
   const options = {
-    'endpoint': 'http://localhost:3000/'
+    'endpoint': 'http://localhost:3001/'
   };
 
   roi.get(options)
@@ -37,7 +38,7 @@ test('Should test unprotected route.', t => {
 
 test('Should test protected route.', t => {
   const options = {
-    'endpoint': 'http://localhost:3000/login'
+    'endpoint': 'http://localhost:3001/login'
   };
 
   roi.get(options)
@@ -53,7 +54,7 @@ test('Should test protected route.', t => {
 
 test('Should verify logout feature.', t => {
   const options = {
-    'endpoint': 'http://localhost:3000/logout'
+    'endpoint': 'http://localhost:3001/logout'
   };
 
   roi.get(options)
@@ -65,4 +66,9 @@ test('Should verify logout feature.', t => {
       console.error(e);
       t.fail();
     });
+});
+
+test('teardown', function (t) {
+  server.close();
+  t.end();
 });
