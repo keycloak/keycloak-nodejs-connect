@@ -47,6 +47,9 @@ module.exports = function (keycloak) {
           console.log(err);
         }
         response.redirect(cleanUrl);
+      }).catch((err) => {
+        keycloak.accessDenied(request, response);
+        console.error('Could not obtain grant code: ' + err);
       });
   };
 };

@@ -271,6 +271,10 @@ Keycloak.prototype.storeGrant = function (grant, request, response) {
     // cannot store, bearer-only, this is weird
     return;
   }
+  if (!grant) {
+    this.accessDenied(request, response);
+    return;
+  }
 
   this.stores[1].wrap(grant);
   grant.store(request, response);

@@ -7,11 +7,10 @@
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js example/*.js",
     "format": "semistandard",
-    "test": "tape test/unit/keycloak-object-test.js test/keycloak-connect-test.js",
+    "test": "tape test/unit/*.js test/*.js",
     "prepublish": "nsp check",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js",
-    "coverage": "istanbul cover tape -- test/unit/*.js | istanbul cover tape -- test/integration/*.js",
-    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls"
+    "coverage": "istanbul cover tape -- test/unit/*.js | istanbul cover tape -- test/*.js"
   },
   "keywords": [
     "sso",
@@ -34,7 +33,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "3.1.0"
+    "keycloak-auth-utils": "abstractj/keycloak-nodejs-auth-utils#KEYCLOAK-4865"
   },
   "bundledDependencies": [
     "keycloak-auth-utils"
@@ -50,7 +49,16 @@
     "nsp": "^2.6.2",
     "roi": "^0.14.1",
     "semistandard": "^9.2.1",
-    "tape": "^4.6.3"
+    "tape": "^4.6.3",
+    "keycloak-admin-client": "^0.6.0",
+    "hogan-express": "^0.5.2",
+    "selenium-webdriver": "^2.52.0",
+    "phantomjs-prebuilt":"^2.1.14"
+  },
+  "semistandard": {
+    "ignore": [
+      "**/phantomjs*/"
+    ]
   },
   "engines": {
     "node": ">=4.0.0"
