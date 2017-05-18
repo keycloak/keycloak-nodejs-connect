@@ -21,7 +21,8 @@ const fs = require('fs');
 
 module.exports = {
   parse: parse,
-  TestVector: TestVector
+  TestVector: TestVector,
+  parseClient: parseClient
 };
 
 /**
@@ -45,10 +46,20 @@ function parse (file, realmName, httpPort, hostname) {
   return json;
 }
 
+function parseClient (file, httpPort, name) {
+  var port = httpPort || '3000';
+  var content = fs.readFileSync(file, 'utf8')
+    .replace(/{{name}}/g, name)
+    .replace(/{{port}}/g, port);
+  var json = JSON.parse(content);
+  return json;
+}
+
 /**
  * Utility to provide testing vectors instead of
  * a bunch of duplicate files with small changes
  */
-function TestVector () { }
+function TestVector () {
+}
 
 TestVector.wrongRealmPublicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAikGBvYGniAJ59ZjpaSDw2o+j40Ila/dWfN8qA1dzXJesH9Z1sZrcevJB+rfxoZDaWMz2l9Q3OxG/qolTpsQl8NBdb5tymic9qDkAIsiyKThzjcfs5lOSxfnkHn6+Z0QbrYnXQs/cGvQ1Ai81M1M1O6BHDWu05n8c977h+BsfLmqGj7MZZj9gw9RM84RIKDGHTbFh9YyXBJVtqbOhRD7hcB0O9olDZb7mQ5A8gsMctcUhsVBy3xKCLMD41XU92rQ9FAlsV9mBglLqaVWr2mxQItN3lgjE02L8UyorI3T0uprIsnv7B2NwUC5ZhwZGfnBznUPVrT6makEJklpg5if3qQIDAQAB';

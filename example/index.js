@@ -21,6 +21,12 @@ var session = require('express-session');
 
 var app = express();
 
+var server = app.listen(3000, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
+});
+
 // Register '.mustache' extension with The Mustache Express
 app.set('view engine', 'html');
 app.set('views', require('path').join(__dirname, '/view'));
@@ -73,10 +79,4 @@ app.get('/login', keycloak.protect(), function (req, res) {
     result: JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4),
     event: '1. Authentication\n2. Login'
   });
-});
-
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-  console.log('Example app listening at http://%s:%s', host, port);
 });

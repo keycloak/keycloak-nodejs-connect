@@ -19,43 +19,58 @@
 const test = require('tape');
 const page = require('./utils/webdriver').ConsolePage;
 const AdminHelper = require('./utils/admin').AdminHelper;
+const Type = require('./utils/admin').Type;
 const TestVector = require('./utils/helper').TestVector;
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
+// TODO remove
+const parse = require('./utils/helper').parse;
 const getAdminHelper = (baseUrl, username, password) => new AdminHelper(baseUrl, username, password);
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 
-let app = new NodeApp().start();
-let realmManager = getAdminHelper().createRealm(app.address().port);
+let realmManager = getAdminHelper().createRealm();
+let app = new NodeApp();
+let client;
+
+test('setup', t => {
+  client = realmManager.then((realm) => {
+    return getAdminHelper().createClient(Type.publicClient(app.port));
+  });
+  t.end();
+})
 
 test('Should be able to access public page', t => {
-  realmManager.then((realm) => {
+  client.then((installation) => {
+    app.build(installation);
+
     t.plan(1);
-    page.index(app.address().port);
+    page.index(app.port);
     page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)');
+      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
       t.end();
     }).catch((err) => {
       t.fail('Test failed');
     });
   });
-})
+});
 test('Should login with admin credentials', t => {
-  realmManager.then((realm) => {
+  client.then((installation) => {
+    app.build(installation);
+
     t.plan(3);
-    page.index(app.address().port);
+    page.index(app.port);
     page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)');
+      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
     })
 
     page.logInButton().click();
     page.login('user', 'password');
 
     page.events().getText().then(function(text) {
-      t.equal(text, 'Auth Success');
+      t.equal(text, 'Auth Success', 'User should be authenticated');
     })
     page.logOutButton().click();
     page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)');
+      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
       t.end();
     }).catch((err) => {
       t.fail('Test failed');
@@ -63,23 +78,26 @@ test('Should login with admin credentials', t => {
   });
 })
 
-let nodeApp = new NodeApp('test-realm2');
-nodeApp.kcConfig['realm-public-key'] = TestVector.wrongRealmPublicKey;
-let app2 = nodeApp.start();
-
 test('Should be forbidden for invalid public key', t => {
-  var realmManager = getAdminHelper().createRealm(app2.address().port, 'test-realm2');
-  realmManager.then((realm) => {
+  let app = new NodeApp();
+  var client = getAdminHelper().createClient(Type.publicClient(app.port, 'app2'));
+
+  client.then((installation) => {
+    installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
+    app.build(installation);
+
     t.plan(2);
-    page.index(app2.address().port);
+    page.index(app.port);
     page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)');
+      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
     })
     page.logInButton().click();
     page.login('user', 'password');
     page.body().getText().then(function (text) {
-      t.equal(text, 'Access denied');
+      t.equal(text, 'Access denied', 'Message should be access denied');
       t.end();
+    }).then(() => {
+      app.close();
     }).catch((err) => {
       t.fail('Test failed');
     });
@@ -88,10 +106,8 @@ test('Should be forbidden for invalid public key', t => {
 
 test('teardown', t => {
   app.close();
-  app2.close();
-  page.quit();
   getAdminHelper().destroy('test-realm');
-  getAdminHelper().destroy('test-realm2');
+  page.quit();
   t.end();
 })
 

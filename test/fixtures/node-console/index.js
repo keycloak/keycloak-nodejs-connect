@@ -13,29 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 var Keycloak = require('../../../index');
 var hogan = require('hogan-express');
 var express = require('express');
 var session = require('express-session');
-var parse = require('../../utils/helper').parse;
 
-function NodeApp (realm, file) {
-  this.kcConfig = parse('test/fixtures/public-client-template.json', realm);
+function NodeApp () {
+  this.app = express();
+  var server = this.app.listen(0);
+  this.close = function () {
+    server.close();
+  };
+  this.port = server.address().port;
+
+  console.log('Example app listening at http://localhost:%s', this.port);
 }
 
-NodeApp.prototype.start = function start () {
-  var app = express();
-  app.set('view engine', 'html');
-  app.set('views', require('path').join(__dirname, '/views'));
-  app.engine('html', hogan);
+NodeApp.prototype.build = function build (kcConfig) {
+  this.app.set('view engine', 'html');
+  this.app.set('views', require('path').join(__dirname, '/views'));
+  this.app.engine('html', hogan);
 
   // Create a session-store to be used by both the express-session
   // middleware and the keycloak middleware.
 
   var memoryStore = new session.MemoryStore();
 
-  app.use(session({
+  this.app.use(session({
     secret: 'mySecret',
     resave: false,
     saveUninitialized: true,
@@ -49,10 +53,10 @@ NodeApp.prototype.start = function start () {
   // installed from the Keycloak web console.
   var keycloak = new Keycloak({
     store: memoryStore
-  }, this.kcConfig);
+  }, kcConfig);
 
   // A normal un-protected public URL.
-  app.get('/', function (req, res) {
+  this.app.get('/', function (req, res) {
     var authenticated = 'Init Success (' + (req.session['keycloak-token'] ? 'Authenticated' : 'Not Authenticated') + ')';
     output(res, authenticated);
   });
@@ -66,22 +70,14 @@ NodeApp.prototype.start = function start () {
   // root URL.  Various permutations, such as /k_logout will ultimately
   // be appended to the admin URL.
 
-  app.use(keycloak.middleware({
+  this.app.use(keycloak.middleware({
     logout: '/logout',
     admin: '/'
   }));
 
-  app.get('/login', keycloak.protect(), function (req, res) {
+  this.app.get('/login', keycloak.protect(), function (req, res) {
     output(res, JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4), 'Auth Success');
   });
-
-  var server = app.listen(0, function () {
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log('Example app listening at http://%s:%s', host, port);
-  });
-
-  return server;
 };
 
 function output (res, output, eventMessage) {

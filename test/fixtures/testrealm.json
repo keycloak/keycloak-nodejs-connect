@@ -34,31 +34,5 @@
                 "description": "Administrator privileges"
             }
         ]
-    },
-    "scopeMappings": [
-        {
-            "client": "js-console",
-            "roles": ["user"]
-        }
-    ],
-    "clients": [
-        {
-            "clientId": "js-console",
-            "enabled": true,
-            "publicClient": true,
-            "baseUrl": "{{host}}:{{port}}",
-            "redirectUris": [
-                "{{host}}:{{port}}/*"
-            ],
-            "webOrigins": []
-        }
-    ],
-    "clientScopeMappings": {
-        "account": [
-            {
-                "client": "js-console",
-                "roles": ["view-profile"]
-            }
-        ]
     }
 }

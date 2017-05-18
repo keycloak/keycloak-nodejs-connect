@@ -1,0 +1,12 @@
+{
+    "clientId": "{{name}}",
+    "rootUrl": "http://localhost:{{port}}",
+    "enabled": true,
+    "redirectUris": [
+        "http://localhost:{{port}}/*"
+    ],
+    "webOrigins": [
+        "http://localhost:{{port}}"
+    ],
+    "publicClient": true
+}

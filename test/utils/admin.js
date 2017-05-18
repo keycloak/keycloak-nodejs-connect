@@ -19,9 +19,28 @@
  */
 const keycloakAdminClient = require('keycloak-admin-client');
 const parse = require('./helper').parse;
+const parseClient = require('./helper').parseClient;
+const defaultRealm = 'test-realm';
 
 module.exports = {
-  AdminHelper: AdminHelper
+  AdminHelper: AdminHelper,
+  Type: Type
+};
+
+function Type () {}
+Type.bearerOnly = function (port, app) {
+  var name = app || 'bearer-app';
+  return parseClient('test/fixtures/templates/bearerOnly-template.json', port, name);
+};
+
+Type.publicClient = function (port, app) {
+  var name = app || 'public-app';
+  return parseClient('test/fixtures/templates/public-template.json', port, name);
+};
+
+Type.confidential = function (port, app) {
+  var name = app || 'confidential-app';
+  return parseClient('test/fixtures/templates/confidential-template.json', port, name);
 };
 
 /**
@@ -48,14 +67,25 @@ function AdminHelper (baseUrl, username, password) {
  * @param {object} name - Realm name
  * @returns {Promise} A promise that will resolve with the realm object.
  */
-AdminHelper.prototype.createRealm = function createRealm (port, name) {
+AdminHelper.prototype.createRealm = function createRealm () {
   return this.kca.then((client) => {
-    return client.realms.create(parse('test/fixtures/realm-template.json', name, port))
+    return client.realms.create(parse('test/fixtures/testrealm.json'))
       .then((realm) => {
         return realm;
       }).catch((err) => {
         console.log(err);
       });
+  }).catch((err) => {
+    console.error(err);
+  });
+};
+
+AdminHelper.prototype.createClient = function createClient (clientRep, name) {
+  clientRep.clientId = name || clientRep.clientId;
+  return this.kca.then((client) => {
+    return client.clients.create(defaultRealm, clientRep).then((newClient) => {
+      return client.clients.installation(defaultRealm, newClient.id);
+    });
   }).catch((err) => {
     console.error(err);
   });

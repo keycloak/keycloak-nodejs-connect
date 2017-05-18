@@ -1,0 +1,13 @@
+{
+    "clientId": "{{name}}",
+    "rootUrl": "http://localhost:{{port}}",
+    "enabled": true,
+    "redirectUris": [
+        "http://localhost:{{port}}/*"
+    ],
+    "webOrigins": [
+        "http://localhost:{{port}}/*"
+    ],
+    "publicClient": false,
+    "secret": "5b5120a0-5e41-4cdd-af8a-72c470db0b59"
+}
