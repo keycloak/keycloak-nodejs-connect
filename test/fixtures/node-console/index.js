@@ -78,17 +78,24 @@ NodeApp.prototype.build = function build (kcConfig) {
   this.app.get('/login', keycloak.protect(), function (req, res) {
     output(res, JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4), 'Auth Success');
   });
+
+  this.app.get('/restricted', keycloak.protect('realm:admin'), function (req, res) {
+    var user = req.kauth.grant.access_token.content.preferred_username;
+    output(res, user, 'Restricted access');
+  });
+
+  this.app.use('*', function (req, res) {
+    res.send('Not found!');
+  });
 };
 
-function output (res, output, eventMessage) {
-  res.render('index', {
+function output (res, output, eventMessage, page) {
+  page = page || 'index';
+  res.render(page, {
     result: output,
     event: eventMessage
   });
 }
-
-// Uncomment this if you want to run the app manually
-// start('../../fixtures/public-client-wrong-realm-key.json');
 
 module.exports = {
   NodeApp: NodeApp

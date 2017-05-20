@@ -22,10 +22,7 @@ const AdminHelper = require('./utils/admin').AdminHelper;
 const Type = require('./utils/admin').Type;
 const TestVector = require('./utils/helper').TestVector;
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
-// TODO remove
-const parse = require('./utils/helper').parse;
 const getAdminHelper = (baseUrl, username, password) => new AdminHelper(baseUrl, username, password);
-const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 
 let realmManager = getAdminHelper().createRealm();
 let app = new NodeApp();
@@ -43,7 +40,7 @@ test('Should be able to access public page', t => {
     app.build(installation);
 
     t.plan(1);
-    page.index(app.port);
+    page.get(app.port);
     page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
       t.end();
@@ -57,13 +54,13 @@ test('Should login with admin credentials', t => {
     app.build(installation);
 
     t.plan(3);
-    page.index(app.port);
+    page.get(app.port);
     page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
     })
 
     page.logInButton().click();
-    page.login('user', 'password');
+    page.login('test-admin', 'password');
 
     page.events().getText().then(function(text) {
       t.equal(text, 'Auth Success', 'User should be authenticated');
@@ -78,8 +75,24 @@ test('Should login with admin credentials', t => {
   });
 })
 
+test('User should be forbidden to access restricted page', t => {
+  client.then((installation) => {
+    app.build(installation);
+
+    t.plan(1);
+    page.get(app.port, '/restricted');
+    page.login('alice', 'password');
+    page.body().getText().then(function (text) {
+      t.equal(text, 'Access denied', 'Message should be access denied');
+      t.end();
+    })
+    page.get(app.port, '/logout');
+  });
+})
+
+
 test('Public client should be forbidden for invalid public key', t => {
-  let app = new NodeApp();
+  var app = new NodeApp();
   var client = getAdminHelper().createClient(Type.publicClient(app.port, 'app2'));
 
   client.then((installation) => {
@@ -87,12 +100,12 @@ test('Public client should be forbidden for invalid public key', t => {
     app.build(installation);
 
     t.plan(2);
-    page.index(app.port);
+    page.get(app.port);
     page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
     })
     page.logInButton().click();
-    page.login('user', 'password');
+    page.login('test-admin', 'password');
     page.body().getText().then(function (text) {
       t.equal(text, 'Access denied', 'Message should be access denied');
       t.end();
@@ -113,7 +126,7 @@ test('Confidential client should be forbidden for invalid public key', t => {
     app.build(installation);
 
     t.plan(2);
-    page.index(app.port);
+    page.get(app.port);
     page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
     })
@@ -138,7 +151,7 @@ test('Bearer client should be forbidden for invalid public key', t => {
     app.build(installation);
 
     t.plan(2);
-    page.index(app.port);
+    page.get(app.port);
     page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
     })
@@ -153,9 +166,6 @@ test('Bearer client should be forbidden for invalid public key', t => {
     });
   })
 })
-
-
-
 
 test('teardown', t => {
   app.close();

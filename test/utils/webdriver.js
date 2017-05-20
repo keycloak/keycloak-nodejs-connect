@@ -44,8 +44,9 @@ function waitForVisibleElement (locator, t) {
 
 function ConsolePage () {}
 
-ConsolePage.prototype.index = function (port) {
-  driver.get('http://localhost:' + port);
+ConsolePage.prototype.get = function (port, resource) {
+  resource = resource || '';
+  driver.get(`http://localhost:${port}${resource}`);
 };
 
 ConsolePage.prototype.quit = function () {

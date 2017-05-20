@@ -21,14 +21,11 @@
 <body>
 
 <div>
-    <!-- <button onclick="keycloakInit()">Init</button> -->
     <button onclick="location.href='/login';">Login</button>
     <button onclick="location.href='/logout';">Logout</button>
     <!-- <button onclick="keycloak.register()">Register</button>
     <button onclick="refreshToken(9999)">Refresh Token</button>
     <button onclick="refreshToken(30)">Refresh Token (if <30s validity)</button>
-    <button onclick="refreshToken(5)">Refresh Token (if <5s validity)</button>
-    <button onclick="showError()">Show Error Response</button>
     <button onclick="loadProfile()">Get Profile</button>
     <button onclick="loadUserInfo()">Get User Info</button>
     <button onclick="output(keycloak.tokenParsed)">Show Token</button>
@@ -38,37 +35,7 @@
     <button onclick="output(keycloak)">Show Details</button>
     <button onclick="output(keycloak.createLoginUrl())">Show Login URL</button>
     <button onclick="output(keycloak.createLogoutUrl())">Show Logout URL</button>
-    <button onclick="output(keycloak.createRegisterUrl())">Show Register URL</button>
-    <button onclick="createBearerRequest()">Create Bearer Request</button>
-    <button onclick="output(showTime())">Show current time</button>
-    <button onclick="cert()">Cert request</button>
-    <button onclick="addToTimeSkew()">timeSkew offset</button>
-    <button onclick="refreshTimeSkew()">refresh timeSkew</button>
-    <button onclick="sendBearerToKeycloak()">Bearer to keycloak</button>
-    <button onclick="createUser()">Create user</button>
-    <button onclick="reentrancyCallback()">Reentrancy callback</button>
-    <button onclick='initWithDifferentRealmName(getInput())'>Init with different realm name</button>
-    <button onclick='keycloakInit(null, {refreshToken: getInput2()})'>Init with refresh token</button>
-    <button onclick='keycloakInit(null, {token: getInput(), refreshToken: getInput2()})'>Init with both tokens</button>
-    <button onclick='keycloakInit(null, {token: getInput(), refreshToken: getInput2(), timeSkew:  parseInt(getInput3())})'>Init with TimeSkew</button>
-    <input id="inputField" value="input"/>
-    <input id="inputField2" value="input2"/>
-    <input id="inputField3" value="input3"/>
-
-
-    <select id="flowSelect">
-        <option value="standard">standard</option>
-        <option value="implicit">implicit</option>
-    </select>
-
-    <select id="responseModeSelect">
-        <option value="fragment">fragment</option>
-        <option value="query">query</option>
-    </select>
-    <select id="onLoad">
-        <option value="check-sso">check-sso</option>
-        <option value="login-required">login-required</option>
-    </select> -->
+    <button onclick="output(keycloak.createRegisterUrl())">Show Register URL</button> -->
 </div>
 
 <h2>Result</h2>
