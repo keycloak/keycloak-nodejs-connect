@@ -78,7 +78,7 @@ test('Should login with admin credentials', t => {
   });
 })
 
-test('Should be forbidden for invalid public key', t => {
+test('Public client should be forbidden for invalid public key', t => {
   let app = new NodeApp();
   var client = getAdminHelper().createClient(Type.publicClient(app.port, 'app2'));
 
@@ -103,6 +103,59 @@ test('Should be forbidden for invalid public key', t => {
     });
   })
 })
+
+test('Confidential client should be forbidden for invalid public key', t => {
+  let app = new NodeApp();
+  var client = getAdminHelper().createClient(Type.confidential(app.port, 'app3'));
+
+  client.then((installation) => {
+    installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
+    app.build(installation);
+
+    t.plan(2);
+    page.index(app.port);
+    page.output().getText().then(function(text) {
+      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+    })
+    page.logInButton().click();
+    page.body().getText().then(function (text) {
+      t.equal(text, 'Access denied', 'Message should be access denied');
+      t.end();
+    }).then(() => {
+      app.close();
+    }).catch((err) => {
+      t.fail('Test failed');
+    });
+  })
+})
+
+test('Bearer client should be forbidden for invalid public key', t => {
+  let app = new NodeApp();
+  var client = getAdminHelper().createClient(Type.bearerOnly(app.port, 'app4'));
+
+  client.then((installation) => {
+    installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
+    app.build(installation);
+
+    t.plan(2);
+    page.index(app.port);
+    page.output().getText().then(function(text) {
+      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+    })
+    page.logInButton().click();
+    page.body().getText().then(function (text) {
+      t.equal(text, 'Access denied', 'Message should be access denied');
+      t.end();
+    }).then(() => {
+      app.close();
+    }).catch((err) => {
+      t.fail('Test failed');
+    });
+  })
+})
+
+
+
 
 test('teardown', t => {
   app.close();

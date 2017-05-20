@@ -69,6 +69,12 @@ ConsolePage.prototype.events = function () {
   return driver.findElement(By.id('events'));
 };
 
+ConsolePage.prototype.print = function () {
+  driver.getPageSource().then((page) => {
+    console.log(page);
+  });
+};
+
 ConsolePage.prototype.login = function (user, pass) {
   waitForVisibleElement(By.id('username'), 100000);
   var username = driver.findElement(By.id('username'));
