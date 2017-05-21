@@ -28,16 +28,10 @@ const fs = require('fs');
  * @param {object} hostname - Host name which the client app will listen.
  */
 
-function parse (file, realmName, httpPort, hostname) {
-  var host = hostname || 'http://localhost';
-  var port = httpPort || '3000';
-  var realm = realmName || 'test-realm';
+function parse (file, realmName) {
   var content = fs.readFileSync(file, 'utf8')
-    .replace(/{{realm}}/g, realm)
-    .replace(/{{host}}/g, host)
-    .replace(/{{port}}/g, port);
-  var json = JSON.parse(content);
-  return json;
+    .replace(/{{realm}}/g, realmName);
+  return JSON.parse(content);
 }
 
 function parseClient (file, httpPort, name) {

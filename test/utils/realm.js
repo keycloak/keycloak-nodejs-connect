@@ -21,7 +21,7 @@ const keycloakAdminClient = require('keycloak-admin-client');
 const parse = require('./helper').parse;
 const parseClient = require('./helper').parseClient;
 const settings = require('./config');
-const defaultRealm = 'test-realm';
+const realmTemplate = 'test/fixtures/testrealm.json';
 
 function bearerOnly (port, app) {
   var name = app || 'bearer-app';
@@ -47,16 +47,19 @@ var kca = keycloakAdminClient(settings);
  * @param {object} name - Realm name
  * @returns {Promise} A promise that will resolve with the realm object.
  */
-function createRealm () {
+function createRealm (realmName) {
+  var name = realmName || 'test-realm';
   return kca.then((client) => {
-    return client.realms.create(parse('test/fixtures/testrealm.json'))
-      .then((realm) => {
-        return realm;
+    return client.realms.find(name)
+      .then((result) => {
+        return result[0];
       }).catch((err) => {
-        console.log(err);
+        // This is ugly and must be fixed
+        console.error(err);
+        return client.realms.create(parse(realmTemplate, name));
       });
   }).catch((err) => {
-    console.error(err);
+    console.error('Failure: ', err);
   });
 }
 
@@ -66,17 +69,23 @@ function createRealm () {
  * @param {object} name - client name
  * @returns {Promise} A promise that will resolve with the realm object.
  */
-function createClient (clientRep, name) {
-  clientRep.clientId = name || clientRep.clientId;
+function createClient (clientRep, realmName) {
+  var realm = realmName || 'test-realm';
   return kca.then((client) => {
-    return client.clients.create(defaultRealm, clientRep).then((newClient) => {
-      return client.clients.installation(defaultRealm, newClient.id);
-    });
-  }).catch((err) => {
+    return client.clients.find(realm, { clientId: clientRep.clientId })
+      .then((result) => {
+        if (result.length === 0) {
+          return client.clients.create(realm, clientRep);
+        } else {
+          return result[0];
+        }
+      }).then((rep) => {
+        return client.clients.installation(realm, rep.id);
+      });
+  }).catch(err => {
     console.error(err);
   });
 }
-
 /**
  * Remove the realm based on the name provided
  * @param {object} realm - Realm name
@@ -85,7 +94,7 @@ function destroy (realm) {
   kca.then((client) => {
     return client.realms.remove(realm);
   }).catch((err) => {
-    console.error(err);
+    console.error('Realm was not found to remove:', err);
   });
 }
 

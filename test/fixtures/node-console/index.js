@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var Keycloak = require('../../../index');
-var hogan = require('hogan-express');
-var express = require('express');
-var session = require('express-session');
+const Keycloak = require('../../../index');
+const hogan = require('hogan-express');
+const express = require('express');
+const session = require('express-session');
 
 function NodeApp () {
   this.app = express();

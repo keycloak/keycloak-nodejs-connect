@@ -6,7 +6,7 @@
  */
 'use strict';
 
-var settings = {
+const settings = {
   baseUrl: 'http://127.0.0.1:8080/auth',
   username: 'admin',
   password: 'admin',

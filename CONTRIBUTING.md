@@ -90,7 +90,7 @@ Bug fixes and features should come with tests. Add your tests in the
 To write the tests you will need keycloak server running, so run this script:
 
 ```shell
-$ ./build/start-server.sh
+$ ./scripts/build/start-server.sh
 ```
 This will download, configure and start keycloak server.
 
@@ -109,7 +109,7 @@ $ make
 Then to stop the server by running this script:
 
 ```shell
-$ ./build/stop-server.sh
+$ ./scripts/build/stop-server.sh
 ```
 
 Make sure the jshint and semistandard are happy and that all tests pass. Please, do not submit
@@ -117,8 +117,8 @@ patches that fail either check.
 
 ### Running integration tests
 
-1. `node test/app-fixture.js`
-2. `scripts/start-server.sh`
+1. `node test/*spec.js`
+2. `./scripts/start-server.sh`
 3. `make tests` or `npm test`
 
 ### Step 6: Push

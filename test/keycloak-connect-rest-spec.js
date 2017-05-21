@@ -13,21 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 'use strict';
+
+const server = require('./fixtures/service-nodejs/index');
+const admin = require('./utils/realm');
+const type = admin.client;
+const TestVector = require('./utils/helper').TestVector;
 
 const test = require('tape');
 const roi = require('roi');
-const server = require('./fixtures/app-fixture');
+const getToken = require('./utils/token');
+const NodeApp = require('./fixtures/node-console/index').NodeApp;
 
 test('Should test unprotected route.', t => {
-  const options = {
-    'endpoint': 'http://localhost:3001/'
+  const opt = {
+    'endpoint': 'http://localhost:3000/service/public'
   };
 
-  roi.get(options)
+  roi.get(opt)
     .then(x => {
-      t.equal(JSON.parse(x.body).name, 'unprotected');
+      t.equal(JSON.parse(x.body).message, 'public');
       t.end();
     })
     .catch(e => {
@@ -37,35 +42,89 @@ test('Should test unprotected route.', t => {
 });
 
 test('Should test protected route.', t => {
-  const options = {
-    'endpoint': 'http://localhost:3001/login'
+  const opt = {
+    'endpoint': 'http://localhost:3000/service/admin'
   };
 
-  roi.get(options)
-    .then(x => {
-      t.equal(x.statusCode !== 404, true);
-      t.end();
-    })
-    .catch(e => {
-      console.error(e);
-      t.fail();
-    });
+  roi.get(opt).then(x => {
+    t.fail('Should never reach this block');
+  }).catch(e => {
+    t.equal(e.toString(), 'Access denied');
+    t.end();
+  });
 });
 
-test('Should verify logout feature.', t => {
-  const options = {
-    'endpoint': 'http://localhost:3001/logout'
-  };
+test('Should test secured route with admin credentials.', t => {
+  getToken().then((token) => {
+    var opt = {
+      endpoint: 'http://localhost:3000/service/admin',
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    };
+    roi.get(opt)
+      .then(x => {
+        t.equal(JSON.parse(x.body).message, 'admin');
+        t.end();
+      })
+      .catch(e => t.error(e, 'Should return a response to the admin'));
 
-  roi.get(options)
-    .then(x => {
-      t.equal(JSON.parse(x.body).name, 'unprotected');
+  }).catch((err) => {
+    console.error(err);
+    t.error(err, 'Unable to retrieve access token');
+  })
+});
+
+test('Should test secured route with invalid access token.', t => {
+  getToken().then((token) => {
+    var opt = {
+      endpoint: 'http://localhost:3000/service/admin',
+      headers: {
+        Authorization: 'Bearer ' + token.replace(/(.+?\..+?\.).*/, '$1.Invalid')
+      }
+    };
+    roi.get(opt).then(x => {
+      t.fail('Should never reach this block');
+    }).catch(e => {
+      t.equal(e.toString(), 'Access denied');
       t.end();
-    })
-    .catch(e => {
-      console.error(e);
-      t.fail();
     });
+
+  }).catch((err) => {
+    console.error(err);
+    t.error(err, 'Unable to retrieve access token');
+  })
+});
+
+test('Status should be not found for bearer client with invalid public key.', t => {
+  var app = new NodeApp();
+  var client = admin.createClient(type.bearerOnly(app.port, 'wrongkey-app'), 'service-node-realm');
+
+  client.then((installation) => {
+    installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
+    app.build(installation);
+
+    getToken().then((token) => {
+      var opt = {
+        endpoint: 'http://localhost:' + app.port + '/service/admin',
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      };
+      roi.get(opt).then(x => {
+        t.equal(x.statusCode !== 404, true);
+        t.end();
+      }).then(() => {
+        app.close();
+      }).catch(e => {
+        console.error(e);
+        t.fail();
+      });
+    }).catch((err) => {
+      console.error(err);
+      t.error(err, 'Unable to retrieve access token');
+    })
+  });
 });
 
 test('teardown', function (t) {

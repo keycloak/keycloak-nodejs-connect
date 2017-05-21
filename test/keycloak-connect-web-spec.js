@@ -23,8 +23,8 @@ const TestVector = require('./utils/helper').TestVector;
 const page = require('./utils/webdriver').newPage;
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
 
-let realmManager = admin.createRealm();
-let app = new NodeApp();
+const realmManager = admin.createRealm();
+const app = new NodeApp();
 let client;
 
 test('setup', t => {
