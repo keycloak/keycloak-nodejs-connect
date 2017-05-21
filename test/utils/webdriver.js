@@ -13,16 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
+'use strict';
 /**
  * An utility with the specifics for selenium
  */
-var phantomjs = require('phantomjs-prebuilt');
-var webdriver = require('selenium-webdriver');
-var By = webdriver.By;
-var until = webdriver.until;
+const phantomjs = require('phantomjs-prebuilt');
+const webdriver = require('selenium-webdriver');
+const By = webdriver.By;
+const until = webdriver.until;
 
-var driver = new webdriver.Builder()
+const driver = new webdriver.Builder()
   .withCapabilities({'phantomjs.binary.path': phantomjs.path})
   .forBrowser('phantomjs')
   .build();
@@ -93,8 +93,10 @@ ConsolePage.prototype.body = () => {
   return driver.findElement(By.tagName('pre'));
 };
 
+var newPage = new ConsolePage();
+
 module.exports = {
   driver: driver,
   webdriver: webdriver,
-  ConsolePage: new ConsolePage()
+  newPage: newPage
 };

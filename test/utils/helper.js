@@ -13,17 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
+'use strict';
 /**
  * A helper for test cases and fixtures
  */
 const fs = require('fs');
-
-module.exports = {
-  parse: parse,
-  TestVector: TestVector,
-  parseClient: parseClient
-};
 
 /**
  * Utility to parse realm templates
@@ -63,3 +57,9 @@ function TestVector () {
 }
 
 TestVector.wrongRealmPublicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAikGBvYGniAJ59ZjpaSDw2o+j40Ila/dWfN8qA1dzXJesH9Z1sZrcevJB+rfxoZDaWMz2l9Q3OxG/qolTpsQl8NBdb5tymic9qDkAIsiyKThzjcfs5lOSxfnkHn6+Z0QbrYnXQs/cGvQ1Ai81M1M1O6BHDWu05n8c977h+BsfLmqGj7MZZj9gw9RM84RIKDGHTbFh9YyXBJVtqbOhRD7hcB0O9olDZb7mQ5A8gsMctcUhsVBy3xKCLMD41XU92rQ9FAlsV9mBglLqaVWr2mxQItN3lgjE02L8UyorI3T0uprIsnv7B2NwUC5ZhwZGfnBznUPVrT6makEJklpg5if3qQIDAQAB';
+
+module.exports = {
+  parse: parse,
+  TestVector: TestVector,
+  parseClient: parseClient
+};

@@ -13,52 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
+'use strict';
 /**
  * A wrapper to keycloak-admin-client with an initial setup
  */
 const keycloakAdminClient = require('keycloak-admin-client');
 const parse = require('./helper').parse;
 const parseClient = require('./helper').parseClient;
+const settings = require('./config');
 const defaultRealm = 'test-realm';
 
-module.exports = {
-  AdminHelper: AdminHelper,
-  Type: Type
-};
-
-function Type () {}
-Type.bearerOnly = function (port, app) {
+function bearerOnly (port, app) {
   var name = app || 'bearer-app';
   return parseClient('test/fixtures/templates/bearerOnly-template.json', port, name);
-};
+}
 
-Type.publicClient = function (port, app) {
+function publicClient (port, app) {
   var name = app || 'public-app';
   return parseClient('test/fixtures/templates/public-template.json', port, name);
-};
+}
 
-Type.confidential = function (port, app) {
+function confidential (port, app) {
   var name = app || 'confidential-app';
   return parseClient('test/fixtures/templates/confidential-template.json', port, name);
-};
-
-/**
- * Initialize the helper with defaults if nothing is provided
- * @param {object} baseUrl - Keycloak server URL
- * @param {object} username - Username to any user with credentials to create realms
- * @param {object} password - password
- */
-function AdminHelper (baseUrl, username, password) {
-  var settings = {
-    baseUrl: baseUrl || 'http://127.0.0.1:8080/auth',
-    username: username || 'admin',
-    password: password || 'admin',
-    grant_type: 'password',
-    client_id: 'admin-cli'
-  };
-  this.kca = keycloakAdminClient(settings);
 }
+
+var kca = keycloakAdminClient(settings);
 
 /**
  * Create realms based on port and name specified
@@ -67,8 +47,8 @@ function AdminHelper (baseUrl, username, password) {
  * @param {object} name - Realm name
  * @returns {Promise} A promise that will resolve with the realm object.
  */
-AdminHelper.prototype.createRealm = function createRealm () {
-  return this.kca.then((client) => {
+function createRealm () {
+  return kca.then((client) => {
     return client.realms.create(parse('test/fixtures/testrealm.json'))
       .then((realm) => {
         return realm;
@@ -78,27 +58,44 @@ AdminHelper.prototype.createRealm = function createRealm () {
   }).catch((err) => {
     console.error(err);
   });
-};
+}
 
-AdminHelper.prototype.createClient = function createClient (clientRep, name) {
+/**
+ * Create clients based the representation and name provided
+ * @param {object} clientRep - Representation of a client
+ * @param {object} name - client name
+ * @returns {Promise} A promise that will resolve with the realm object.
+ */
+function createClient (clientRep, name) {
   clientRep.clientId = name || clientRep.clientId;
-  return this.kca.then((client) => {
+  return kca.then((client) => {
     return client.clients.create(defaultRealm, clientRep).then((newClient) => {
       return client.clients.installation(defaultRealm, newClient.id);
     });
   }).catch((err) => {
     console.error(err);
   });
-};
+}
 
 /**
  * Remove the realm based on the name provided
  * @param {object} realm - Realm name
  */
-AdminHelper.prototype.destroy = function destroy (realm) {
-  this.kca.then((client) => {
+function destroy (realm) {
+  kca.then((client) => {
     return client.realms.remove(realm);
   }).catch((err) => {
     console.error(err);
   });
+}
+
+module.exports = {
+  client: {
+    bearerOnly: bearerOnly,
+    publicClient: publicClient,
+    confidential: confidential
+  },
+  createRealm: createRealm,
+  createClient: createClient,
+  destroy: destroy
 };

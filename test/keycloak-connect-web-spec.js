@@ -13,24 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 'use strict';
 
 const test = require('tape');
-const page = require('./utils/webdriver').ConsolePage;
-const AdminHelper = require('./utils/admin').AdminHelper;
-const Type = require('./utils/admin').Type;
+const admin = require('./utils/realm');
+const type = admin.client;
 const TestVector = require('./utils/helper').TestVector;
-const NodeApp = require('./fixtures/node-console/index').NodeApp;
-const getAdminHelper = (baseUrl, username, password) => new AdminHelper(baseUrl, username, password);
 
-let realmManager = getAdminHelper().createRealm();
+const page = require('./utils/webdriver').newPage;
+const NodeApp = require('./fixtures/node-console/index').NodeApp;
+
+let realmManager = admin.createRealm();
 let app = new NodeApp();
 let client;
 
 test('setup', t => {
   client = realmManager.then((realm) => {
-    return getAdminHelper().createClient(Type.publicClient(app.port));
+    return admin.createClient(type.publicClient(app.port));
   });
   t.end();
 })
@@ -93,7 +92,7 @@ test('User should be forbidden to access restricted page', t => {
 
 test('Public client should be forbidden for invalid public key', t => {
   var app = new NodeApp();
-  var client = getAdminHelper().createClient(Type.publicClient(app.port, 'app2'));
+  var client = admin.createClient(type.publicClient(app.port, 'app2'));
 
   client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -118,8 +117,8 @@ test('Public client should be forbidden for invalid public key', t => {
 })
 
 test('Confidential client should be forbidden for invalid public key', t => {
-  let app = new NodeApp();
-  var client = getAdminHelper().createClient(Type.confidential(app.port, 'app3'));
+  var app = new NodeApp();
+  var client = admin.createClient(type.confidential(app.port, 'app3'));
 
   client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -143,8 +142,8 @@ test('Confidential client should be forbidden for invalid public key', t => {
 })
 
 test('Bearer client should be forbidden for invalid public key', t => {
-  let app = new NodeApp();
-  var client = getAdminHelper().createClient(Type.bearerOnly(app.port, 'app4'));
+  var app = new NodeApp();
+  var client = admin.createClient(type.bearerOnly(app.port, 'app4'));
 
   client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -169,7 +168,7 @@ test('Bearer client should be forbidden for invalid public key', t => {
 
 test('teardown', t => {
   app.close();
-  getAdminHelper().destroy('test-realm');
+  admin.destroy('test-realm');
   page.quit();
   t.end();
 })
