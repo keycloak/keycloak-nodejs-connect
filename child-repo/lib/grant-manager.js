@@ -181,7 +181,7 @@ GrantManager.prototype.validateAccessToken = function validateAccessToken (token
   const options = postOptions(this, '/protocol/openid-connect/token/introspect');
   const handler = validationHandler(this, token);
 
-  return nodeify(fetch(this, handler, options, params));
+  return nodeify(fetch(this, handler, options, params), callback);
 };
 
 GrantManager.prototype.userInfo = function userInfo (token, callback) {
