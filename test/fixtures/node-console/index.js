@@ -13,6 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+'use strict';
+
 const Keycloak = require('../../../index');
 const hogan = require('hogan-express');
 const express = require('express');
@@ -82,6 +84,18 @@ NodeApp.prototype.build = function build (kcConfig) {
   this.app.get('/restricted', keycloak.protect('realm:admin'), function (req, res) {
     var user = req.kauth.grant.access_token.content.preferred_username;
     output(res, user, 'Restricted access');
+  });
+
+  this.app.get('/service/public', function (req, res) {
+    res.json({message: 'public'});
+  });
+
+  this.app.get('/service/secured', keycloak.protect('realm:user'), function (req, res) {
+    res.json({message: 'secured'});
+  });
+
+  this.app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
+    res.json({message: 'admin'});
   });
 
   this.app.use('*', function (req, res) {
