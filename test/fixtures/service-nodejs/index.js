@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+'use strict';
 
 const express = require('express');
 const Keycloak = require('../../../index');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
 const app = express();
-app.use(bodyParser.json());
 
+app.use(bodyParser.json());
 // Enable CORS support
 app.use(cors());
 
 // Create a session-store to be used by both the express-session
 // middleware and the keycloak middleware.
-
 var memoryStore = new session.MemoryStore();
 
 app.use(session({

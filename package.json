@@ -49,6 +49,7 @@
     "nsp": "^2.6.2",
     "semistandard": "^9.2.1",
     "tape": "^4.6.3",
+    "blue-tape": "^1.0.0",
     "keycloak-admin-client": "bucharest-gold/keycloak-admin-client",
     "keycloak-request-token": "^0.1.0",
     "hogan-express": "^0.5.2",

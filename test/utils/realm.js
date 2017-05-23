@@ -19,10 +19,16 @@
  */
 const keycloakAdminClient = require('keycloak-admin-client');
 const parse = require('./helper').parse;
-const parseClient = require('./helper').parseClient;
 const settings = require('./config');
 const realmTemplate = 'test/fixtures/testrealm.json';
 
+var kca = keycloakAdminClient(settings);
+
+/* FIXME
+ * Used exclusively by the service-nodejs app
+ * This will be removed after we merge the apps
+ */
+const parseClient = require('./helper').parseClient;
 function bearerOnly (port, app) {
   var name = app || 'bearer-app';
   return parseClient('test/fixtures/templates/bearerOnly-template.json', port, name);
@@ -37,8 +43,6 @@ function confidential (port, app) {
   var name = app || 'confidential-app';
   return parseClient('test/fixtures/templates/confidential-template.json', port, name);
 }
-
-var kca = keycloakAdminClient(settings);
 
 /**
  * Create realms based on port and name specified
@@ -99,6 +103,7 @@ function destroy (realm) {
 }
 
 module.exports = {
+  // FIXME To be removed after merge service-nodejs and node-console
   client: {
     bearerOnly: bearerOnly,
     publicClient: publicClient,

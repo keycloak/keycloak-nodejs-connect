@@ -15,9 +15,8 @@
  */
 'use strict';
 
-const test = require('tape');
+const test = require('blue-tape');
 const admin = require('./utils/realm');
-const type = admin.client;
 const TestVector = require('./utils/helper').TestVector;
 
 const page = require('./utils/webdriver').newPage;
@@ -28,10 +27,9 @@ const app = new NodeApp();
 let client;
 
 test('setup', t => {
-  client = realmManager.then((realm) => {
-    return admin.createClient(type.publicClient(app.port));
+  return client = realmManager.then((realm) => {
+    return admin.createClient(app.publicClient());
   });
-  t.end();
 })
 
 test('Should be able to access public page', t => {
@@ -92,7 +90,7 @@ test('User should be forbidden to access restricted page', t => {
 
 test('Public client should be forbidden for invalid public key', t => {
   var app = new NodeApp();
-  var client = admin.createClient(type.publicClient(app.port, 'app2'));
+  var client = admin.createClient(app.publicClient('app2'));
 
   client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -118,7 +116,7 @@ test('Public client should be forbidden for invalid public key', t => {
 
 test('Confidential client should be forbidden for invalid public key', t => {
   var app = new NodeApp();
-  var client = admin.createClient(type.confidential(app.port, 'app3'));
+  var client = admin.createClient(app.confidential('app3'));
 
   client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -142,9 +140,10 @@ test('Confidential client should be forbidden for invalid public key', t => {
 })
 
 test('teardown', t => {
-  app.close();
-  admin.destroy('test-realm');
-  page.quit();
-  t.end();
+  return realmManager.then((realm) => {
+    app.close();
+    admin.destroy('test-realm');
+    page.quit();
+  });
 })
 
