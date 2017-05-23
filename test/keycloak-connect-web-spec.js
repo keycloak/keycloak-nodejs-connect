@@ -141,31 +141,6 @@ test('Confidential client should be forbidden for invalid public key', t => {
   })
 })
 
-test('Bearer client should be forbidden for invalid public key', t => {
-  var app = new NodeApp();
-  var client = admin.createClient(type.bearerOnly(app.port, 'app4'));
-
-  client.then((installation) => {
-    installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
-    app.build(installation);
-
-    t.plan(2);
-    page.get(app.port);
-    page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-    })
-    page.logInButton().click();
-    page.body().getText().then(function (text) {
-      t.equal(text, 'Access denied', 'Message should be access denied');
-      t.end();
-    }).then(() => {
-      app.close();
-    }).catch((err) => {
-      t.fail('Test failed');
-    });
-  })
-})
-
 test('teardown', t => {
   app.close();
   admin.destroy('test-realm');
