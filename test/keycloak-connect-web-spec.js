@@ -33,115 +33,108 @@ test('setup', t => {
 })
 
 test('Should be able to access public page', t => {
-  client.then((installation) => {
+  t.plan(1);
+
+  return client.then((installation) => {
     app.build(installation);
 
-    t.plan(1);
     page.get(app.port);
-    page.output().getText().then(function(text) {
+    return page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-      t.end();
-    }).catch((err) => {
-      t.fail('Test failed');
-    });
+    })
   });
 });
+
 test('Should login with admin credentials', t => {
-  client.then((installation) => {
+  t.plan(3);
+
+  return client.then((installation) => {
     app.build(installation);
-
-    t.plan(3);
     page.get(app.port);
-    page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-    })
 
-    page.logInButton().click();
-    page.login('test-admin', 'password');
-
-    page.events().getText().then(function(text) {
-      t.equal(text, 'Auth Success', 'User should be authenticated');
-    })
-    page.logOutButton().click();
-    page.output().getText().then(function(text) {
+    return page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-      t.end();
-    }).catch((err) => {
-      t.fail('Test failed');
-    });
+      page.logInButton().click();
+      page.login('test-admin', 'password');
+
+      return page.events().getText().then(function(text) {
+        t.equal(text, 'Auth Success', 'User should be authenticated');
+        page.logOutButton().click();
+        return page.output().getText().then(function(text) {
+          t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+        })
+      })
+    })
   });
 })
 
 test('User should be forbidden to access restricted page', t => {
-  client.then((installation) => {
-    app.build(installation);
+  t.plan(1);
 
-    t.plan(1);
+  return client.then((installation) => {
+    app.build(installation);
     page.get(app.port, '/restricted');
     page.login('alice', 'password');
-    page.body().getText().then(function (text) {
+
+    return page.body().getText().then(function (text) {
       t.equal(text, 'Access denied', 'Message should be access denied');
-      t.end();
+    }).then(() => {
+      page.get(app.port, '/logout');
     })
-    page.get(app.port, '/logout');
   });
 })
 
 
 test('Public client should be forbidden for invalid public key', t => {
+  t.plan(2);
   var app = new NodeApp();
   var client = admin.createClient(app.publicClient('app2'));
 
-  client.then((installation) => {
+  return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
     app.build(installation);
-
-    t.plan(2);
     page.get(app.port);
-    page.output().getText().then(function(text) {
+
+    return page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+      page.logInButton().click();
+      page.login('test-admin', 'password');
+
+      return page.body().getText().then(function (text) {
+        t.equal(text, 'Access denied', 'Message should be access denied');
+      }).then(() => {
+        app.destroy();
+      })
     })
-    page.logInButton().click();
-    page.login('test-admin', 'password');
-    page.body().getText().then(function (text) {
-      t.equal(text, 'Access denied', 'Message should be access denied');
-      t.end();
-    }).then(() => {
-      app.close();
-    }).catch((err) => {
-      t.fail('Test failed');
-    });
   })
 })
 
 test('Confidential client should be forbidden for invalid public key', t => {
+  t.plan(2);
   var app = new NodeApp();
   var client = admin.createClient(app.confidential('app3'));
 
-  client.then((installation) => {
+  return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
     app.build(installation);
-
-    t.plan(2);
     page.get(app.port);
-    page.output().getText().then(function(text) {
+
+    return page.output().getText().then(function(text) {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+      page.logInButton().click();
+
+      return page.body().getText().then(function (text) {
+        t.equal(text, 'Access denied', 'Message should be access denied');
+      }).then(() => {
+        app.destroy();
+      })
     })
-    page.logInButton().click();
-    page.body().getText().then(function (text) {
-      t.equal(text, 'Access denied', 'Message should be access denied');
-      t.end();
-    }).then(() => {
-      app.close();
-    }).catch((err) => {
-      t.fail('Test failed');
-    });
   })
 })
 
 test('teardown', t => {
   return realmManager.then((realm) => {
-    app.close();
+    app.destroy();
     admin.destroy('test-realm');
     page.quit();
   });

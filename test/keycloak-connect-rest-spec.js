@@ -15,7 +15,6 @@
  */
 'use strict';
 
-const server = require('./fixtures/service-nodejs/index');
 const admin = require('./utils/realm');
 const TestVector = require('./utils/helper').TestVector;
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
@@ -24,196 +23,179 @@ const test = require('blue-tape');
 const roi = require('roi');
 const getToken = require('./utils/token');
 
-const realmManager = admin.createRealm('service-node-realm');
-
-// FIXME To be removed after merge service-nodejs and node-console
-const type = admin.client;
-const app = type.bearerOnly('3000');
+const realmName = 'service-node-realm';
+const realmManager = admin.createRealm(realmName);
+const app = new NodeApp();
+let client;
 
 test('setup', t => {
-  return realmManager.then((realm) => {
-    return admin.createClient(app, 'service-node-realm');
-  })
+  return client = realmManager.then((realm) => {
+    return admin.createClient(app.bearerOnly(), realmName);
+  });
 })
 
 test('Should test unprotected route.', t => {
   t.plan(1);
-  const opt = {
-    'endpoint': app.adminUrl + '/service/public'
-  };
-  roi.get(opt)
-    .then(x => {
-      t.equal(JSON.parse(x.body).message, 'public');
-      t.end();
-    })
-    .catch(e => {
-      console.error(e);
-      t.fail();
-    });
+
+  return client.then((installation) => {
+    app.build(installation);
+    const opt = {
+      'endpoint': app.address + '/service/public'
+    };
+    return roi.get(opt)
+      .then(x => {
+        t.equal(JSON.parse(x.body).message, 'public');
+      })
+  })
 });
 
 test('Should test protected route.', t => {
   t.plan(1);
-  const opt = {
-    'endpoint': app.adminUrl + '/service/admin'
-  };
 
-  roi.get(opt).then(x => {
-    t.fail('Should never reach this block');
-  }).catch(e => {
-    t.equal(e.toString(), 'Access denied');
-    t.end();
-  });
+  return client.then((installation) => {
+    app.build(installation);
+    const opt = {
+      'endpoint': app.address + '/service/admin'
+    };
+
+    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for no credentials');
+  })
 });
 
 test('Should test protected route with admin credentials.', t => {
   t.plan(1);
-  getToken().then((token) => {
-    var opt = {
-      endpoint: app.adminUrl + '/service/admin',
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
-    };
-    roi.get(opt)
-      .then(x => {
-        t.equal(JSON.parse(x.body).message, 'admin');
-        t.end();
-      })
-      .catch(e => t.error(e, 'Should return a response to the admin'));
 
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
+  return client.then((installation) => {
+    app.build(installation);
+
+    return getToken().then((token) => {
+      var opt = {
+        endpoint: app.address + '/service/admin',
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      };
+      return roi.get(opt)
+        .then(x => {
+          t.equal(JSON.parse(x.body).message, 'admin');
+        })
+    })
   })
 });
 
 test('Should test protected route with invalid access token.', t => {
   t.plan(1);
-  getToken().then((token) => {
+  return getToken().then((token) => {
     var opt = {
-      endpoint: 'http://localhost:3000/service/admin',
+      endpoint: app.address + '/service/admin',
       headers: {
         Authorization: 'Bearer ' + token.replace(/(.+?\..+?\.).*/, '$1.Invalid')
       }
     };
-    roi.get(opt).then(x => {
-      t.fail('Should never reach this block');
-    }).catch(e => {
-      t.equal(e.toString(), 'Access denied');
-      t.end();
-    });
-
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
+    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
   })
 });
 
 test('Access should be denied for bearer client with invalid public key.', t => {
   t.plan(1);
-  var someApp = new NodeApp();
-  var client = admin.createClient(type.bearerOnly(someApp.port, 'wrongkey-app'), 'service-node-realm');
 
-  client.then((installation) => {
+  var someApp = new NodeApp();
+  var client = admin.createClient(app.bearerOnly('wrongkey-app'), realmName);
+
+  return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
     someApp.build(installation);
 
-    getToken().then((token) => {
+    return getToken().then((token) => {
       var opt = {
-        endpoint: 'http://localhost:' + someApp.port + '/service/admin',
+        endpoint: someApp.address + '/service/admin',
         headers: {
           Authorization: 'Bearer ' + token
         }
       };
-      roi.get(opt).then(x => {
-        t.fail('Should never reach this block');
-      }).catch(e => {
-        t.equal(e.toString(), 'Access denied');
-        someApp.close();
-        t.end();
-      });
-    }).catch((err) => {
-      console.error(err);
-      t.error(err, 'Unable to retrieve access token');
+
+      return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid public key');
     })
+  }).then(() => {
+    someApp.close();
   });
 });
 
 test('Should test protected route after push revocation.', t => {
   t.plan(2);
 
-  getToken().then((token) => {
-    var opt = {
-      endpoint: app.adminUrl + '/service/admin',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        Accept: 'application/json'
-      }
-    };
-    roi.get(opt)
-      .then(x => {
-        t.equal(JSON.parse(x.body).message, 'admin');
-      })
-      .catch(e => t.error(e, 'Should return a response to the admin'));
+  var app = new NodeApp();
+  var client = admin.createClient(app.bearerOnly('revokeapp'), realmName);
 
-    opt.endpoint = 'http://localhost:8080/auth/admin/realms/service-node-realm/push-revocation';
-    roi.post(opt);
-    opt.endpoint = app.adminUrl + '/service/admin';
+  return client.then((installation) => {
+    app.build(installation);
 
-    roi.get(opt).then(x => {
-      t.equal(x.body, 'Not found!');
-      t.end();
-    }).catch(e => {
-      console.error(e);
-      t.fail();
-    });
+    return getToken().then((token) => {
+      var opt = {
+        endpoint: app.address + '/service/admin',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          Accept: 'application/json'
+        }
+      };
+      return roi.get(opt)
+        .then(x => {
+          t.equal(JSON.parse(x.body).message, 'admin');
 
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
+          opt.endpoint = 'http://127.0.0.1:8080/auth/admin/realms/service-node-realm/push-revocation';
+          roi.post(opt);
+          opt.endpoint = app.address + '/service/admin';
+
+          return roi.get(opt).then(x => {
+            t.equal(x.body, 'Not found!');
+          })
+        })
+    })
+  }).then(() => {
+    app.destroy();
   })
 });
 
 test('Should invoke admin logout', t => {
   t.plan(2);
 
-  getToken().then((token) => {
-    var opt = {
-      endpoint: app.adminUrl + '/service/admin',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        Accept: 'application/json'
-      }
-    };
-    roi.get(opt)
-      .then(x => {
-        t.equal(JSON.parse(x.body).message, 'admin');
-      })
-      .catch(e => t.error(e, 'Should return a response to the admin'));
+  var app = new NodeApp();
+  var client = admin.createClient(app.bearerOnly('anotherapp'), realmName);
 
-    opt.endpoint = 'http://localhost:8080/auth/admin/realms/service-node-realm/logout-all';
-    roi.post(opt);
-    opt.endpoint = app.adminUrl + '/service/admin';
+  return client.then((installation) => {
+    app.build(installation);
 
-    roi.get(opt).then(x => {
-      t.equal(x.body, 'Not found!');
-      t.end();
-    }).catch(e => {
-      console.error(e);
-      t.fail();
-    });
+    return getToken().then((token) => {
+      var opt = {
+        endpoint: app.address + '/service/admin',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          Accept: 'application/json'
+        }
+      };
+      return roi.get(opt)
+        .then(x => {
+          t.equal(JSON.parse(x.body).message, 'admin');
 
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
+          opt.endpoint = 'http://127.0.0.1:8080/auth/admin/realms/service-node-realm/logout-all';
+          return roi.post(opt).then(x => {
+            opt.endpoint = app.address + '/service/admin';
+
+            return roi.get(opt).then(x => {
+              t.equal(x.body, 'Not found!');
+            })
+          });
+        })
+    })
+  }).then(() => {
+    app.destroy();
   })
 });
 
 test('teardown', t => {
   return realmManager.then((realm) => {
-    server.close();
-    admin.destroy('service-node-realm');
+    app.destroy();
+    admin.destroy(realmName);
   });
 })
 
