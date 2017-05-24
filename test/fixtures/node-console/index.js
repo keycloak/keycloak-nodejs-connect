@@ -19,10 +19,10 @@ const Keycloak = require('../../../index');
 const hogan = require('hogan-express');
 const express = require('express');
 const session = require('express-session');
+const app = express();
 
 function NodeApp () {
-  this.app = express();
-  var server = this.app.listen(0);
+  var server = app.listen(0);
   this.close = function () {
     server.close();
   };
@@ -32,16 +32,16 @@ function NodeApp () {
 }
 
 NodeApp.prototype.build = function build (kcConfig) {
-  this.app.set('view engine', 'html');
-  this.app.set('views', require('path').join(__dirname, '/views'));
-  this.app.engine('html', hogan);
+  app.set('view engine', 'html');
+  app.set('views', require('path').join(__dirname, '/views'));
+  app.engine('html', hogan);
 
   // Create a session-store to be used by both the express-session
   // middleware and the keycloak middleware.
 
   var memoryStore = new session.MemoryStore();
 
-  this.app.use(session({
+  app.use(session({
     secret: 'mySecret',
     resave: false,
     saveUninitialized: true,
@@ -58,7 +58,7 @@ NodeApp.prototype.build = function build (kcConfig) {
   }, kcConfig);
 
   // A normal un-protected public URL.
-  this.app.get('/', function (req, res) {
+  app.get('/', function (req, res) {
     var authenticated = 'Init Success (' + (req.session['keycloak-token'] ? 'Authenticated' : 'Not Authenticated') + ')';
     output(res, authenticated);
   });
@@ -72,33 +72,33 @@ NodeApp.prototype.build = function build (kcConfig) {
   // root URL.  Various permutations, such as /k_logout will ultimately
   // be appended to the admin URL.
 
-  this.app.use(keycloak.middleware({
+  app.use(keycloak.middleware({
     logout: '/logout',
     admin: '/'
   }));
 
-  this.app.get('/login', keycloak.protect(), function (req, res) {
+  app.get('/login', keycloak.protect(), function (req, res) {
     output(res, JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4), 'Auth Success');
   });
 
-  this.app.get('/restricted', keycloak.protect('realm:admin'), function (req, res) {
+  app.get('/restricted', keycloak.protect('realm:admin'), function (req, res) {
     var user = req.kauth.grant.access_token.content.preferred_username;
     output(res, user, 'Restricted access');
   });
 
-  this.app.get('/service/public', function (req, res) {
+  app.get('/service/public', function (req, res) {
     res.json({message: 'public'});
   });
 
-  this.app.get('/service/secured', keycloak.protect('realm:user'), function (req, res) {
+  app.get('/service/secured', keycloak.protect('realm:user'), function (req, res) {
     res.json({message: 'secured'});
   });
 
-  this.app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
+  app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
     res.json({message: 'admin'});
   });
 
-  this.app.use('*', function (req, res) {
+  app.use('*', function (req, res) {
     res.send('Not found!');
   });
 };
