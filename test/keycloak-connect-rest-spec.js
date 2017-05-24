@@ -41,15 +41,10 @@ test('Should test unprotected route.', t => {
   const opt = {
     'endpoint': app.adminUrl + '/service/public'
   };
-  roi.get(opt)
+  return roi.get(opt)
     .then(x => {
       t.equal(JSON.parse(x.body).message, 'public');
-      t.end();
     })
-    .catch(e => {
-      console.error(e);
-      t.fail();
-    });
 });
 
 test('Should test protected route.', t => {
@@ -57,56 +52,35 @@ test('Should test protected route.', t => {
   const opt = {
     'endpoint': app.adminUrl + '/service/admin'
   };
-
-  roi.get(opt).then(x => {
-    t.fail('Should never reach this block');
-  }).catch(e => {
-    t.equal(e.toString(), 'Access denied');
-    t.end();
-  });
+  return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for no credentials');
 });
 
 test('Should test protected route with admin credentials.', t => {
   t.plan(1);
-  getToken().then((token) => {
+  return getToken().then((token) => {
     var opt = {
       endpoint: app.adminUrl + '/service/admin',
       headers: {
         Authorization: 'Bearer ' + token
       }
     };
-    roi.get(opt)
+    return roi.get(opt)
       .then(x => {
         t.equal(JSON.parse(x.body).message, 'admin');
-        t.end();
       })
-      .catch(e => t.error(e, 'Should return a response to the admin'));
-
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
   })
 });
 
 test('Should test protected route with invalid access token.', t => {
   t.plan(1);
-  getToken().then((token) => {
+  return getToken().then((token) => {
     var opt = {
       endpoint: 'http://localhost:3000/service/admin',
       headers: {
         Authorization: 'Bearer ' + token.replace(/(.+?\..+?\.).*/, '$1.Invalid')
       }
     };
-    roi.get(opt).then(x => {
-      t.fail('Should never reach this block');
-    }).catch(e => {
-      t.equal(e.toString(), 'Access denied');
-      t.end();
-    });
-
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
+    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
   })
 });
 
@@ -115,35 +89,30 @@ test('Access should be denied for bearer client with invalid public key.', t => 
   var someApp = new NodeApp();
   var client = admin.createClient(type.bearerOnly(someApp.port, 'wrongkey-app'), 'service-node-realm');
 
-  client.then((installation) => {
+  return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
     someApp.build(installation);
 
-    getToken().then((token) => {
+    return getToken().then((token) => {
       var opt = {
         endpoint: 'http://localhost:' + someApp.port + '/service/admin',
         headers: {
           Authorization: 'Bearer ' + token
         }
       };
-      roi.get(opt).then(x => {
-        t.fail('Should never reach this block');
-      }).catch(e => {
-        t.equal(e.toString(), 'Access denied');
-        someApp.close();
-        t.end();
-      });
-    }).catch((err) => {
-      console.error(err);
-      t.error(err, 'Unable to retrieve access token');
+
+      return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid public key')
+        .then(() => {
+          someApp.close();
+        });
     })
   });
 });
 
 test('Should test protected route after push revocation.', t => {
-  t.plan(2);
+  t.plan(1);
 
-  getToken().then((token) => {
+  return getToken().then((token) => {
     var opt = {
       endpoint: app.adminUrl + '/service/admin',
       headers: {
@@ -151,34 +120,25 @@ test('Should test protected route after push revocation.', t => {
         Accept: 'application/json'
       }
     };
-    roi.get(opt)
+    return roi.get(opt)
       .then(x => {
         t.equal(JSON.parse(x.body).message, 'admin');
       })
-      .catch(e => t.error(e, 'Should return a response to the admin'));
 
     opt.endpoint = 'http://localhost:8080/auth/admin/realms/service-node-realm/push-revocation';
     roi.post(opt);
     opt.endpoint = app.adminUrl + '/service/admin';
 
-    roi.get(opt).then(x => {
+    return roi.get(opt).then(x => {
       t.equal(x.body, 'Not found!');
-      t.end();
-    }).catch(e => {
-      console.error(e);
-      t.fail();
-    });
-
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
+    })
   })
 });
 
 test('Should invoke admin logout', t => {
-  t.plan(2);
+  t.plan(1);
 
-  getToken().then((token) => {
+  return getToken().then((token) => {
     var opt = {
       endpoint: app.adminUrl + '/service/admin',
       headers: {
@@ -186,27 +146,18 @@ test('Should invoke admin logout', t => {
         Accept: 'application/json'
       }
     };
-    roi.get(opt)
+    return roi.get(opt)
       .then(x => {
         t.equal(JSON.parse(x.body).message, 'admin');
       })
-      .catch(e => t.error(e, 'Should return a response to the admin'));
 
     opt.endpoint = 'http://localhost:8080/auth/admin/realms/service-node-realm/logout-all';
     roi.post(opt);
     opt.endpoint = app.adminUrl + '/service/admin';
 
-    roi.get(opt).then(x => {
+    return roi.get(opt).then(x => {
       t.equal(x.body, 'Not found!');
-      t.end();
-    }).catch(e => {
-      console.error(e);
-      t.fail();
-    });
-
-  }).catch((err) => {
-    console.error(err);
-    t.error(err, 'Unable to retrieve access token');
+    })
   })
 });
 
