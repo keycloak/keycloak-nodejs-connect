@@ -24,26 +24,6 @@ const realmTemplate = 'test/fixtures/testrealm.json';
 
 var kca = keycloakAdminClient(settings);
 
-/* FIXME
- * Used exclusively by the service-nodejs app
- * This will be removed after we merge the apps
- */
-const parseClient = require('./helper').parseClient;
-function bearerOnly (port, app) {
-  var name = app || 'bearer-app';
-  return parseClient('test/fixtures/templates/bearerOnly-template.json', port, name);
-}
-
-function publicClient (port, app) {
-  var name = app || 'public-app';
-  return parseClient('test/fixtures/templates/public-template.json', port, name);
-}
-
-function confidential (port, app) {
-  var name = app || 'confidential-app';
-  return parseClient('test/fixtures/templates/confidential-template.json', port, name);
-}
-
 /**
  * Create realms based on port and name specified
  * @param {object} port - The HTTP port which the client app will listen. This is necessary
@@ -54,14 +34,7 @@ function confidential (port, app) {
 function createRealm (realmName) {
   var name = realmName || 'test-realm';
   return kca.then((client) => {
-    return client.realms.find(name)
-      .then((result) => {
-        return result[0];
-      }).catch((err) => {
-        // This is ugly and must be fixed
-        console.error(err);
-        return client.realms.create(parse(realmTemplate, name));
-      });
+    return client.realms.create(parse(realmTemplate, name));
   }).catch((err) => {
     console.error('Failure: ', err);
   });
@@ -76,16 +49,9 @@ function createRealm (realmName) {
 function createClient (clientRep, realmName) {
   var realm = realmName || 'test-realm';
   return kca.then((client) => {
-    return client.clients.find(realm, { clientId: clientRep.clientId })
-      .then((result) => {
-        if (result.length === 0) {
-          return client.clients.create(realm, clientRep);
-        } else {
-          return result[0];
-        }
-      }).then((rep) => {
-        return client.clients.installation(realm, rep.id);
-      });
+    return client.clients.create(realm, clientRep).then((rep) => {
+      return client.clients.installation(realm, rep.id);
+    });
   }).catch(err => {
     console.error(err);
   });
@@ -103,12 +69,6 @@ function destroy (realm) {
 }
 
 module.exports = {
-  // FIXME To be removed after merge service-nodejs and node-console
-  client: {
-    bearerOnly: bearerOnly,
-    publicClient: publicClient,
-    confidential: confidential
-  },
   createRealm: createRealm,
   createClient: createClient,
   destroy: destroy

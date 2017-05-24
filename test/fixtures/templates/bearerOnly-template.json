@@ -1,6 +1,6 @@
 {
     "clientId": "{{name}}",
-    "adminUrl": "http://localhost:{{port}}",
+    "adminUrl": "http://127.0.0.1:{{port}}",
     "enabled": true,
     "bearerOnly": true
 }

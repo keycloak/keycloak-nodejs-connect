@@ -19,17 +19,23 @@ const Keycloak = require('../../../index');
 const hogan = require('hogan-express');
 const express = require('express');
 const session = require('express-session');
+const enableDestroy = require('server-destroy');
 const parseClient = require('../../utils/helper').parseClient;
 
 function NodeApp () {
   var app = express();
   var server = app.listen(0);
+  enableDestroy(server);
   this.close = function () {
     server.close();
   };
+  this.destroy = function () {
+    server.destroy();
+  };
   this.port = server.address().port;
+  this.address = 'http://127.0.0.1:' + this.port;
 
-  console.log('Example app listening at http://localhost:%s', this.port);
+  console.log('Testing app listening at http://localhost:%s', this.port);
 
   this.publicClient = function (app) {
     var name = app || 'public-app';
