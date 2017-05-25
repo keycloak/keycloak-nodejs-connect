@@ -1,6 +1,6 @@
 {
   "name": "keycloak-connect",
-  "version": "2.5.6",
+  "version": "2.5.7",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
   "main": "index.js",
@@ -33,7 +33,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "2.5.6"
+    "keycloak-auth-utils": "2.5.7"
   },
   "bundledDependencies": [
     "keycloak-auth-utils"
