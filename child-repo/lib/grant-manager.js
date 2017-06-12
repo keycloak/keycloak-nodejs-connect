@@ -56,12 +56,14 @@ function GrantManager (config) {
  * @param {String} password The cleartext password.
  * @param {Function} callback Optional callback, if not using promises.
  */
-GrantManager.prototype.obtainDirectly = function obtainDirectly (username, password, callback) {
+GrantManager.prototype.obtainDirectly = function obtainDirectly (username, password,
+  callback, scopeParam) {
   const params = {
     client_id: this.clientId,
     username: username,
     password: password,
-    grant_type: 'password'
+    grant_type: 'password',
+    scope: scopeParam || 'openid'
   };
   const handler = createHandler(this);
   const options = postOptions(this);
@@ -109,9 +111,10 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
  *
  * @param {Function} callback Optional callback, if not using promises.
  */
-GrantManager.prototype.obtainFromClientCredentials = function obtainFromlientCredentials (callback) {
+GrantManager.prototype.obtainFromClientCredentials = function obtainFromlientCredentials (callback, scopeParam) {
   const params = {
     grant_type: 'client_credentials',
+    scope: scopeParam || 'openid',
     client_id: this.clientId
   };
   const handler = createHandler(this);
