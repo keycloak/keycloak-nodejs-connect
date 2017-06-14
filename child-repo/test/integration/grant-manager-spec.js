@@ -186,9 +186,9 @@ test('GrantManager should be able to validate tokens in a grant', (t) => {
 test('GrantManager should be able to remove invalid tokens from a grant', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
-      grant.access_token.signature = Buffer.from('this signature is invalid');
-      grant.refresh_token.signature = Buffer.from('this signature is also invalid');
-      grant.id_token.signature = Buffer.from('this signature is still invalid');
+      grant.access_token.signature = new Buffer('this signature is invalid');
+      grant.refresh_token.signature = new Buffer('this signature is also invalid');
+      grant.id_token.signature = new Buffer('this signature is still invalid');
       return manager.validateGrant(grant);
     })
     .catch((e) => {
