@@ -1,6 +1,6 @@
 {
   "name": "keycloak-connect",
-  "version": "2.5.7",
+  "version": "2.5.8",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
   "main": "index.js",
@@ -53,7 +53,7 @@
     "keycloak-admin-client": "^0.6.0",
     "hogan-express": "^0.5.2",
     "selenium-webdriver": "^2.52.0",
-    "phantomjs-prebuilt":"^2.1.14"
+    "phantomjs-prebuilt": "^2.1.14"
   },
   "semistandard": {
     "ignore": [
