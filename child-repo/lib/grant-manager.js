@@ -264,7 +264,7 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  *
  * @return {Promise} That resolves to a validated grant
  */
-GrantManager.prototype.validateGrant = function validateGrant (grant, callback) {
+GrantManager.prototype.validateGrant = function validateGrant (grant) {
   var self = this;
   const updateGrantToken = (grant, tokenName) => {
     return new Promise((resolve, reject) => {
