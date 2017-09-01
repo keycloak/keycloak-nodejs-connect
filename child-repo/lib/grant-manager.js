@@ -287,7 +287,6 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
     Promise.all(promises).then(() => {
       resolve(grant);
     }).catch((err) => {
-      console.error('Validate grant failed');
       reject(new Error(err.message));
     });
   });
@@ -333,7 +332,6 @@ GrantManager.prototype.validateToken = function validateToken (token) {
             resolve(token);
           }
         } catch (err) {
-          console.error('invalid token (config)');
           reject(new Error('Misconfigured parameters while validating token. Check your keycloak.json file!'));
         }
       } else {
