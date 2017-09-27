@@ -420,7 +420,8 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
       client_id: 'public-client',
       username: 'test-user',
       password: 'tiger',
-      grant_type: 'password'
+      grant_type: 'password',
+      scope: 'openid'
     })
     .reply(204, helper.dummyReply);
   const manager = getManager('test/fixtures/keycloak-https.json');
