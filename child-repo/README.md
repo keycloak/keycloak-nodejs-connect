@@ -5,7 +5,13 @@
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 [![Coverage Status](https://coveralls.io/repos/github/keycloak/keycloak-nodejs-auth-utils/badge.svg?branch=master)](https://coveralls.io/github/keycloak/keycloak-nodejs-auth-utils?branch=master)
 
-## Contributing
+Reporting security vulnerabilities
+----------------------------------
+
+If you've found a security vulnerability, please look at the [instructions on how to properly report it](http://www.keycloak.org/security.html)
+
+Contributing
+------------
 
 Please read the [contributing guide](./CONTRIBUTING.md)
 
