@@ -50,11 +50,19 @@ module.exports = function (keycloak, spec) {
 
   return function protect (request, response, next) {
     if (request.kauth && request.kauth.grant) {
-      if (!guard || guard(request.kauth.grant.access_token, request, response)) {
-        return next();
+      const guardedResponse = guard && guard(request.kauth.grant.access_token, request, response);
+      if (guardedResponse instanceof Promise) {
+        guardedResponse
+          .then(next)
+          .catch(function () {
+            return keycloak.accessDenied(request, response, next);
+          });
+      } else {
+        if (!guard || guardedResponse) {
+          return next();
+        }
+        return keycloak.accessDenied(request, response, next);
       }
-
-      return keycloak.accessDenied(request, response, next);
     }
 
     if (keycloak.redirectToLogin(request)) {

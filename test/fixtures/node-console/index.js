@@ -21,6 +21,7 @@ const express = require('express');
 const session = require('express-session');
 const enableDestroy = require('server-destroy');
 const parseClient = require('../../utils/helper').parseClient;
+const Promise = require('bluebird');
 
 function NodeApp () {
   var app = express();
@@ -116,6 +117,22 @@ function NodeApp () {
     });
 
     app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
+      res.json({message: 'admin'});
+    });
+
+    app.get('/service/admin-function', keycloak.protect(function (token, request) {
+      return token.hasRole('realm:admin');
+    }), function (req, res) {
+      res.json({message: 'admin'});
+    });
+
+    app.get('/service/admin-promise', keycloak.protect(function (token, request) {
+      return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          resolve(token.hasRole('realm:admin'))
+        }, 3000);
+      });
+    }), function (req, res) {
       res.json({message: 'admin'});
     });
 

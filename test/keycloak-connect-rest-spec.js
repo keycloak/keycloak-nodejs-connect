@@ -83,7 +83,42 @@ test('Should test protected route with admin credentials.', t => {
   })
 });
 
+test('Should test protected route with admin credentials using a promise in the route\'s middleware.', t => {
+  t.plan(1);
+
+  return client.then((installation) => {
+    app.build(installation);
+
+    return getToken().then((token) => {
+      var opt = {
+        endpoint: app.address + '/service/admin-promise',
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      };
+      return roi.get(opt)
+        .then(x => {
+          t.equal(JSON.parse(x.body).message, 'admin');
+        })
+    })
+  })
+});
+
 test('Should test protected route with invalid access token.', t => {
+  t.plan(1);
+  return getToken().then((token) => {
+    var opt = {
+      endpoint: app.address + '/service/admin',
+      headers: {
+        Authorization: 'Bearer ' + token.replace(/(.+?\..+?\.).*/, '$1.Invalid')
+      }
+    };
+    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
+  })
+});
+
+
+test('Should test protected route with invalid access token via the promise based middleware.', t => {
   t.plan(1);
   return getToken().then((token) => {
     var opt = {
