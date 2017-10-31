@@ -52,9 +52,8 @@ module.exports = function (keycloak, spec) {
     if (request.kauth && request.kauth.grant) {
       const guardedResponse = guard && guard(request.kauth.grant.access_token, request, response);
       if (guardedResponse instanceof Promise) {
-        
         return guardedResponse
-          .then(function (authorized) { 
+          .then(function (authorized) {
             return authorized ? next() : keycloak.accessDenied(request, response, next);
           })
           .catch(function () {
