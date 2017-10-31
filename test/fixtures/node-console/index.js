@@ -126,10 +126,31 @@ function NodeApp () {
       res.json({message: 'admin'});
     });
 
+    app.get('/service/admin-promise-reject', keycloak.protect(function (token, request) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          const authorized = token.hasRole('realm:admin');
+          authorized ? resolve(true) : reject(false);
+        }, 3000);
+      });
+    }), function (req, res) {
+      res.json({message: 'admin'});
+    });
+
     app.get('/service/admin-promise', keycloak.protect(function (token, request) {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
           resolve(token.hasRole('realm:admin'));
+        }, 3000);
+      });
+    }), function (req, res) {
+      res.json({message: 'admin'});
+    });
+
+    app.get('/service/admin-promise-reject', keycloak.protect(function (token, request) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          token.hasRole('realm:admin') ? resolve(true) : reject(false);
         }, 3000);
       });
     }), function (req, res) {
