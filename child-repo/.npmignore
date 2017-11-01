@@ -1,0 +1,6 @@
+node_modules
+*keycloak.json
+npm-debug.log
+.idea
+.grunt
+doc

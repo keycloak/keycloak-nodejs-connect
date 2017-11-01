@@ -1,0 +1,66 @@
+{
+  "name": "keycloak-auth-utils",
+  "version": "3.3.0",
+  "description": "Keycloak OAuth client.",
+  "keywords": [
+    "keycloak",
+    "authentication",
+    "oauth",
+    "oauth2.0",
+    "sso",
+    "openid",
+    "jwt",
+    "saml"
+  ],
+  "homepage": "http://keycloak.org",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "test": "tape test/integration/*-spec.js | tap-spec && tape test/unit/*-test.js | tap-spec",
+    "lint": "jshint *.js lib/*.js test/**/*.js",
+    "format": "semistandard",
+    "prepublish": "nsp check",
+    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js",
+    "coverage": "istanbul cover tape -- test/unit/*.js | istanbul cover tape -- test/integration/*.js",
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "test",
+    "doc"
+  ],
+  "author": {
+    "name": "Red Hat, Inc.",
+    "url": "http://keycloak.org"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "jwk-to-pem": "^1.2.6"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-gh-pages": "^2.0.0",
+    "grunt-touch": "^1.0.0",
+    "ink-docstrap": "^1.1.4",
+    "jsdoc": "^3.4.0",
+    "jshint": "^2.9.2",
+    "nock": "^9.0.2",
+    "nsp": "*",
+    "rsa-compat": "^1.2.7",
+    "semistandard": "^9.2.1",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.5.1",
+    "tape-catch": "^1.0.6",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/keycloak/keycloak-nodejs-auth-utils.git"
+  },
+  "bugs": "https://issues.jboss.org/browse/KEYCLOAK"
+}
