@@ -1,13 +1,13 @@
 'use strict';
 
-const GrantManager = require('../../index').GrantManager;
-const Config = require('../../index').Config;
+const GrantManager = require('../middleware/auth-utils/grant-manager');
+const Config = require('../middleware/auth-utils/config');
 const test = require('tape');
 const nock = require('nock');
 const extend = require('util')._extend;
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const getManager = (fixture) => new GrantManager(new Config(fixture));
-const helper = require('./helper');
+const helper = require('./utils/helper');
 
 test('GrantManager with empty configuration', (t) => {
   t.throws(function () {
@@ -26,28 +26,28 @@ test('GrantManager with rogue configuration', (t) => {
 });
 
 test('GrantManager in public mode should be able to obtain a grant', (t) => {
-  const manager = getManager('test/fixtures/keycloak-public.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => t.notEqual(grant.access_token, undefined))
     .then(t.end);
 });
 
 test('GrantManager in public mode should be able to obtain a raw grant', (t) => {
-  const manager = getManager('test/fixtures/keycloak-public.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => t.notEqual(grant.toString(), undefined))
     .then(t.end);
 });
 
 test('GrantManager in public mode with public key configured should be able to obtain a grant', (t) => {
-  const manager = getManager('test/fixtures/keycloak-with-public-key.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-with-public-key.json');
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => t.notEqual(grant.access_token, undefined))
     .then(t.end);
 });
 
 test('GrantManager should return empty with public key configured but invalid signature', (t) => {
-  const manager = getManager('test/fixtures/keycloak-with-public-key.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-with-public-key.json');
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
@@ -60,14 +60,14 @@ test('GrantManager should return empty with public key configured but invalid si
 });
 
 test('GrantManager in public mode should be able to get userinfo', (t) => {
-  const manager = getManager('test/fixtures/keycloak-public.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => manager.userInfo(grant.access_token))
     .then((user) => t.equal(user.preferred_username, 'test-user'))
     .then(t.end);
 });
 
-const manager = getManager('test/fixtures/keycloak-confidential.json');
+const manager = getManager('./test/fixtures/auth-utils/keycloak-confidential.json');
 
 test('GrantManager in confidential mode should be able to get userinfo', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
@@ -424,7 +424,7 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
       scope: 'openid'
     })
     .reply(204, helper.dummyReply);
-  const manager = getManager('test/fixtures/keycloak-https.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-https.json');
   manager.validateToken = (t) => { return Promise.resolve(t); };
 
   manager.obtainDirectly('test-user', 'tiger')
@@ -445,7 +445,7 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
     signed: true,
     content: { iat: -1 }
   };
-  const manager = getManager('test/fixtures/keycloak-https.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-https.json');
   const tokens = [
     undefined,
     expiredToken,

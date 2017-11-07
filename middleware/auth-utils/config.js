@@ -98,7 +98,7 @@ Config.prototype.configure = function configure (config) {
    * Realm ID
    * @type {String}
    */
-  this.realm = resolveValue(config['realm'] || config.realm);
+  this.realm = resolveValue(config.realm || config.realm);
 
   /**
    * Client/Application ID
@@ -110,7 +110,7 @@ Config.prototype.configure = function configure (config) {
    * Client/Application secret
    * @type {String}
    */
-  this.secret = resolveValue((config['credentials'] || {}).secret || config.secret);
+  this.secret = resolveValue((config.credentials || {}).secret || config.secret);
 
   /**
    * If this is a public application or confidential.

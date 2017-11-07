@@ -2,7 +2,7 @@
 
 const test = require('tape-catch');
 const RSA = require('rsa-compat').RSA;
-const Config = require('../../index').Config;
+const Config = require('../../middleware/auth-utils/config');
 
 test('Config#configure', (t) => {
   let cfg = new Config({'realm': 'test-realm'});
