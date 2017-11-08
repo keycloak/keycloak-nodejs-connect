@@ -5,6 +5,7 @@
 *.tmp
 node_modules/
 keycloak-*
+!keycloak-*.json
 !keycloak-connect-test.js
 !keycloak-object-test.js
 !keycloak-fixture.json

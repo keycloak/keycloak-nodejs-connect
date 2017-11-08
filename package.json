@@ -5,12 +5,12 @@
   "homepage": "http://keycloak.org",
   "main": "index.js",
   "scripts": {
-    "lint": "jshint *.js stores/*.js middleware/*.js example/*.js",
+    "lint": "jshint *.js stores/*.js middleware/*.js middleware/auth-utils/*.js example/*.js",
     "format": "semistandard",
     "test": "tape test/unit/*.js test/*.js",
     "prepublish": "nsp check",
-    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js",
-    "coverage": "istanbul cover tape -- test/unit/*.js | istanbul cover tape -- test/*.js"
+    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
+    "coverage": "istanbul cover tape test/unit/*.js tape test/*.js"
   },
   "keywords": [
     "sso",
@@ -33,32 +33,31 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "keycloak-auth-utils": "3.3.0"
+    "jwk-to-pem": "^1.2.6"
   },
-  "bundledDependencies": [
-    "keycloak-auth-utils"
-  ],
   "devDependencies": {
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "server-destroy": "^1.0.1",
-    "ink-docstrap": "^1.3.0",
     "istanbul": "^0.4.5",
+    "ink-docstrap": "^1.1.4",
     "coveralls": "^2.11.4",
     "jsdoc": "^3.4.3",
     "jshint": "^2.9.4",
     "nsp": "^2.6.2",
     "semistandard": "^9.2.1",
     "tape": "^4.6.3",
+    "tape-catch": "^1.0.6",
     "blue-tape": "^1.0.0",
+    "rsa-compat": "^1.2.7",
     "keycloak-admin-client": "bucharest-gold/keycloak-admin-client",
     "keycloak-request-token": "^0.1.0",
     "hogan-express": "^0.5.2",
     "selenium-webdriver": "^2.52.0",
     "phantomjs-prebuilt": "^2.1.14",
     "body-parser": "^1.13.3",
-    "cors": "^2.8.1",
-    "roi": "^0.15.0"
+    "roi": "^0.15.0",
+    "nock": "^9.0.2"
   },
   "semistandard": {
     "ignore": [
