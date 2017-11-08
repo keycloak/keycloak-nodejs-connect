@@ -1,7 +1,0 @@
-{
-  "server-url" : "http://localhost:8080/auth",
-  "realm" : "nodejs-test",
-  "realm-public-key" : "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgH1MnB3XC7vCXYYZZVth0fHgfOMnJmpaldkX+WMi+U9ivkYkEo+uRL6QNmysbbFtllb/btGOMSPyTpQ+6WBsTPgL3BuWJiA4Xvg0FkkTvZb/B/Uta4SAOtM8/qB9Aq/papgK2eCwB6t803RyPThLrzOV8q1q+KocRl5BhAoN97mQyTytesSMrgsWwpyyXSqejIefaIlefucVzK7seZghEApofzJBz9ryiqOcAATD4oC6uzmUUKvXHeYsIT6DnlZdYIm4Bf884QXYGD9NhvjMrDWqs1kTNOjFoGvxmvcKXx05lztYDMii8jv1pKYNEVmNuUOL4TW5IRd5dtOVvrpd1QIDAQAB",
-  "resource" : "public-client",
-  "public-client" : true
-}
