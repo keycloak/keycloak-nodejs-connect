@@ -18,9 +18,8 @@ var BearerStore = require('./stores/bearer-store');
 var CookieStore = require('./stores/cookie-store');
 var SessionStore = require('./stores/session-store');
 
-var Config = require('keycloak-auth-utils').Config;
-var GrantManager = require('keycloak-auth-utils').GrantManager;
-
+var Config = require('./middleware/auth-utils/config');
+var GrantManager = require('./middleware/auth-utils/grant-manager');
 var Setup = require('./middleware/setup');
 var Admin = require('./middleware/admin');
 var Logout = require('./middleware/logout');
