@@ -16,11 +16,8 @@ Discussions can be done via:
 
 Documentation:
 
-[Web site docs](http://keycloak.jboss.org/docs) - User Guide, Admin REST API and Javadocs
-
-[Git books](https://www.gitbook.com/@keycloak) - Authorization Services, Server Administration Guide, Server Developer Guide,
-Server Installation and Configuration Guide, Securing Applications and Services Guide, Getting Started Guide
-
+[Web site docs](http://www.keycloak.org/documentation.html) - Authorization Services, Server Administration Guide, Server Developer Guide,
+Server Installation and Configuration Guide, Securing Applications and Services Guide, Getting Started Guide, Admin REST API and Javadocs
 
 ## Code contributions
 
