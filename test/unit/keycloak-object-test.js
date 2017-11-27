@@ -50,6 +50,11 @@ test('Should verify the realm name of the config object.', t => {
   t.end();
 });
 
+test('Should verify enabled of the config object.', t => {
+  t.equal(kc.config.enabled, true);
+  t.end();
+});
+
 test('Should verify if login URL has the configured realm.', t => {
   t.equal(kc.loginUrl().indexOf(kc.config.realm) > 0, true);
   t.end();

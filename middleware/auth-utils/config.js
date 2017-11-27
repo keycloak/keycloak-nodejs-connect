@@ -157,8 +157,11 @@ Config.prototype.configure = function configure (config) {
     * Allow to disable Keycloak
     * @type {Boolean}
     */
-  this.enabled = config.enabled === false ? false : true;
-  
+  this.enabled = true;
+  if (config.enabled === false) {
+    this.enabled = false;
+  }
+
   if (plainKey) {
     this.publicKey = '-----BEGIN PUBLIC KEY-----\n';
     for (let i = 0; i < plainKey.length; i = i + 64) {
