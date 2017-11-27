@@ -49,6 +49,9 @@ module.exports = function (keycloak, spec) {
   }
 
   return function protect (request, response, next) {
+    if (!keycloak.config.enabled) {
+      next();
+    }
     if (request.kauth && request.kauth.grant) {
       if (!guard || guard(request.kauth.grant.access_token, request, response)) {
         return next();
