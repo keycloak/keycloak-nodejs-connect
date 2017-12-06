@@ -241,28 +241,39 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
   let grantData = rawData;
   if (typeof rawData !== 'object') grantData = JSON.parse(grantData);
 
-  return this.validateGrant(new Grant({
+  const grant = new Grant({
     access_token: (grantData.access_token ? new Token(grantData.access_token, this.clientId) : undefined),
     refresh_token: (grantData.refresh_token ? new Token(grantData.refresh_token) : undefined),
     id_token: (grantData.id_token ? new Token(grantData.id_token) : undefined),
     expires_in: grantData.expires_in,
     token_type: grantData.token_type,
     __raw: rawData
-  })).catch((err) => {
-    console.error(err.message);
   });
+
+  if (this.bearerOnly) {
+    return this.validateGrant(grant);
+  } else {
+    return new Promise((resolve, reject) => {
+      this.ensureFreshness(grant)
+      .then(g => this.validateGrant(g))
+      .then(g => resolve(g))
+      .catch((err) => reject(err));
+    });
+  }
 };
 
 /**
  * Validate the grant and all tokens contained therein.
  *
- * This method filters a grant (in place), by nulling out
- * any invalid tokens.  After this method returns, the
- * passed in grant will only contain valid tokens.
+ * This method examines a grant (in place) and rejects
+ * if any of the tokens are invalid. After this method
+ * resolves, the passed grant is guaranteed to have
+ * valid tokens.
  *
  * @param {Grant} The grant to validate.
  *
- * @return {Promise} That resolves to a validated grant
+ * @return {Promise} That resolves to a validated grant or
+ * rejects with an error if any of the tokens are invalid.
  */
 GrantManager.prototype.validateGrant = function validateGrant (grant) {
   var self = this;
