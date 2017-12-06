@@ -200,15 +200,31 @@ test('GrantManager should be able to remove invalid tokens from a grant', (t) =>
     .then(t.end);
 });
 
-test('GrantManager should return empty access token data', (t) => {
+test('GrantManager should reject with token missing error when bearer only', (t) => {
+  const originalBearerOnly = manager.bearerOnly;
+  manager.bearerOnly = true;
   manager.createGrant('{ }')
     .catch((e) => {
-      t.equal(e.message, 'Grant validation failed. Reason: invalid token (public key signature)');
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (missing)');
     })
     .then((grant) => {
       t.equal(grant, undefined);
     })
-    .then(t.end);
+    .then((x) => {
+      manager.bearerOnly = originalBearerOnly;
+      t.end();
+    });
+});
+
+test('GrantManager should reject with refresh token missing error', (t) => {
+  manager.createGrant('{ }')
+  .catch((e) => {
+    t.equal(e.message, 'Unable to refresh without a refresh token');
+  })
+  .then((grant) => {
+    t.equal(grant, undefined);
+  })
+  .then(t.end);
 });
 
 test('GrantManager validate empty access token', (t) => {
@@ -426,6 +442,7 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
     .reply(204, helper.dummyReply);
   const manager = getManager('./test/fixtures/auth-utils/keycloak-https.json');
   manager.validateToken = (t) => { return Promise.resolve(t); };
+  manager.ensureFreshness = (t) => { return Promise.resolve(t); };
 
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => t.equal(grant.access_token.token, 'Dummy access token'))
