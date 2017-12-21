@@ -17,7 +17,6 @@
 
 module.exports = function (resolver) {
   return function setup (request, response, next) {
-    console.log(resolver(request));
     request.kauth = {realmName: resolver(request)};
     next();
   };
