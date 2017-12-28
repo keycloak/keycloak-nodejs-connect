@@ -469,6 +469,43 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
     .then(t.end);
 });
 
+test('GrantManager#ensureFreshness should fetch new access token with client id ', (t) => {
+  const refreshedToken = {
+    'access_token': 'some.access.token',
+    'expires_in': 30,
+    'refresh_expires_in': 1800,
+    'refresh_token': 'i-Am-The-Refresh-Token',
+    'token_type': 'bearer',
+    'id_token': 'some-id-token',
+    'not-before-policy': 1462208947,
+    'session_state': 'ess-sion-tat-se'
+  };
+  nock('http://localhost:8080')
+    .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
+      grant_type: 'refresh_token',
+      client_id: 'public-client',
+      refresh_token: 'i-Am-The-Refresh-Token'
+    })
+    .reply(204, refreshedToken);
+
+  const grant = {
+    isExpired: function () {
+      return true;
+    },
+    refresh_token: {
+      token: 'i-Am-The-Refresh-Token',
+      isExpired: () => false
+    }
+  };
+
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.createGrant = (t) => { return Promise.resolve(t); };
+  manager.ensureFreshness(grant)
+    .then((grant) => {
+      t.true(grant === JSON.stringify(refreshedToken));
+    }).then(t.end);
+});
+
 test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
   const expiredToken = {
     isExpired: () => true
