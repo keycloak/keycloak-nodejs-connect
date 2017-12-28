@@ -451,14 +451,14 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
 
 test('GrantManager#ensureFreshness should fetch new access token with client id ', (t) => {
   const refreshedToken = {
-    "access_token": "some.access.token",
-    "expires_in": 30,
-    "refresh_expires_in": 1800,
-    "refresh_token": "i-Am-The-Refresh-Token",
-    "token_type": "bearer",
-    "id_token": "some-id-token",
-    "not-before-policy": 1462208947,
-    "session_state": "ess-sion-tat-se"
+    'access_token': 'some.access.token',
+    'expires_in': 30,
+    'refresh_expires_in': 1800,
+    'refresh_token': 'i-Am-The-Refresh-Token',
+    'token_type': 'bearer',
+    'id_token': 'some-id-token',
+    'not-before-policy': 1462208947,
+    'session_state': 'ess-sion-tat-se'
   };
   nock('http://localhost:8080')
     .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
@@ -469,12 +469,12 @@ test('GrantManager#ensureFreshness should fetch new access token with client id 
     .reply(204, refreshedToken);
 
   const grant = {
-    isExpired: function(){
+    isExpired: function () {
       return true;
     },
     refresh_token: {
       token: 'i-Am-The-Refresh-Token',
-      isExpired: () => false,
+      isExpired: () => false
     }
   };
 
