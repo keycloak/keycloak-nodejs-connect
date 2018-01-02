@@ -46,6 +46,13 @@ test('GrantManager in public mode with public key configured should be able to o
     .then(t.end);
 });
 
+test('GrantManager in public mode should be able to refresh a grant', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-with-public-key.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => t.true(manager.isGrantRefreshable(grant)))
+    .then(t.end);
+});
+
 test('GrantManager should return empty with public key configured but invalid signature', (t) => {
   const manager = getManager('./test/fixtures/auth-utils/keycloak-with-public-key.json');
   manager.obtainDirectly('test-user', 'tiger')
@@ -88,6 +95,7 @@ test('GrantManager in confidential mode should be able to refresh a grant', (t) 
     .then(delay(3000))
     .then((grant) => {
       t.notEqual(grant.access_token, undefined);
+      t.true(manager.isGrantRefreshable(grant));
       originalAccessToken = grant.access_token;
       return grant;
     })
@@ -216,8 +224,20 @@ test('GrantManager should reject with token missing error when bearer only', (t)
     });
 });
 
+test('GrantManager should not be able to refresh a grant when bearer only', (t) => {
+  const originalBearerOnly = manager.bearerOnly;
+  manager.bearerOnly = true;
+
+  try {
+    t.false(manager.isGrantRefreshable({ 'refresh_token': 'a_refresh_token' }));
+  } finally {
+    manager.bearerOnly = originalBearerOnly;
+    t.end();
+  }
+});
+
 test('GrantManager should reject with refresh token missing error', (t) => {
-  manager.createGrant('{ }')
+  manager.ensureFreshness({ isExpired: () => true })
   .catch((e) => {
     t.equal(e.message, 'Unable to refresh without a refresh token');
   })

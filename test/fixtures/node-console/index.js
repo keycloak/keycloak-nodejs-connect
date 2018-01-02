@@ -16,11 +16,21 @@
 'use strict';
 
 const Keycloak = require('../../../index');
+const bodyParser = require('body-parser');
 const hogan = require('hogan-express');
 const express = require('express');
 const session = require('express-session');
 const enableDestroy = require('server-destroy');
 const parseClient = require('../../utils/helper').parseClient;
+
+Keycloak.prototype.redirectToLogin = function (req) {
+  var apiMatcher = /^\/service\/.*/i;
+  return !apiMatcher.test(req.baseUrl);
+};
+
+Keycloak.prototype.obtainDirectly = function (user, pass) {
+  return this.grantManager.obtainDirectly(user, pass);
+};
 
 function NodeApp () {
   var app = express();
@@ -117,6 +127,30 @@ function NodeApp () {
 
     app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
       res.json({message: 'admin'});
+    });
+
+    app.get('/service/grant', keycloak.protect(), (req, res) => {
+      keycloak.getGrant(req, res)
+      .then(grant => {
+        res.json(grant);
+      })
+      .catch(err => {
+        throw err;
+      });
+    });
+
+    app.post('/service/grant', bodyParser.json(), (req, res) => {
+      if (!req.body.username || !req.body.password) {
+        res.status(400).send('Username and password required');
+      }
+      keycloak.obtainDirectly(req.body.username, req.body.password)
+      .then(grant => {
+        keycloak.storeGrant(grant, req, res);
+        res.json(grant);
+      })
+      .catch(err => {
+        throw err;
+      });
     });
 
     app.use('*', function (req, res) {

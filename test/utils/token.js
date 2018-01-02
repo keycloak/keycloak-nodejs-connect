@@ -3,7 +3,7 @@
 const requester = require('keycloak-request-token');
 const baseUrl = 'http://127.0.0.1:8080/auth';
 
-const settings = {
+const defaultSettings = {
   username: 'test-admin',
   password: 'password',
   grant_type: 'password',
@@ -11,4 +11,7 @@ const settings = {
   realmName: 'service-node-realm'
 };
 
-module.exports = () => requester(baseUrl, settings);
+module.exports = (options) => {
+  const settings = Object.assign({}, defaultSettings, options);
+  return requester(baseUrl, settings);
+};
