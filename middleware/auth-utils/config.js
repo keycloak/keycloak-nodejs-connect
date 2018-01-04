@@ -153,6 +153,15 @@ Config.prototype.configure = function configure (config) {
     */
   const plainKey = resolveValue(config['realm-public-key'] || config.realmPublicKey);
 
+  /**
+    * Allow to disable Keycloak
+    * @type {Boolean}
+    */
+  this.enabled = true;
+  if (config.enabled === false) {
+    this.enabled = false;
+  }
+
   if (plainKey) {
     this.publicKey = '-----BEGIN PUBLIC KEY-----\n';
     for (let i = 0; i < plainKey.length; i = i + 64) {
