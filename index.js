@@ -68,11 +68,13 @@ function Keycloak (config, keycloakConfig) {
   const configs = Array.isArray(keycloakConfig) ? keycloakConfig.map(kcRealmConfig => new Config(kcRealmConfig)) : [new Config(keycloakConfig)];
 
   // Add the custom scope value
-  configs.forEach(realmConfig => realmConfig.scope = config.scope);
+  configs.forEach(realmConfig => {
+    realmConfig.scope = config.scope;
+  });
 
-  this.configs = configs.reduce((previous, realmConfig) => Object.assign(previous, {[realmConfig.realm] : realmConfig}), {});
+  this.configs = configs.reduce((previous, realmConfig) => Object.assign(previous, {[realmConfig.realm]: realmConfig}), {});
 
-  this.grantManagers = configs.reduce((previous, realmConfig) => Object.assign(previous, {[realmConfig.realm] : new GrantManager(realmConfig)}), {});
+  this.grantManagers = configs.reduce((previous, realmConfig) => Object.assign(previous, {[realmConfig.realm]: new GrantManager(realmConfig)}), {});
 
   this.stores = [ BearerStore ];
 
