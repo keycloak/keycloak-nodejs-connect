@@ -2,14 +2,11 @@
 *.swo
 *.log
 *.orig
+*.gz
+*.tar
 *.tmp
 node_modules/
-keycloak-*
-!keycloak-*.json
-!keycloak-connect-rest-mixed-client-spec.js
-!keycloak-connect-test.js
-!keycloak-object-test.js
-!keycloak-fixture.json
+/keycloak-*/
 coverage
 pid.txt
 .idea/
