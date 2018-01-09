@@ -15,9 +15,9 @@
  */
 'use strict';
 
-module.exports = function (keycloak, resolver) {
+module.exports = function (keycloak) {
   return function grantAttacher (request, response, next) {
-    keycloak.getGrant(request, response, resolver)
+    keycloak.getGrant(request, response)
       .then(grant => {
         request.kauth.grant = grant;
       })
