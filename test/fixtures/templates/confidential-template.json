@@ -2,6 +2,7 @@
     "clientId": "{{name}}",
     "rootUrl": "http://localhost:{{port}}",
     "enabled": true,
+    "directAccessGrantsEnabled": true,
     "redirectUris": [
         "http://localhost:{{port}}/*"
     ],

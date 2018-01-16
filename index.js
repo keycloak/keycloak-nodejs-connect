@@ -254,7 +254,6 @@ Keycloak.prototype.getGrant = function (request, response) {
   if (grantData && !grantData.error) {
     var self = this;
     return this.grantManager.createGrant(JSON.stringify(grantData))
-    .then(grant => { return this.grantManager.ensureFreshness(grant); })
     .then(grant => {
       self.storeGrant(grant, request, response);
       return grant;
@@ -266,8 +265,9 @@ Keycloak.prototype.getGrant = function (request, response) {
 };
 
 Keycloak.prototype.storeGrant = function (grant, request, response) {
-  if (this.stores.length < 2) {
-    // cannot store, bearer-only, this is weird
+  if (this.stores.length < 2 || BearerStore.get(request)) {
+    // cannot store bearer-only, and should not store if grant is from the
+    // authorization header
     return;
   }
   if (!grant) {

@@ -24,66 +24,64 @@ const NodeApp = require('./fixtures/node-console/index').NodeApp;
 
 const realmManager = admin.createRealm();
 const app = new NodeApp();
-let client;
 
 test('setup', t => {
-  return client = realmManager.then((realm) => {
-    return admin.createClient(app.publicClient());
+  return realmManager.then(() => {
+    return admin.createClient(app.publicClient())
+    .then((installation) => {
+      return app.build(installation);
+    });
   });
-})
+});
+
+// test('setup', t => {
+//   return client = realmManager.then((realm) => {
+//     return admin.createClient(app.publicClient());
+//   });
+// });
 
 test('Should be able to access public page', t => {
   t.plan(1);
 
-  return client.then((installation) => {
-    app.build(installation);
+  page.get(app.port);
 
-    page.get(app.port);
-    return page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-    })
+  return page.output().getText().then(text => {
+    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
   });
 });
 
 test('Should login with admin credentials', t => {
   t.plan(3);
 
-  return client.then((installation) => {
-    app.build(installation);
-    page.get(app.port);
+  page.get(app.port);
 
-    return page.output().getText().then(function(text) {
-      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-      page.logInButton().click();
-      page.login('test-admin', 'password');
+  return page.output().getText().then(text => {
+    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+    page.logInButton().click();
+    page.login('test-admin', 'password');
 
-      return page.events().getText().then(function(text) {
-        t.equal(text, 'Auth Success', 'User should be authenticated');
-        page.logOutButton().click();
-        return page.output().getText().then(function(text) {
-          t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-        })
-      })
-    })
+    return page.events().getText().then(text => {
+      t.equal(text, 'Auth Success', 'User should be authenticated');
+      page.logOutButton().click();
+      return page.output().getText().then(text => {
+        t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+      });
+    });
   });
-})
+});
 
 test('User should be forbidden to access restricted page', t => {
   t.plan(1);
 
-  return client.then((installation) => {
-    app.build(installation);
-    page.get(app.port, '/restricted');
-    page.login('alice', 'password');
+  page.get(app.port, '/restricted');
+  page.login('alice', 'password');
 
-    return page.body().getText().then(function (text) {
-      t.equal(text, 'Access denied', 'Message should be access denied');
-    }).then(() => {
-      page.get(app.port, '/logout');
-    })
+  return page.body().getText().then(text => {
+    t.equal(text, 'Access denied', 'Message should be access denied');
+  }).then(() => {
+    page.get(app.port, '/logout');
   });
-})
-
+});
 
 test('Public client should be forbidden for invalid public key', t => {
   t.plan(2);
@@ -95,19 +93,23 @@ test('Public client should be forbidden for invalid public key', t => {
     app.build(installation);
     page.get(app.port);
 
-    return page.output().getText().then(function(text) {
+    return page.output().getText().then(text => {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
       page.logInButton().click();
       page.login('test-admin', 'password');
 
-      return page.body().getText().then(function (text) {
+      return page.body().getText().then(text => {
         t.equal(text, 'Access denied', 'Message should be access denied');
       }).then(() => {
         app.destroy();
       })
-    })
-  })
-})
+      .catch(err => {
+        app.destroy();
+        throw err;
+      });
+    });
+  });
+});
 
 test('Confidential client should be forbidden for invalid public key', t => {
   t.plan(2);
@@ -119,18 +121,22 @@ test('Confidential client should be forbidden for invalid public key', t => {
     app.build(installation);
     page.get(app.port);
 
-    return page.output().getText().then(function(text) {
+    return page.output().getText().then(text => {
       t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
       page.logInButton().click();
 
-      return page.body().getText().then(function (text) {
+      return page.body().getText().then(text => {
         t.equal(text, 'Access denied', 'Message should be access denied');
       }).then(() => {
         app.destroy();
       })
-    })
-  })
-})
+      .catch(err => {
+        app.destroy();
+        throw err;
+      });
+    });
+  });
+});
 
 test('teardown', t => {
   return realmManager.then((realm) => {
@@ -138,5 +144,4 @@ test('teardown', t => {
     admin.destroy('test-realm');
     page.quit();
   });
-})
-
+});
