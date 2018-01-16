@@ -165,6 +165,8 @@ function NodeApp () {
       });
     }), function (req, res) {
       res.json({message: 'admin'});
+    });
+
     app.get('/service/grant', keycloak.protect(), (req, res) => {
       keycloak.getGrant(req, res)
       .then(grant => {

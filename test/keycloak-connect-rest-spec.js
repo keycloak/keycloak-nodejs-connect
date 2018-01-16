@@ -74,64 +74,52 @@ test('Should test protected route with admin credentials.', t => {
 test('Should test protected route with admin credentials using a promise in the route\'s middleware, using resolve for authorized access, and reject for denying access', t => {
   t.plan(1);
 
-  return client.then((installation) => {
-    app.build(installation);
-
-    return getToken().then((token) => {
-      var opt = {
-        endpoint: app.address + '/service/admin-promise-reject',
-        headers: {
-          Authorization: 'Bearer ' + token
-        }
-      };
-      return roi.get(opt)
-        .then(x => {
-          t.equal(JSON.parse(x.body).message, 'admin');
-        })
-    })
-  })
+  return getToken().then((token) => {
+    var opt = {
+      endpoint: app.address + '/service/admin-promise-reject',
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return roi.get(opt)
+      .then(x => {
+        t.equal(JSON.parse(x.body).message, 'admin');
+      });
+  });
 });
 
 test('Should test protected route with admin credentials using a promise in the route\'s middleware, using the return boolean value of resolve', t => {
   t.plan(1);
 
-  return client.then((installation) => {
-    app.build(installation);
-
-    return getToken().then((token) => {
-      var opt = {
-        endpoint: app.address + '/service/admin-promise',
-        headers: {
-          Authorization: 'Bearer ' + token
-        }
-      };
-      return roi.get(opt)
-        .then(x => {
-          t.equal(JSON.parse(x.body).message, 'admin');
-        })
-    })
-  })
+  return getToken().then((token) => {
+    var opt = {
+      endpoint: app.address + '/service/admin-promise',
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return roi.get(opt)
+      .then(x => {
+        t.equal(JSON.parse(x.body).message, 'admin');
+      });
+  });
 });
 
 test('Should test protected route with admin credentials using a custom grant handler.', t => {
   t.plan(1);
 
-  return client.then((installation) => {
-    app.build(installation);
-
-    return getToken().then((token) => {
-      var opt = {
-        endpoint: app.address + '/service/admin-function',
-        headers: {
-          Authorization: 'Bearer ' + token
-        }
-      };
-      return roi.get(opt)
-        .then(x => {
-          t.equal(JSON.parse(x.body).message, 'admin');
-        })
-    })
-  })
+  return getToken().then((token) => {
+    var opt = {
+      endpoint: app.address + '/service/admin-function',
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    };
+    return roi.get(opt)
+      .then(x => {
+        t.equal(JSON.parse(x.body).message, 'admin');
+      });
+  });
 });
 
 test('Should test protected route with invalid access token.', t => {
@@ -157,7 +145,7 @@ test('Should test protected route with invalid access token via the promise base
       }
     };
     return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
-  })
+  });
 });
 
 test('Should test protected route with invalid access token via the promise based middleware, using resolve for authorized access, reject for unauthoried', t => {
@@ -170,7 +158,7 @@ test('Should test protected route with invalid access token via the promise base
       }
     };
     return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
-  })
+  });
 });
 
 test('Should test protected route with invalid access token via the custom grant handler.', t => {
@@ -183,7 +171,7 @@ test('Should test protected route with invalid access token via the custom grant
       }
     };
     return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
-  })
+  });
 });
 
 test('Access should be denied for bearer client with invalid public key.', t => {
