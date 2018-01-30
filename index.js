@@ -309,7 +309,6 @@ Keycloak.prototype.loginUrl = function (uuid, redirectUrl) {
   return this.config.realmUrl +
   '/protocol/openid-connect/auth' +
   '?client_id=' + encodeURIComponent(this.config.clientId) +
-  '&state=' + encodeURIComponent(uuid) +
   '&redirect_uri=' + encodeURIComponent(redirectUrl) +
   '&scope=' + encodeURIComponent(this.config.scope ? 'openid ' + this.config.scope : 'openid') +
   '&response_type=code';
