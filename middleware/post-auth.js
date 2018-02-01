@@ -37,6 +37,7 @@ module.exports = function (keycloak) {
         delete urlParts.query.code;
         delete urlParts.query.auth_callback;
         delete urlParts.query.state;
+        delete urlParts.query.session_state;
 
         let cleanUrl = URL.format(urlParts);
 
