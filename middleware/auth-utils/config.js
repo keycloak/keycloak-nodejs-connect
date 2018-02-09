@@ -161,6 +161,12 @@ Config.prototype.configure = function configure (config) {
     }
     this.publicKey += '-----END PUBLIC KEY-----\n';
   }
+
+  /**
+   * External URL of the server. Only needed if behind a reverse-proxy.
+   * @type {String}
+   */
+  this.externalUrl = resolveValue(config['external-url'] || config.externalUrl);
 };
 
 module.exports = Config;
