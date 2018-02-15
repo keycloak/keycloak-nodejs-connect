@@ -19,7 +19,7 @@ const URL = require('url');
 
 module.exports = function (keycloak) {
   return function postAuth (request, response, next) {
-    if (!request.query.auth_callback) {
+    if (!request.query || !request.query.auth_callback) {
       return next();
     }
 
