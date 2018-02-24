@@ -433,7 +433,7 @@ test('GrantManager should fail to load public key when kid is empty', (t) => {
       return manager.validateToken(grant.access_token);
     })
     .catch(e => {
-      t.equal(e.message, 'failed to load public key to verify token');
+      t.equal(e.message, 'failed to load public key to verify token. Reason: Expected "jwk" to be an Object');
     })
     .then(t.end);
 });
