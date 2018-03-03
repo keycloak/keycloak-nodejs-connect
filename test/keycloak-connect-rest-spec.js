@@ -26,61 +26,49 @@ const getToken = require('./utils/token');
 const realmName = 'service-node-realm';
 const realmManager = admin.createRealm(realmName);
 const app = new NodeApp();
-let client;
 
 test('setup', t => {
-  return client = realmManager.then((realm) => {
-    return admin.createClient(app.bearerOnly(), realmName);
+  return realmManager.then(() => {
+    return admin.createClient(app.bearerOnly(), realmName)
+    .then((installation) => {
+      return app.build(installation);
+    });
   });
-})
+});
 
 test('Should test unprotected route.', t => {
   t.plan(1);
-
-  return client.then((installation) => {
-    app.build(installation);
-    const opt = {
-      'endpoint': app.address + '/service/public'
-    };
-    return roi.get(opt)
-      .then(x => {
-        t.equal(JSON.parse(x.body).message, 'public');
-      })
-  })
+  const opt = {
+    'endpoint': app.address + '/service/public'
+  };
+  return roi.get(opt)
+  .then(x => {
+    t.equal(JSON.parse(x.body).message, 'public');
+  });
 });
 
 test('Should test protected route.', t => {
   t.plan(1);
-
-  return client.then((installation) => {
-    app.build(installation);
-    const opt = {
-      'endpoint': app.address + '/service/admin'
-    };
-
-    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for no credentials');
-  })
+  const opt = {
+    'endpoint': app.address + '/service/admin'
+  };
+  return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for no credentials');
 });
 
 test('Should test protected route with admin credentials.', t => {
   t.plan(1);
-
-  return client.then((installation) => {
-    app.build(installation);
-
-    return getToken().then((token) => {
-      var opt = {
-        endpoint: app.address + '/service/admin',
-        headers: {
-          Authorization: 'Bearer ' + token
-        }
-      };
-      return roi.get(opt)
-        .then(x => {
-          t.equal(JSON.parse(x.body).message, 'admin');
-        })
-    })
-  })
+  return getToken().then((token) => {
+    var opt = {
+      endpoint: app.address + '/service/admin',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    return roi.get(opt)
+    .then(x => {
+      t.equal(JSON.parse(x.body).message, 'admin');
+    });
+  });
 });
 
 test('Should test protected route with invalid access token.', t => {
@@ -93,7 +81,7 @@ test('Should test protected route with invalid access token.', t => {
       }
     };
     return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
-  })
+  });
 });
 
 test('Access should be denied for bearer client with invalid public key.', t => {
@@ -115,9 +103,13 @@ test('Access should be denied for bearer client with invalid public key.', t => 
       };
 
       return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid public key');
-    })
+    });
   }).then(() => {
-    someApp.close();
+    someApp.destroy();
+  })
+  .catch(err => {
+    someApp.destroy();
+    throw err;
   });
 });
 
@@ -148,12 +140,16 @@ test('Should test protected route after push revocation.', t => {
 
           return roi.get(opt).then(x => {
             t.equal(x.body, 'Not found!');
-          })
-        })
-    })
+          });
+        });
+    });
   }).then(() => {
     app.destroy();
   })
+  .catch(err => {
+    app.destroy();
+    throw err;
+  });
 });
 
 test('Should invoke admin logout', t => {
@@ -183,13 +179,17 @@ test('Should invoke admin logout', t => {
 
             return roi.get(opt).then(x => {
               t.equal(x.body, 'Not found!');
-            })
+            });
           });
-        })
-    })
+        });
+    });
   }).then(() => {
     app.destroy();
   })
+  .catch(err => {
+    app.destroy();
+    throw err;
+  });
 });
 
 test('teardown', t => {
@@ -197,5 +197,4 @@ test('teardown', t => {
     app.destroy();
     admin.destroy(realmName);
   });
-})
-
+});

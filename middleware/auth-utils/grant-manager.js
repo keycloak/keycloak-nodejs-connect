@@ -226,6 +226,10 @@ GrantManager.prototype.getAccount = function getAccount () {
   return this.userInfo.apply(this, arguments);
 };
 
+GrantManager.prototype.isGrantRefreshable = function isGrantRefreshable (grant) {
+  return !this.bearerOnly && (grant && grant.refresh_token);
+};
+
 /**
  * Create a `Grant` object from a string of JSON data.
  *
@@ -250,15 +254,15 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
     __raw: rawData
   });
 
-  if (this.bearerOnly) {
-    return this.validateGrant(grant);
-  } else {
+  if (this.isGrantRefreshable(grant)) {
     return new Promise((resolve, reject) => {
       this.ensureFreshness(grant)
       .then(g => this.validateGrant(g))
       .then(g => resolve(g))
-      .catch((err) => reject(err));
+      .catch(err => reject(err));
     });
+  } else {
+    return this.validateGrant(grant);
   }
 };
 
@@ -277,7 +281,7 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  */
 GrantManager.prototype.validateGrant = function validateGrant (grant) {
   var self = this;
-  const updateGrantToken = (grant, tokenName) => {
+  const validateGrantToken = (grant, tokenName) => {
     return new Promise((resolve, reject) => {
     // check the access token
       this.validateToken(grant[tokenName]).then(token => {
@@ -290,10 +294,14 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
   };
   return new Promise((resolve, reject) => {
     var promises = [];
-    promises.push(updateGrantToken(grant, 'access_token'));
+    promises.push(validateGrantToken(grant, 'access_token'));
     if (!self.bearerOnly) {
-      promises.push(updateGrantToken(grant, 'refresh_token'));
-      promises.push(updateGrantToken(grant, 'id_token'));
+      if (grant.refresh_token) {
+        promises.push(validateGrantToken(grant, 'refresh_token'));
+      }
+      if (grant.id_token) {
+        promises.push(validateGrantToken(grant, 'id_token'));
+      }
     }
     Promise.all(promises).then(() => {
       resolve(grant);

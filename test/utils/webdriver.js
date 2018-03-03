@@ -89,6 +89,21 @@ ConsolePage.prototype.login = function (user, pass) {
   driver.findElement(By.name('login')).click();
 };
 
+/**
+ * Logouts directly with support for a wait period
+ *
+ * @param port
+ * @returns {Promise<any>}
+ */
+ConsolePage.prototype.logout = function (port) {
+  this.get(port, '/logout');
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, 2000);
+  });
+};
+
 ConsolePage.prototype.body = () => {
   return driver.findElement(By.tagName('pre'));
 };
