@@ -56,23 +56,27 @@ var Protect = require('./middleware/protect');
  *
  */
 function Keycloak (config, keycloakConfig) {
-  // If keycloakConfig is null, Config() will search for `keycloak.json`.
-  this.config = new Config(keycloakConfig);
-
-  this.grantManager = new GrantManager(this.config);
-
-  this.stores = [ BearerStore ];
-
   if (!config) {
     throw new Error('Adapter configuration must be provided.');
   }
 
-  // Add the custom scope value
-  this.config.scope = config.scope;
-
   if (config && config.store && config.cookies) {
     throw new Error('Either `store` or `cookies` may be set, but not both');
   }
+
+  // If keycloakConfig is null, Config() will search for `keycloak.json`.
+  const configs = Array.isArray(keycloakConfig) ? keycloakConfig.map(kcRealmConfig => new Config(kcRealmConfig)) : [new Config(keycloakConfig)];
+
+  // Add the custom scope value
+  configs.forEach(realmConfig => {
+    realmConfig.scope = config.scope;
+  });
+
+  this.configs = configs.reduce((previous, realmConfig) => Object.assign(previous, {[realmConfig.realm]: realmConfig}), {});
+
+  this.grantManagers = configs.reduce((previous, realmConfig) => Object.assign(previous, {[realmConfig.realm]: new GrantManager(realmConfig)}), {});
+
+  this.stores = [ BearerStore ];
 
   if (config && config.store) {
     this.stores.push(new SessionStore(config.store));
@@ -99,6 +103,7 @@ function Keycloak (config, keycloakConfig) {
  *
  *  - `logout` URL for logging a user out. Defaults to `/logout`.
  *  - `admin` Root URL for Keycloak admin callbacks.  Defaults to `/`.
+ *  - `realmResolver` Lambda or Function: request => string. Extract the realm name from the request (multitenant only).
  *
  * @param {Object} options Optional options for specifying details.
  */
@@ -110,9 +115,15 @@ Keycloak.prototype.middleware = function (options) {
   options.logout = options.logout || '/logout';
   options.admin = options.admin || '/';
 
+  const resolver = Object.keys(this.configs).length === 1 ? () => this.configs[Object.keys(this.configs)[0]].realm : options.realmResolver;
+
+  if (!resolver) {
+    throw new Error('Realm resolver must be provided for Multi-tenancy.');
+  }
+
   var middlewares = [];
 
-  middlewares.push(Setup);
+  middlewares.push(Setup(resolver));
   middlewares.push(PostAuth(this));
   middlewares.push(Admin(this, options.admin));
   middlewares.push(GrantAttacher(this));
@@ -252,17 +263,25 @@ Keycloak.prototype.getGrant = function (request, response) {
   }
 
   if (grantData && !grantData.error) {
-    var self = this;
-    return this.grantManager.createGrant(JSON.stringify(grantData))
-    .then(grant => { return this.grantManager.ensureFreshness(grant); })
+    const grantManager = this.getGrantManager(request);
+    return grantManager.createGrant(JSON.stringify(grantData))
+    .then(grant => grantManager.ensureFreshness(grant))
     .then(grant => {
-      self.storeGrant(grant, request, response);
+      this.storeGrant(grant, request, response);
       return grant;
     })
-    .catch(() => { return Promise.reject(); });
+    .catch(() => Promise.reject());
   }
 
   return Promise.reject();
+};
+
+Keycloak.prototype.getGrantManager = function (request) {
+  return this.grantManagers[request.kauth.realmName];
+};
+
+Keycloak.prototype.getConfig = function (request) {
+  return this.configs[request.kauth.realmName];
 };
 
 Keycloak.prototype.storeGrant = function (grant, request, response) {
@@ -298,39 +317,40 @@ Keycloak.prototype.getGrantFromCode = function (code, request, response) {
   var sessionId = request.session.id;
 
   var self = this;
-  return this.grantManager.obtainFromCode(request, code, sessionId)
+  return this.getGrantManager(request).obtainFromCode(request, code, sessionId)
     .then(function (grant) {
       self.storeGrant(grant, request, response);
       return grant;
     });
 };
 
-Keycloak.prototype.loginUrl = function (uuid, redirectUrl) {
-  return this.config.realmUrl +
+Keycloak.prototype.loginUrl = function (request, uuid, redirectUrl) {
+  const config = this.getConfig(request);
+  return config.realmUrl +
   '/protocol/openid-connect/auth' +
-  '?client_id=' + encodeURIComponent(this.config.clientId) +
+  '?client_id=' + encodeURIComponent(config.clientId) +
   '&state=' + encodeURIComponent(uuid) +
   '&redirect_uri=' + encodeURIComponent(redirectUrl) +
-  '&scope=' + encodeURIComponent(this.config.scope ? 'openid ' + this.config.scope : 'openid') +
+  '&scope=' + encodeURIComponent(config.scope ? 'openid ' + config.scope : 'openid') +
   '&response_type=code';
 };
 
-Keycloak.prototype.logoutUrl = function (redirectUrl) {
-  return this.config.realmUrl +
+Keycloak.prototype.logoutUrl = function (request, redirectUrl) {
+  return this.getConfig(request).realmUrl +
   '/protocol/openid-connect/logout' +
   '?redirect_uri=' + encodeURIComponent(redirectUrl);
 };
 
-Keycloak.prototype.accountUrl = function () {
-  return this.config.realmUrl + '/account';
+Keycloak.prototype.accountUrl = function (request) {
+  return this.getConfig(request).realmUrl + '/account';
 };
 
-Keycloak.prototype.getAccount = function (token) {
-  return this.grantManager.getAccount(token);
+Keycloak.prototype.getAccount = function (token, request) {
+  return this.getGrantManager(request).getAccount(token);
 };
 
 Keycloak.prototype.redirectToLogin = function (request) {
-  return !this.config.bearerOnly;
+  return !this.getConfig(request).bearerOnly;
 };
 
 module.exports = Keycloak;
