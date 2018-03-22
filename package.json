@@ -1,6 +1,6 @@
 {
   "name": "keycloak-connect",
-  "version": "3.4.3",
+  "version": "4.0.0-beta.1",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
   "main": "index.js",
