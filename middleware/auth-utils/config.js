@@ -140,7 +140,7 @@ Config.prototype.configure = function configure (config) {
      * Authentication server URL additional endpoints
      * @type {String}
      */
-  this.realmWhitelistUrls = resolveValue(config.realmWhitelistUrls);
+  this.externalRealm = resolveValue(config.externalRealm);
 
   /**
    * How many minutes before retrying getting the keys.
