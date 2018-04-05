@@ -135,11 +135,10 @@ Config.prototype.configure = function configure (config) {
    * @type {String} */
   this.realmAdminUrl = this.authServerUrl + '/admin/realms/' + this.realm;
 
-
-    /**
-     * Authentication server URL additional endpoints
-     * @type {String}
-     */
+  /**
+   * Authentication server URL additional endpoints
+   * @type {String}
+   */
   this.externalRealm = resolveValue(config.externalRealm);
 
   /**
