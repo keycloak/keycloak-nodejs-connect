@@ -372,7 +372,7 @@ test('GrantManager should be able to validate invalid ISS', (t) => {
       return manager.validateGrant(grant);
     })
     .catch((e) => {
-      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong ISS)');
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong ISS) or unknown external realm');
     })
     .then(t.end);
 });

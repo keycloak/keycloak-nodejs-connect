@@ -33,6 +33,7 @@ var Rotation = require('./rotation');
  */
 function GrantManager (config) {
   this.realmUrl = config.realmUrl;
+  this.externalRealm = config.externalRealm;
   this.clientId = config.clientId;
   this.secret = config.secret;
   this.publicKey = config.publicKey;
@@ -338,8 +339,8 @@ GrantManager.prototype.validateToken = function validateToken (token) {
       reject(new Error('invalid token (not signed)'));
     } else if (token.content.iat < this.notBefore) {
       reject(new Error('invalid token (future dated)'));
-    } else if (token.content.iss !== this.realmUrl) {
-      reject(new Error('invalid token (wrong ISS)'));
+    } else if (token.content.iss !== this.realmUrl && token.content.iss !== this.externalRealm) {
+      reject(new Error('invalid token (wrong ISS) or unknown external realm'));
     } else {
       const verify = crypto.createVerify('RSA-SHA256');
       // if public key has been supplied use it to validate token
