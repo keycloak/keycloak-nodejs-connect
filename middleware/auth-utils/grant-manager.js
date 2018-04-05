@@ -33,6 +33,7 @@ var Rotation = require('./rotation');
  */
 function GrantManager (config) {
   this.realmUrl = config.realmUrl;
+  this.realmWhitelistUrls = config.realmWhitelistUrls;
   this.clientId = config.clientId;
   this.secret = config.secret;
   this.publicKey = config.publicKey;
@@ -338,7 +339,7 @@ GrantManager.prototype.validateToken = function validateToken (token) {
       reject(new Error('invalid token (not signed)'));
     } else if (token.content.iat < this.notBefore) {
       reject(new Error('invalid token (future dated)'));
-    } else if (token.content.iss !== this.realmUrl) {
+    } else if (token.content.iss !== this.realmUrl && this.realmWhitelistUrls.indexOf(token.content.iss) === -1) {
       reject(new Error('invalid token (wrong ISS)'));
     } else {
       const verify = crypto.createVerify('RSA-SHA256');
