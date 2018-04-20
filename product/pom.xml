@@ -59,7 +59,7 @@
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}</directory>
+                                    <directory>${project.basedir}/../</directory>
                                     <includes>
                                         <include>example/**</include>
                                         <include>index.js</include>
@@ -90,7 +90,7 @@
                             <goal>set-properties</goal>
                         </goals>
                         <configuration>
-                            <file>package.json</file>
+                            <file>${project.basedir}/../package.json</file>
                             <properties>
                                 <version.js.phantomjs>$.devDependencies.phantomjs-prebuilt</version.js.phantomjs>
                                 <version.js.nsp>$.devDependencies.nsp</version.js.nsp>
@@ -216,7 +216,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>dist.xml</descriptor>
+                                <descriptor>${project.basedir}/dist.xml</descriptor>
                             </descriptors>
                             <appendAssemblyId>false</appendAssemblyId>
                             <tarLongFileMode>posix</tarLongFileMode>
