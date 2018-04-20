@@ -3,7 +3,7 @@
   "version": "7.0.0-dev",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
-  "main": "index.js",
+  "main": "keycloak.js",
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js middleware/auth-utils/*.js example/*.js",
     "format": "semistandard",
@@ -26,6 +26,7 @@
     "index.js",
     "uuid.js"
   ],
+  "typings": "keycloak.d.ts",
   "author": {
     "name": "Red Hat, Inc.",
     "url": "http://keycloak.org"

@@ -407,12 +407,7 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
  *
  * If the token is valid the promise will be resolved with the token
  *
- * If any of the following errors are seen the promise will resolve with undefined:
- *
- * - The token was undefined in the first place.
- * - The token is expired.
- * - The token is not expired, but issued before the current *not before* timestamp.
- * - The token signature does not verify against the known realm public-key.
+ * If the token is undefined or fails validation an applicable error is returned
  *
  * @return {Promise} That resolve a token
  */
