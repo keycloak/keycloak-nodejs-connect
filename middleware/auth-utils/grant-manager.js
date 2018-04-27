@@ -39,6 +39,8 @@ function GrantManager (config) {
   this.public = config.public;
   this.bearerOnly = config.bearerOnly;
   this.notBefore = 0;
+  this.authServerHost = config.authServerHost;
+  this.authServerPort = config.authServerPort;
   this.rotation = new Rotation(config);
 }
 
@@ -99,6 +101,14 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
   };
   const handler = createHandler(this);
   const options = postOptions(this);
+
+  if (this.authServerHost) {
+    options.hostname = this.authServerHost;
+  }
+
+  if (this.authServerPort) {
+    options.port = this.authServerPort;
+  }
 
   return nodeify(fetch(this, handler, options, params), callback);
 };

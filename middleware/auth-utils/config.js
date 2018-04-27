@@ -161,6 +161,16 @@ Config.prototype.configure = function configure (config) {
     }
     this.publicKey += '-----END PUBLIC KEY-----\n';
   }
+
+  /**
+   * Configurable host for keycloak auth server.
+   */
+  this.authServerHost = config['auth-server-host'] || config.authServerHost;
+
+  /**
+   * Configurable port number for keycloak auth server.
+   */
+  this.authServerPort = config['auth-server-port'] || config.authServerPort;
 };
 
 module.exports = Config;
