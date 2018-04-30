@@ -1,0 +1,10 @@
+{
+  "server-url" : "https://localhost:8080/auth",
+  "realm" : "nodejs-test",
+  "min-time-between-jwks-requests" : 0,
+  "ssl-required" : "external",
+  "resource" : "public-client",
+  "public-client" : true,
+  "auth-server-host" : "someFakeHost",
+  "auth-server-port" : 9090
+}

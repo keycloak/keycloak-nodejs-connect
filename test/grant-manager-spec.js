@@ -536,3 +536,16 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
   }
   t.end();
 });
+
+test('GrantManager#obtainFromCode should try to connect to a configurable host and port', (t) => {
+  const dockerManager = getManager('./test/fixtures/auth-utils/keycloak-docker.json');
+  const fakeRequest = {};
+  const fakeCode = 'a-fake-code';
+
+  dockerManager.obtainFromCode(fakeRequest, fakeCode)
+    .catch((err) => {
+      t.true(err instanceof Error, err.message);
+      t.equal(err.message, 'getaddrinfo ENOTFOUND somefakehost somefakehost:9090');
+    })
+    .then(t.end);
+});
