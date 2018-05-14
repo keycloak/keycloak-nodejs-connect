@@ -49,7 +49,7 @@ module.exports = function (keycloak) {
         }
         response.redirect(cleanUrl);
       }).catch((err) => {
-        keycloak.accessDenied(request, response);
+        keycloak.accessDenied(request, response, next);
         console.error('Could not obtain grant code: ' + err);
       });
   };
