@@ -125,6 +125,12 @@ Config.prototype.configure = function configure (config) {
   this.authServerUrl = resolveValue(config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl);
 
   /**
+   * Proxy URL
+   * @type {String}
+   */
+  this.proxyUrl = resolveValue(config['proxy-url'] || config.proxyUrl);
+
+  /**
    * Root realm URL.
    * @type {String}
    */

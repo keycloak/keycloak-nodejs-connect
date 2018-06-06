@@ -15,9 +15,8 @@
  */
 'use strict';
 
-const URL = require('url');
 const http = require('http');
-const https = require('https');
+const request = require('request');
 const crypto = require('crypto');
 const querystring = require('querystring');
 const Grant = require('./grant');
@@ -36,6 +35,7 @@ function GrantManager (config) {
   this.clientId = config.clientId;
   this.secret = config.secret;
   this.publicKey = config.publicKey;
+  this.proxyUrl = config.proxyUrl;
   this.public = config.public;
   this.bearerOnly = config.bearerOnly;
   this.notBefore = 0;
@@ -189,34 +189,32 @@ GrantManager.prototype.validateAccessToken = function validateAccessToken (token
 };
 
 GrantManager.prototype.userInfo = function userInfo (token, callback) {
-  const url = this.realmUrl + '/protocol/openid-connect/userinfo';
-  const options = URL.parse(url);
-  options.method = 'GET';
-
   let t = token;
   if (typeof token === 'object') t = token.token;
 
-  options.headers = {
-    'Authorization': 'Bearer ' + t,
-    'Accept': 'application/json',
-    'X-Client': 'keycloak-nodejs-connect'
+  const uri = this.realmUrl + '/protocol/openid-connect/userinfo';
+  const options = {
+    uri,
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + t,
+      'Accept': 'application/json',
+      'X-Client': 'keycloak-nodejs-connect'
+    }
   };
+  if (this.proxyUrl) {
+    options.proxy = this.proxyUrl;
+  }
 
   const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode >= 300) {
+    const req = request(options, (error, response, body) => {
+      if (error || response.statusCode < 200 || response.statusCode >= 300) {
         return reject('Error fetching account');
       }
-      let json = '';
-      response.on('data', (d) => (json += d.toString()));
-      response.on('end', () => {
-        const data = JSON.parse(json);
-        if (data.error) reject(data);
-        else resolve(data);
-      });
+      const data = JSON.parse(body);
+      resolve(data);
     });
     req.on('error', reject);
-    req.end();
   });
 
   return nodeify(promise, callback);
@@ -371,10 +369,6 @@ GrantManager.prototype.validateToken = function validateToken (token) {
   });
 };
 
-const getProtocol = (opts) => {
-  return opts.protocol === 'https:' ? https : http;
-};
-
 const nodeify = (promise, cb) => {
   if (typeof cb !== 'function') return promise;
   return promise.then((res) => cb(null, res)).catch((err) => cb(err));
@@ -402,7 +396,8 @@ const validationHandler = (manager, token) => (resolve, reject, json) => {
 
 const postOptions = (manager, path) => {
   const realPath = path || '/protocol/openid-connect/token';
-  const opts = URL.parse(manager.realmUrl + realPath);
+  const opts = {};
+  opts.uri = manager.realmUrl + realPath;
   opts.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'X-Client': 'keycloak-nodejs-connect'
@@ -419,20 +414,20 @@ const fetch = (manager, handler, options, params) => {
     const data = (typeof params === 'string' ? params : querystring.stringify(params));
     options.headers['Content-Length'] = data.length;
 
-    const req = getProtocol(options).request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode > 299) {
+    options.body = data;
+
+    if (this.proxyUrl) {
+      options.proxy = this.proxyUrl;
+    }
+
+    const req = request(options, (error, response, body) => {
+      if (error || response.statusCode < 200 || response.statusCode > 299) {
         return reject(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]);
       }
-      let json = '';
-      response.on('data', (d) => (json += d.toString()));
-      response.on('end', () => {
-        handler(resolve, reject, json);
-      });
+      handler(resolve, reject, body);
     });
 
-    req.write(data);
     req.on('error', reject);
-    req.end();
   });
 };
 
