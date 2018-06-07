@@ -58,7 +58,7 @@ test('GrantManager should return empty with public key configured but invalid si
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch((e) => {
       t.equal(e.message, 'invalid token (signature)');
@@ -418,10 +418,21 @@ test('GrantManager should validate unsigned token', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.signed = false;
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch(e => {
       t.equal(e.message, 'invalid token (not signed)');
+    })
+    .then(t.end);
+});
+
+test('GrantManager should not validate token with wrong type', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      return manager.validateToken(grant.access_token, 'Refresh');
+    })
+    .catch(e => {
+      t.equal(e.message, 'invalid token (wrong type)');
     })
     .then(t.end);
 });
@@ -430,7 +441,7 @@ test('GrantManager should fail to load public key when kid is empty', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.header.kid = {};
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch(e => {
       t.equal(e.message, 'failed to load public key to verify token. Reason: Expected "jwk" to be an Object');
@@ -442,7 +453,7 @@ test('GrantManager should fail with invalid signature', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch(e => {
       t.equal(e.message, 'invalid token (public key signature)');
@@ -529,7 +540,7 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
 
   /* jshint loopfunc:true */
   for (const token of tokens) {
-    manager.validateToken(token)
+    manager.validateToken(token, 'Bearer')
     .catch((err) => {
       t.true(err instanceof Error, err.message);
     });
