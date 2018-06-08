@@ -75,10 +75,18 @@ declare namespace KeycloakConnect {
      * @param {String} sessionId Optional opaque session-id.
      * @param {String} sessionHost Optional session host for targetted Keycloak console post-backs.
      */
-    obtainFromCode(code: string, sessionid: string, sessionHost: string): Promise<Grant>
+    obtainFromCode(code: string, sessionid?: string, sessionHost?: string, callback?: (err: Error, grant: Grant) => void): Promise<Grant>
 
 
-    // obtainFromClientCredentials
+    /**
+     * Obtain a service account grant.
+     * Client option 'Service Accounts Enabled' needs to be on.
+     *
+     * This method returns or promise or may optionally take a callback function.
+     *
+     * @param {Function} callback Optional callback, if not using promises.
+     */
+    obtainFromClientCredentials (callback?: (err: Error, grant: Grant) => void, scopeParam?: string): Promise<Grant>
 
     /**
      * Ensure that a grant is *fresh*, refreshing if required & possible.
@@ -104,13 +112,13 @@ declare namespace KeycloakConnect {
      *
      * @return {boolean} `false` if the token is invalid, or the same token if valid.
      */
-    validateAccessToken(token: string): Promise<boolean>
+    validateAccessToken<T extends Token|string>(token: T): Promise<false|T>
 
     /**
      * Returns a user info JSON Object
-     * @param {String} token
+     * @param {Token|String} token
      */
-    userInfo(token: string): Promise<Object>
+    userInfo<T extends Token|string, C extends StandardClaims>(token: T): Promise<C>
 
     /**
      * Create a `Grant` object from a string of JSON data.
@@ -120,10 +128,10 @@ declare namespace KeycloakConnect {
      * if available, and validates each for expiration and
      * against the known public-key of the server.
      *
-     * @param {String} rawData The raw JSON string received from the Keycloak server or from a client.
+     * @param {String|GrantProperties} rawData The raw JSON string received from the Keycloak server or from a client.
      * @return {Promise} A promise reoslving a grant.
      */
-    createGrant(data: GrantProperties): Promise<Grant>
+    createGrant(data: string|GrantProperties): Promise<Grant>
 
     /**
      * Validate the grant and all tokens contained therein.
@@ -141,21 +149,16 @@ declare namespace KeycloakConnect {
     validateGrant(grant: Grant): Promise<Grant>
 
     /**
-   * Validate a token.
-   *
-   * This method accepts a token, and returns a promise
-   *
-   * If the token is valid the promise will be resolved with the token
-   *
-   * If any of the following errors are seen the promise will resolve with undefined:
-   *
-   * - The token was undefined in the first place.
-   * - The token is expired.
-   * - The token is not expired, but issued before the current *not before* timestamp.
-   * - The token signature does not verify against the known realm public-key.
-   *
-   * @return {Promise} That resolve a token
-   */
+     * Validate a token.
+     *
+     * This method accepts a token, and returns a promise
+     *
+     * If the token is valid the promise will be resolved with the token
+     * 
+     * If the token is undefined or fails validation an applicable error is returned
+     * 
+     * @return {Promise} That resolve a token
+     */
     validateToken(token: Token): Promise<Token>
   }
 
@@ -174,7 +177,7 @@ declare namespace KeycloakConnect {
      * If the raw string is unavailable (due to programatic construction)
      * then `undefined` is returned.
      */
-    toString(): string
+    toString(): string|undefined
 
     /**
      * Determine if this grant is expired/out-of-date.
