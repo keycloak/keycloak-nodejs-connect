@@ -36,6 +36,11 @@ function adminLogout (request, response, keycloak) {
 
   request.on('end', function () {
     let parts = data.split('.');
+    if (!parts[1]) {
+      response.status(400).end();
+      return;
+    }
+
     let payload = JSON.parse(new Buffer(parts[1], 'base64').toString());
     if (payload.action === 'LOGOUT') {
       let sessionIDs = payload.adapterSessionIds;
@@ -69,6 +74,11 @@ function adminNotBefore (request, response, keycloak) {
 
   request.on('end', function () {
     let parts = data.split('.');
+    if (!parts[1]) {
+      response.status(400).end();
+      return;
+    }
+
     let payload = JSON.parse(new Buffer(parts[1], 'base64').toString());
     if (payload.action === 'PUSH_NOT_BEFORE') {
       keycloak.grantManager.notBefore = payload.notBefore;
