@@ -27,88 +27,30 @@ Admin.prototype.getFunction = function () {
   return this._adminRequest.bind(this);
 };
 
-function adminLogout (request, response, keycloak) {
-  if (request.method !== 'POST') {
-    response.status(400).end();
+function adminLogout (response, keycloak, payload) {
+  let sessionIDs = payload.adapterSessionIds;
+  if (!sessionIDs) {
+    keycloak.grantManager.notBefore = payload.notBefore;
+    response.send('ok');
     return;
   }
-
-  let data = '';
-
-  request.on('data', d => {
-    data += d.toString();
-  });
-
-  request.on('end', function () {
-    let parts = data.split('.');
-    if (!parts[1]) {
-      response.status(400).end();
-      return;
-    }
-
-    let payload;
-    try {
-      payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-    } catch (e) {
-      response.status(400).end();
-      return;
-    }
-
-    if (payload.action === 'LOGOUT') {
-      let sessionIDs = payload.adapterSessionIds;
-      if (!sessionIDs) {
-        keycloak.grantManager.notBefore = payload.notBefore;
-        response.send('ok');
-        return;
-      }
-      if (sessionIDs && sessionIDs.length > 0) {
-        let seen = 0;
-        sessionIDs.forEach(id => {
-          keycloak.unstoreGrant(id);
-          ++seen;
-          if (seen === sessionIDs.length) {
-            response.send('ok');
-          }
-        });
-      } else {
+  if (sessionIDs && sessionIDs.length > 0) {
+    let seen = 0;
+    sessionIDs.forEach(id => {
+      keycloak.unstoreGrant(id);
+      ++seen;
+      if (seen === sessionIDs.length) {
         response.send('ok');
       }
-    }
-  });
+    });
+  } else {
+    response.send('ok');
+  }
 }
 
-function adminNotBefore (request, response, keycloak) {
-  if (request.method !== 'POST') {
-    response.status(400).end();
-    return;
-  }
-
-  let data = '';
-
-  request.on('data', d => {
-    data += d.toString();
-  });
-
-  request.on('end', function () {
-    let parts = data.split('.');
-    if (!parts[1]) {
-      response.status(400).end();
-      return;
-    }
-
-    let payload;
-    try {
-      payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-    } catch (e) {
-      response.status(400).end();
-      return;
-    }
-
-    if (payload.action === 'PUSH_NOT_BEFORE') {
-      keycloak.grantManager.notBefore = payload.notBefore;
-      response.send('ok');
-    }
-  });
+function adminNotBefore (response, keycloak, payload) {
+  keycloak.grantManager.notBefore = payload.notBefore;
+  response.send('ok');
 }
 
 module.exports = function (keycloak, adminUrl) {
@@ -120,15 +62,46 @@ module.exports = function (keycloak, adminUrl) {
   let urlNotBefore = url + 'k_push_not_before';
 
   return function adminRequest (request, response, next) {
-    switch (request.url) {
-      case urlLogout:
-        adminLogout(request, response, keycloak);
-        break;
-      case urlNotBefore:
-        adminNotBefore(request, response, keycloak);
-        break;
-      default:
-        return next();
+    if (request.url !== urlLogout && request.url !== urlNotBefore) {
+      return next();
     }
+
+    if (request.method !== 'POST') {
+      response.status(400).end();
+      return;
+    }
+
+    let data = '';
+
+    request.on('data', d => {
+      data += d.toString();
+    });
+
+    request.on('end', function () {
+      let parts = data.split('.');
+      if (!parts[1]) {
+        response.status(400).end();
+        return;
+      }
+
+      let payload;
+      try {
+        payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+      } catch (e) {
+        response.status(400).end();
+        return;
+      }
+
+      switch (payload.action) {
+        case 'PUSH_NOT_BEFORE':
+          adminNotBefore(response, keycloak, payload);
+          break;
+        case 'LOGOUT':
+          adminLogout(response, keycloak, payload);
+          break;
+        default:
+          next();
+      }
+    });
   };
 };
