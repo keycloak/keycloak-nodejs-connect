@@ -28,6 +28,11 @@ Admin.prototype.getFunction = function () {
 };
 
 function adminLogout (request, response, keycloak) {
+  if (request.method !== 'POST') {
+    response.status(400).end();
+    return;
+  }
+
   let data = '';
 
   request.on('data', d => {
@@ -66,6 +71,11 @@ function adminLogout (request, response, keycloak) {
 }
 
 function adminNotBefore (request, response, keycloak) {
+  if (request.method !== 'POST') {
+    response.status(400).end();
+    return;
+  }
+
   let data = '';
 
   request.on('data', d => {
