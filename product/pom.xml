@@ -93,7 +93,6 @@
                             <file>${project.basedir}/../package.json</file>
                             <properties>
                                 <version.js.phantomjs>$.devDependencies.phantomjs-prebuilt</version.js.phantomjs>
-                                <version.js.nsp>$.devDependencies.nsp</version.js.nsp>
                             </properties>
                         </configuration>
                     </execution>
@@ -159,16 +158,6 @@
                         <configuration>
                             <nodeVersion>${version.js.node}</nodeVersion>
                             <npmVersion>${version.js.npm}</npmVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm-install-nsp</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <arguments>install nsp@${version.js.nsp} --no-shrinkwrap</arguments>
                         </configuration>
                     </execution>
                     <execution>
