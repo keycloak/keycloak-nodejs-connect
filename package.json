@@ -32,7 +32,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "jwk-to-pem": "^2.0.0"
+    "jwk-to-pem": "^2.0.0",
+    "request": "^2.83.0"
   },
   "devDependencies": {
     "express": "^4.14.0",
