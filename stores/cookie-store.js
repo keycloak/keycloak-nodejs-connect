@@ -32,7 +32,7 @@ CookieStore.get = (request) => {
 
 let store = (grant) => {
   return (request, response) => {
-    request.session[CookieStore.TOKEN_KEY] = grant.__raw;
+    request.cookies[CookieStore.TOKEN_KEY] = grant.__raw;
   };
 };
 
