@@ -47,12 +47,21 @@ function Token (token, clientId) {
 }
 
 /**
+ * Determine if this token is offline token.
+ *
+ * @return {boolean} `true` if type is `offline`, otherwise `false`.
+ */
+Token.prototype.isOffline = function isOffline () {
+  return this.content.typ === 'Offline';
+};
+
+/**
  * Determine if this token is expired.
  *
  * @return {boolean} `true` if it is expired, otherwise `false`.
  */
 Token.prototype.isExpired = function isExpired () {
-  return ((this.content.exp * 1000) < Date.now());
+  return !this.isOffline() && ((this.content.exp * 1000) < Date.now());
 };
 
 /**
