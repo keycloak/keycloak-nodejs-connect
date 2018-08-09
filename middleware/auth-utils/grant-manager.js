@@ -103,6 +103,93 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
   return nodeify(fetch(this, handler, options, params), callback);
 };
 
+GrantManager.prototype.checkPermissions = function obtainPermissions (authzRequest, request, callback) {
+  const params = {
+    grant_type: 'urn:ietf:params:oauth:grant-type:uma-ticket'
+  };
+
+  if (authzRequest.audience) {
+    params.audience = authzRequest.audience;
+  } else {
+    params.audience = this.clientId;
+  }
+
+  if (authzRequest.response_mode) {
+    params.response_mode = authzRequest.response_mode;
+  }
+
+  if (authzRequest.claim_token) {
+    params.claim_token = authzRequest.claim_token;
+    params.claim_token_format = authzRequest.claim_token_format;
+  }
+
+  const options = postOptions(this);
+
+  if (this.public) {
+    if (request.kauth && request.kauth.grant && request.kauth.grant.access_token) {
+      options.headers.Authorization = 'Bearer ' + request.kauth.grant.access_token.token;
+    }
+  } else {
+    let header = request.headers.authorization;
+    let bearerToken;
+
+    if (header && header.indexOf('bearer ') === 0 || header.indexOf('Bearer ') === 0) {
+      bearerToken = header.substring(7);
+    }
+
+    if (!bearerToken) {
+      return;
+    }
+
+    params.subject_token = bearerToken;
+  }
+
+  let permissions = authzRequest.permissions;
+
+  if (!permissions) {
+    permissions = [];
+  }
+
+  for (let i = 0; i < permissions.length; i++) {
+    var resource = permissions[i];
+    var permission = resource.id;
+
+    if (resource.scopes && resource.scopes.length > 0) {
+      permission += '#';
+
+      for (let j = 0; j < resource.scopes.length; j++) {
+        var scope = resource.scopes[j];
+        if (permission.indexOf('#') !== permission.length - 1) {
+          permission += ',';
+        }
+        permission += scope;
+      }
+    }
+
+    if (!params.permission) {
+      params.permission = [];
+    }
+
+    params.permission.push(permission);
+  }
+
+  let manager = this;
+
+  var handler = (resolve, reject, json) => {
+    try {
+      if (authzRequest.response_mode === 'decision' || authzRequest.response_mode === 'permissions') {
+        callback(JSON.parse(json));
+      } else {
+        resolve(manager.createGrant(json));
+      }
+    } catch (err) {
+      reject(err);
+    }
+  };
+
+  return nodeify(fetch(this, handler, options, params));
+};
+
 /**
  * Obtain a service account grant.
  * Client option 'Service Accounts Enabled' needs to be on.

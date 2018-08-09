@@ -11,3 +11,4 @@ coverage
 pid.txt
 .idea/
 tmp/
+.vscode/

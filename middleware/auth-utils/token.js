@@ -136,4 +136,50 @@ Token.prototype.hasRealmRole = function hasRealmRole (roleName) {
   return (this.content.realm_access.roles.indexOf(roleName) >= 0);
 };
 
+/**
+ * Determine if this token has an associated role.
+ *
+ * This method is only functional if the token is constructed
+ * with a `clientId` parameter.
+ *
+ * The parameter matches a role specification using the following rules:
+ *
+ * - If the name contains no colons, then the name is taken as the entire
+ *   name of a role within the current application, as specified via
+ *   `clientId`.
+ * - If the name starts with the literal `realm:`, the subsequent portion
+ *   is taken as the name of a _realm-level_ role.
+ * - Otherwise, the name is split at the colon, with the first portion being
+ *   taken as the name of an arbitrary application, and the subsequent portion
+ *   as the name of a role with that app.
+ *
+ * @param {String} permission The role name specifier.
+ *
+ * @return {boolean} `true` if this token has the specified role, otherwise `false`.
+ */
+Token.prototype.hasPermission = function hasPermission (resource, scope) {
+  let permissions = this.content.authorization ? this.content.authorization.permissions : undefined;
+
+  if (!permissions) {
+    return false;
+  }
+
+  for (let i = 0; i < permissions.length; i++) {
+    let permission = permissions[i];
+
+    if (permission.rsid === resource || permission.rsname === resource) {
+      if (scope) {
+        if (permission.scopes && permission.scopes.length > 0) {
+          if (!permission.scopes.includes(scope)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+  }
+
+  return false;
+};
+
 module.exports = Token;
