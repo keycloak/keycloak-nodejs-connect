@@ -59,7 +59,8 @@
   },
   "semistandard": {
     "ignore": [
-      "**/phantomjs*/"
+      "**/phantomjs*/",
+      "**/keycloak*/"
     ]
   },
   "engines": {

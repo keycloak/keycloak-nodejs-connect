@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. scripts/version.sh
+. scripts/build-keycloak.sh
 
 set -v
 
@@ -10,7 +10,7 @@ function waitForServer {
   C=50
   while [ $C -gt 0 ]
   do
-    grep "Keycloak ${VERSION} (WildFly Core 2.0.10.Final) started" keycloak.log
+    grep "Keycloak ${VERSION} (WildFly Core .*) started" keycloak.log
     if [ $? -eq 0 ]; then
       echo "Server started."
       C=0
@@ -22,16 +22,7 @@ function waitForServer {
   done
 }
 
-ARCHIVE="${KEYCLOAK}.tar.gz"
-DIST="keycloak-server-dist"
-URL="https://repo1.maven.org/maven2/org/keycloak/$DIST/${VERSION}/$DIST-${VERSION}.tar.gz"
-# Download keycloak server if we don't already have it
-if [ ! -e $KEYCLOAK ]
-then
-  curl -o $ARCHIVE $URL
-  tar xzf $ARCHIVE
-  rm -f $ARCHIVE
-fi
+KEYCLOAK="keycloak-server"
 
 # Start the server
 $KEYCLOAK/bin/add-user-keycloak.sh -u admin -p admin
