@@ -134,28 +134,24 @@ function NodeApp () {
       res.json({message: 'admin'});
     });
 
-    app.get('/service/grant', keycloak.protect(), (req, res) => {
+    app.get('/service/grant', keycloak.protect(), (req, res, next) => {
       keycloak.getGrant(req, res)
-      .then(grant => {
-        res.json(grant);
-      })
-      .catch(err => {
-        throw err;
-      });
+        .then(grant => {
+          res.json(grant);
+        })
+        .catch(next);
     });
 
-    app.post('/service/grant', bodyParser.json(), (req, res) => {
+    app.post('/service/grant', bodyParser.json(), (req, res, next) => {
       if (!req.body.username || !req.body.password) {
         res.status(400).send('Username and password required');
       }
       keycloak.obtainDirectly(req.body.username, req.body.password)
-      .then(grant => {
-        keycloak.storeGrant(grant, req, res);
-        res.json(grant);
-      })
-      .catch(err => {
-        throw err;
-      });
+        .then(grant => {
+          keycloak.storeGrant(grant, req, res);
+          res.json(grant);
+        })
+        .catch(next);
     });
 
     app.get('/protected/enforcer/resource', keycloak.enforcer('resource:view'), function (req, res) {

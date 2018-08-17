@@ -495,7 +495,7 @@ const postOptions = (manager, path) => {
     'X-Client': 'keycloak-nodejs-connect'
   };
   if (!manager.public) {
-    opts.headers.Authorization = 'Basic ' + new Buffer(manager.clientId + ':' + manager.secret).toString('base64');
+    opts.headers.Authorization = 'Basic ' + Buffer.from(manager.clientId + ':' + manager.secret).toString('base64');
   }
   opts.method = 'POST';
   return opts;
