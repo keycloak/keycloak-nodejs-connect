@@ -369,10 +369,10 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  */
 GrantManager.prototype.validateGrant = function validateGrant (grant) {
   var self = this;
-  const validateGrantToken = (grant, tokenName) => {
+  const validateGrantToken = (grant, tokenName, expectedType) => {
     return new Promise((resolve, reject) => {
     // check the access token
-      this.validateToken(grant[tokenName]).then(token => {
+      this.validateToken(grant[tokenName], expectedType).then(token => {
         grant[tokenName] = token;
         resolve();
       }).catch((err) => {
@@ -382,13 +382,13 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
   };
   return new Promise((resolve, reject) => {
     var promises = [];
-    promises.push(validateGrantToken(grant, 'access_token'));
+    promises.push(validateGrantToken(grant, 'access_token', 'Bearer'));
     if (!self.bearerOnly) {
       if (grant.refresh_token) {
-        promises.push(validateGrantToken(grant, 'refresh_token'));
+        promises.push(validateGrantToken(grant, 'refresh_token', 'Refresh'));
       }
       if (grant.id_token) {
-        promises.push(validateGrantToken(grant, 'id_token'));
+        promises.push(validateGrantToken(grant, 'id_token', 'ID'));
       }
     }
     Promise.all(promises).then(() => {
@@ -415,7 +415,7 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
  *
  * @return {Promise} That resolve a token
  */
-GrantManager.prototype.validateToken = function validateToken (token) {
+GrantManager.prototype.validateToken = function validateToken (token, expectedType) {
   return new Promise((resolve, reject) => {
     if (!token) {
       reject(new Error('invalid token (missing)'));
@@ -423,6 +423,8 @@ GrantManager.prototype.validateToken = function validateToken (token) {
       reject(new Error('invalid token (expired)'));
     } else if (!token.signed) {
       reject(new Error('invalid token (not signed)'));
+    } else if (token.content.typ !== expectedType) {
+      reject(new Error('invalid token (wrong type)'));
     } else if (token.content.iat < this.notBefore) {
       reject(new Error('invalid token (future dated)'));
     } else if (token.content.iss !== this.realmUrl) {
