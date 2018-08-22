@@ -6,17 +6,16 @@ node_js:
   - "7"
   - "8"
 
+services:
+  - docker
+
 after_success:
   - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
 
 install:
   - npm install
 
-before_script:
+before_install:
   - ./scripts/start-server.sh
 
 script: make tests
-
-after_script:
-  - ./scripts/stop-server.sh
-  - kill -9 `cat pid.txt`
