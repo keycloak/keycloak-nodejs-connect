@@ -35,8 +35,14 @@ function adminLogout (request, response, keycloak) {
   });
 
   request.on('end', function () {
+    let payload;
     let parts = data.split('.');
-    let payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    try {
+      payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    } catch (e) {
+      response.status(400).end();
+      return;
+    }
     if (payload.action === 'LOGOUT') {
       let sessionIDs = payload.adapterSessionIds;
       if (!sessionIDs) {

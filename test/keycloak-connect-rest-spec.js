@@ -55,6 +55,14 @@ test('Should test protected route.', t => {
   return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for no credentials');
 });
 
+test('Should test for bad request on k_logout without any parameters.', t => {
+  t.plan(1);
+  const opt = {
+    'endpoint': app.address + '/k_logout'
+  };
+  return t.shouldFail(roi.get(opt), 'Response should be bad request');
+});
+
 test('Should test protected route with admin credentials.', t => {
   t.plan(1);
   return getToken().then((token) => {
