@@ -21,6 +21,7 @@ const NodeApp = require('./fixtures/node-console/index').NodeApp;
 
 const test = require('blue-tape');
 const roi = require('roi');
+const request = require('request');
 const getToken = require('./utils/token');
 
 const realmName = 'service-node-realm';
@@ -50,9 +51,14 @@ test('Should test unprotected route.', t => {
 test('Should test protected route.', t => {
   t.plan(1);
   const opt = {
-    'endpoint': app.address + '/service/admin'
+    'uri': app.address + '/service/admin'
   };
-  return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for no credentials');
+  return request(opt, function (err, response, body) {
+    t.equal(response.statusCode, 401);
+    if (err) {
+      throw err;
+    }
+  });
 });
 
 test('Should test for bad request on k_logout without any parameters.', t => {

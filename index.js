@@ -279,11 +279,11 @@ Keycloak.prototype.deauthenticated = function (request) {
  * this function will be called.
  *
  * By default, a simple string of "Access denied" along with
- * an HTTP status code for 403 is returned.  Chances are an
+ * an HTTP status code for 401 is returned.  Chances are an
  * application would prefer to render a fancy template.
  */
 Keycloak.prototype.accessDenied = function (request, response) {
-  response.status(403);
+  response.status(401);
   response.end('Access denied');
 };
 

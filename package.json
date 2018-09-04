@@ -55,7 +55,8 @@
     "phantomjs-prebuilt": "^2.1.14",
     "body-parser": "^1.13.3",
     "roi": "^0.15.0",
-    "nock": "^9.0.2"
+    "nock": "^9.0.2",
+    "request": "^2.88.0"
   },
   "semistandard": {
     "ignore": [
