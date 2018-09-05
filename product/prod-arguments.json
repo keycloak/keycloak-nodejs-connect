@@ -9,8 +9,7 @@
   },
   "pme": {
     "properties": {
-        "dependencySource": "BOM",
-        "restURL": "",
+        "dependencySource": "BOMREST",
         "dependencyManagement": "org.jboss.eap:jboss-eap-parent:$EAP_VERSION",
         "dependencyRelocations.org.wildfly:@org.jboss.eap:": "$EAP_VERSION",
         "dependencyExclusion.org.jboss:jboss-parent@*": "19.0.0.redhat-2",
