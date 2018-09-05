@@ -314,7 +314,7 @@ Keycloak.prototype.getGrant = function (request, response) {
     .catch(() => { return Promise.reject(); });
   }
 
-  return Promise.reject();
+  return Promise.reject(grantData ? grantData.error : new Error('No token avaiable'));
 };
 
 Keycloak.prototype.storeGrant = function (grant, request, response) {
