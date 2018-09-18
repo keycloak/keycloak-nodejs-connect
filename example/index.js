@@ -71,12 +71,22 @@ var keycloak = new Keycloak({
 
 app.use(keycloak.middleware({
   logout: '/logout',
-  admin: '/'
+  admin: '/',
+  protected: '/protected/resource'
 }));
 
 app.get('/login', keycloak.protect(), function (req, res) {
   res.render('index', {
     result: JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4),
     event: '1. Authentication\n2. Login'
+  });
+});
+
+app.get('/protected/resource', keycloak.enforcer(['resource:view', 'resource:write'], {
+  resource_server_id: 'nodejs-apiserver'
+}), function (req, res) {
+  res.render('index', {
+    result: JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4),
+    event: '1. Access granted to Default Resource\n'
   });
 });

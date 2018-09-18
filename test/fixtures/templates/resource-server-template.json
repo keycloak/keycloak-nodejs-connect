@@ -1,0 +1,88 @@
+{
+    "clientId": "{{name}}",
+    "rootUrl": "http://localhost:{{port}}",
+    "enabled": true,
+    "directAccessGrantsEnabled": true,
+    "redirectUris": [
+        "http://localhost:{{port}}/*"
+    ],
+    "webOrigins": [
+        "http://localhost:{{port}}/*"
+    ],
+    "serviceAccountsEnabled": true,
+    "directAccessGrantsEnabled": true,
+    "publicClient": false,
+    "secret": "5b5120a0-5e41-4cdd-af8a-72c470db0b59",
+    "authorizationSettings": {
+        "allowRemoteResourceManagement": true,
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [
+          {
+            "name": "resource",
+            "type": "urn:nodejs-apiserver:resources:default",
+            "scopes": [
+              {
+                "name": "view"
+              },
+              {
+                "name": "update"
+              },
+              {
+                "name": "delete"
+              }
+            ]
+          },
+          {
+            "name": "photo"
+          }
+        ],
+        "policies": [
+          {
+            "name": "Default Policy",
+            "type": "js",
+            "config": {
+              "code": "$evaluation.grant();\n"
+            }
+          },
+          {
+            "name": "Delete Policy",
+            "type": "js",
+            "config": {
+              "code": "$evaluation.deny();"
+            }
+          },
+          {
+            "name": "Supported Browser Policy",
+            "type": "js",
+            "config": {
+              "code": "var context = $evaluation.context;var attributes = context.attributes;if (attributes.containsValue('user_agent', 'mozilla')) {$evaluation.grant();} else {$evaluation.deny();}"
+            }
+          },          
+          {
+            "name": "Default Permission",
+            "type": "resource",
+            "config": {
+              "defaultResourceType": "urn:nodejs-apiserver:resources:default",
+              "applyPolicies": "[\"Default Policy\"]"
+            }
+          },
+          {
+            "name": "Photo Permission",
+            "type": "resource",
+            "resources": ["photo"],
+            "config": {
+              "applyPolicies": "[\"Supported Browser Policy\"]"
+            }
+          },
+          {
+            "name": "Delete Permission",
+            "type": "scope",
+            "resources": ["resource"],
+            "scopes": ["delete"],
+            "config": {
+              "applyPolicies": "[\"Delete Policy\"]"
+            }
+          }
+        ]
+      }
+}

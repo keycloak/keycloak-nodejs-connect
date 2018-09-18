@@ -35,8 +35,14 @@ function adminLogout (request, response, keycloak) {
   });
 
   request.on('end', function () {
+    let payload;
     let parts = data.split('.');
-    let payload = JSON.parse(new Buffer(parts[1], 'base64').toString());
+    try {
+      payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    } catch (e) {
+      response.status(400).end();
+      return;
+    }
     if (payload.action === 'LOGOUT') {
       let sessionIDs = payload.adapterSessionIds;
       if (!sessionIDs) {
@@ -69,7 +75,7 @@ function adminNotBefore (request, response, keycloak) {
 
   request.on('end', function () {
     let parts = data.split('.');
-    let payload = JSON.parse(new Buffer(parts[1], 'base64').toString());
+    let payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
     if (payload.action === 'PUSH_NOT_BEFORE') {
       keycloak.getGrantManager(request).notBefore = payload.notBefore;
       response.send('ok');

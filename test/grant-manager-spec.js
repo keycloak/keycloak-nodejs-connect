@@ -58,7 +58,7 @@ test('GrantManager should return empty with public key configured but invalid si
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch((e) => {
       t.equal(e.message, 'invalid token (signature)');
@@ -194,9 +194,9 @@ test('GrantManager should be able to validate tokens in a grant', (t) => {
 test('GrantManager should be able to remove invalid tokens from a grant', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
-      grant.access_token.signature = new Buffer('this signature is invalid');
-      grant.refresh_token.signature = new Buffer('this signature is also invalid');
-      grant.id_token.signature = new Buffer('this signature is still invalid');
+      grant.access_token.signature = Buffer.from('this signature is invalid');
+      grant.refresh_token.signature = Buffer.from('this signature is also invalid');
+      grant.id_token.signature = Buffer.from('this signature is still invalid');
       return manager.validateGrant(grant);
     })
     .catch((e) => {
@@ -418,10 +418,21 @@ test('GrantManager should validate unsigned token', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.signed = false;
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch(e => {
       t.equal(e.message, 'invalid token (not signed)');
+    })
+    .then(t.end);
+});
+
+test('GrantManager should not validate token with wrong type', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      return manager.validateToken(grant.access_token, 'Refresh');
+    })
+    .catch(e => {
+      t.equal(e.message, 'invalid token (wrong type)');
     })
     .then(t.end);
 });
@@ -430,10 +441,10 @@ test('GrantManager should fail to load public key when kid is empty', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.header.kid = {};
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch(e => {
-      t.equal(e.message, 'failed to load public key to verify token');
+      t.equal(e.message, 'failed to load public key to verify token. Reason: Expected "jwk" to be an Object');
     })
     .then(t.end);
 });
@@ -442,7 +453,7 @@ test('GrantManager should fail with invalid signature', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
       grant.access_token.signature = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-      return manager.validateToken(grant.access_token);
+      return manager.validateToken(grant.access_token, 'Bearer');
     })
     .catch(e => {
       t.equal(e.message, 'invalid token (public key signature)');
@@ -469,6 +480,43 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
     .then(t.end);
 });
 
+test('GrantManager#ensureFreshness should fetch new access token with client id ', (t) => {
+  const refreshedToken = {
+    'access_token': 'some.access.token',
+    'expires_in': 30,
+    'refresh_expires_in': 1800,
+    'refresh_token': 'i-Am-The-Refresh-Token',
+    'token_type': 'bearer',
+    'id_token': 'some-id-token',
+    'not-before-policy': 1462208947,
+    'session_state': 'ess-sion-tat-se'
+  };
+  nock('http://localhost:8080')
+    .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
+      grant_type: 'refresh_token',
+      client_id: 'public-client',
+      refresh_token: 'i-Am-The-Refresh-Token'
+    })
+    .reply(204, refreshedToken);
+
+  const grant = {
+    isExpired: function () {
+      return true;
+    },
+    refresh_token: {
+      token: 'i-Am-The-Refresh-Token',
+      isExpired: () => false
+    }
+  };
+
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.createGrant = (t) => { return Promise.resolve(t); };
+  manager.ensureFreshness(grant)
+    .then((grant) => {
+      t.true(grant === JSON.stringify(refreshedToken));
+    }).then(t.end);
+});
+
 test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
   const expiredToken = {
     isExpired: () => true
@@ -492,7 +540,7 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
 
   /* jshint loopfunc:true */
   for (const token of tokens) {
-    manager.validateToken(token)
+    manager.validateToken(token, 'Bearer')
     .catch((err) => {
       t.true(err instanceof Error, err.message);
     });

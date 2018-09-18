@@ -103,6 +103,93 @@ GrantManager.prototype.obtainFromCode = function obtainFromCode (request, code, 
   return nodeify(fetch(this, handler, options, params), callback);
 };
 
+GrantManager.prototype.checkPermissions = function obtainPermissions (authzRequest, request, callback) {
+  const params = {
+    grant_type: 'urn:ietf:params:oauth:grant-type:uma-ticket'
+  };
+
+  if (authzRequest.audience) {
+    params.audience = authzRequest.audience;
+  } else {
+    params.audience = this.clientId;
+  }
+
+  if (authzRequest.response_mode) {
+    params.response_mode = authzRequest.response_mode;
+  }
+
+  if (authzRequest.claim_token) {
+    params.claim_token = authzRequest.claim_token;
+    params.claim_token_format = authzRequest.claim_token_format;
+  }
+
+  const options = postOptions(this);
+
+  if (this.public) {
+    if (request.kauth && request.kauth.grant && request.kauth.grant.access_token) {
+      options.headers.Authorization = 'Bearer ' + request.kauth.grant.access_token.token;
+    }
+  } else {
+    let header = request.headers.authorization;
+    let bearerToken;
+
+    if (header && header.indexOf('bearer ') === 0 || header.indexOf('Bearer ') === 0) {
+      bearerToken = header.substring(7);
+    }
+
+    if (!bearerToken) {
+      return;
+    }
+
+    params.subject_token = bearerToken;
+  }
+
+  let permissions = authzRequest.permissions;
+
+  if (!permissions) {
+    permissions = [];
+  }
+
+  for (let i = 0; i < permissions.length; i++) {
+    var resource = permissions[i];
+    var permission = resource.id;
+
+    if (resource.scopes && resource.scopes.length > 0) {
+      permission += '#';
+
+      for (let j = 0; j < resource.scopes.length; j++) {
+        var scope = resource.scopes[j];
+        if (permission.indexOf('#') !== permission.length - 1) {
+          permission += ',';
+        }
+        permission += scope;
+      }
+    }
+
+    if (!params.permission) {
+      params.permission = [];
+    }
+
+    params.permission.push(permission);
+  }
+
+  let manager = this;
+
+  var handler = (resolve, reject, json) => {
+    try {
+      if (authzRequest.response_mode === 'decision' || authzRequest.response_mode === 'permissions') {
+        callback(JSON.parse(json));
+      } else {
+        resolve(manager.createGrant(json));
+      }
+    } catch (err) {
+      reject(err);
+    }
+  };
+
+  return nodeify(fetch(this, handler, options, params));
+};
+
 /**
  * Obtain a service account grant.
  * Client option 'Service Accounts Enabled' needs to be on.
@@ -155,7 +242,8 @@ GrantManager.prototype.ensureFreshness = function ensureFreshness (grant, callba
 
   const params = {
     grant_type: 'refresh_token',
-    refresh_token: grant.refresh_token.token
+    refresh_token: grant.refresh_token.token,
+    client_id: this.clientId
   };
   const handler = refreshHandler(this, grant);
   const options = postOptions(this);
@@ -281,10 +369,10 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  */
 GrantManager.prototype.validateGrant = function validateGrant (grant) {
   var self = this;
-  const validateGrantToken = (grant, tokenName) => {
+  const validateGrantToken = (grant, tokenName, expectedType) => {
     return new Promise((resolve, reject) => {
     // check the access token
-      this.validateToken(grant[tokenName]).then(token => {
+      this.validateToken(grant[tokenName], expectedType).then(token => {
         grant[tokenName] = token;
         resolve();
       }).catch((err) => {
@@ -294,13 +382,13 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
   };
   return new Promise((resolve, reject) => {
     var promises = [];
-    promises.push(validateGrantToken(grant, 'access_token'));
+    promises.push(validateGrantToken(grant, 'access_token', 'Bearer'));
     if (!self.bearerOnly) {
       if (grant.refresh_token) {
-        promises.push(validateGrantToken(grant, 'refresh_token'));
+        promises.push(validateGrantToken(grant, 'refresh_token', 'Refresh'));
       }
       if (grant.id_token) {
-        promises.push(validateGrantToken(grant, 'id_token'));
+        promises.push(validateGrantToken(grant, 'id_token', 'ID'));
       }
     }
     Promise.all(promises).then(() => {
@@ -327,7 +415,7 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
  *
  * @return {Promise} That resolve a token
  */
-GrantManager.prototype.validateToken = function validateToken (token) {
+GrantManager.prototype.validateToken = function validateToken (token, expectedType) {
   return new Promise((resolve, reject) => {
     if (!token) {
       reject(new Error('invalid token (missing)'));
@@ -335,6 +423,8 @@ GrantManager.prototype.validateToken = function validateToken (token) {
       reject(new Error('invalid token (expired)'));
     } else if (!token.signed) {
       reject(new Error('invalid token (not signed)'));
+    } else if (token.content.typ !== expectedType) {
+      reject(new Error('invalid token (wrong type)'));
     } else if (token.content.iat < this.notBefore) {
       reject(new Error('invalid token (future dated)'));
     } else if (token.content.iss !== this.realmUrl) {
@@ -362,8 +452,8 @@ GrantManager.prototype.validateToken = function validateToken (token) {
           } else {
             resolve(token);
           }
-        }, () => {
-          reject(new Error('failed to load public key to verify token'));
+        }).catch((err) => {
+          reject(new Error('failed to load public key to verify token. Reason: ' + err.message));
         });
       }
     }
@@ -407,7 +497,7 @@ const postOptions = (manager, path) => {
     'X-Client': 'keycloak-nodejs-connect'
   };
   if (!manager.public) {
-    opts.headers.Authorization = 'Basic ' + new Buffer(manager.clientId + ':' + manager.secret).toString('base64');
+    opts.headers.Authorization = 'Basic ' + Buffer.from(manager.clientId + ':' + manager.secret).toString('base64');
   }
   opts.method = 'POST';
   return opts;
