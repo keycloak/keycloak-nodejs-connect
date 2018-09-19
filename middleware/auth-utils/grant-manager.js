@@ -384,9 +384,6 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
     var promises = [];
     promises.push(validateGrantToken(grant, 'access_token', 'Bearer'));
     if (!self.bearerOnly) {
-      if (grant.refresh_token) {
-        promises.push(validateGrantToken(grant, 'refresh_token', 'Refresh'));
-      }
       if (grant.id_token) {
         promises.push(validateGrantToken(grant, 'id_token', 'ID'));
       }
