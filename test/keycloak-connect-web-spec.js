@@ -21,6 +21,7 @@ const TestVector = require('./utils/helper').TestVector;
 
 const page = require('./utils/webdriver').newPage;
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
+const session = require('express-session');
 
 const realmManager = admin.createRealm();
 const app = new NodeApp();
@@ -66,6 +67,26 @@ test('Should login with admin credentials', t => {
       return page.output().getText().then(text => {
         t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
       });
+    });
+  });
+});
+
+test('Public client should be redirected to GitHub when idpHint is provided', t => {
+  t.plan(1);
+  var app = new NodeApp();
+  var client = admin.createClient(app.publicClient('appIdP'));
+
+  return client.then((installation) => {
+    app.build(installation, {store: new session.MemoryStore(), idpHint: 'github'});
+    page.get(app.port, '/restricted');
+    return page.h1().getText().then(text => {
+      t.equal(text, 'Sign in to GitHub', 'Application should redirect to GitHub');
+      return page.logout(app.port); // we need to wait a bit until the logout is fully completed
+    }).then(() => {
+      app.destroy();
+    }).catch(err => {
+      app.destroy();
+      throw err;
     });
   });
 });

@@ -108,6 +108,10 @@ ConsolePage.prototype.body = () => {
   return driver.findElement(By.tagName('pre'));
 };
 
+ConsolePage.prototype.h1 = () => {
+  return driver.findElement(By.tagName('h1'));
+};
+
 var newPage = new ConsolePage();
 
 module.exports = {

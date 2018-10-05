@@ -67,7 +67,7 @@ function NodeApp () {
     return parseClient('test/fixtures/templates/resource-server-template.json', this.port, name);
   };
 
-  this.build = function (kcConfig) {
+  this.build = function (kcConfig, params) {
     app.set('view engine', 'html');
     app.set('views', require('path').join(__dirname, '/views'));
     app.engine('html', hogan);
@@ -89,9 +89,8 @@ function NodeApp () {
     //
     // Additional configuration is read from keycloak.json file
     // installed from the Keycloak web console.
-    var keycloak = new Keycloak({
-      store: memoryStore
-    }, kcConfig);
+    params = params || { store: memoryStore };
+    var keycloak = new Keycloak(params, kcConfig);
 
     // A normal un-protected public URL.
     app.get('/', function (req, res) {

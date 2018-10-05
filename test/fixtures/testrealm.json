@@ -61,5 +61,20 @@
       "directAccessGrantsEnabled": true,
       "fullScopeAllowed": true
     }
-  ]
+  ],
+  "identityProviders" : [
+  {
+      "alias" : "github",
+      "providerId" : "github",
+      "enabled": true,
+      "storeToken": "false",
+      "postBrokerLoginFlowAlias" : "browser",
+      "config": {
+        "authorizationUrl": "authorizationUrl",
+        "tokenUrl": "tokenUrl",
+        "userInfoUrl": "userInfoUrl",
+        "clientId": "clientId",
+        "clientSecret": "clientSecret"
+      }
+  } ]
 }
