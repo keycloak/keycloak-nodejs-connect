@@ -37,7 +37,7 @@ function waitForElement (locator, t) {
 function waitForVisibleElement (locator, t) {
   var timeout = t || 3000;
   var element = driver.wait(until.elementLocated(locator), timeout);
-  return driver.wait(new until.WebElementCondition('for element to be visible ' + locator, function () {
+  return driver.wait(new webdriver.WebElementCondition('for element to be visible ' + locator, function () {
     return element.isDisplayed().then(x => x ? element : null);
   }), timeout);
 }
