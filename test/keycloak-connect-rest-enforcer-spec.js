@@ -36,7 +36,7 @@ test('setup', t => {
 });
 
 test('Should test access to protected resource and scope view.', t => {
-  t.plan(1);
+  t.plan(4);
   return getToken({ realmName }).then((token) => {
     var opt = {
       endpoint: app.address + '/protected/enforcer/resource',
@@ -46,13 +46,17 @@ test('Should test access to protected resource and scope view.', t => {
     };
     return roi.get(opt)
     .then(x => {
-      t.equal(JSON.parse(x.body).message, 'resource:view');
+      const j = JSON.parse(x.body);
+      t.equal(j.message, 'resource:view');
+      t.equal(j.permissions.length, 1);
+      t.equal(j.permissions[0].rsname, 'resource');
+      t.equal(j.permissions[0].scopes[0], 'view');
     });
   });
 });
 
-test('Should test access to protected resource and scope update.', t => {
-  t.plan(1);
+test('Should test access to protected resource and scope update - and returned permissions.', t => {
+  t.plan(4);
   return getToken({ realmName }).then((token) => {
     var opt = {
       endpoint: app.address + '/protected/enforcer/resource',
@@ -62,13 +66,17 @@ test('Should test access to protected resource and scope update.', t => {
     };
     return roi.post(opt)
     .then(x => {
-      t.equal(JSON.parse(x.body).message, 'resource:update');
+      const j = JSON.parse(x.body);
+      t.equal(j.message, 'resource:update');
+      t.equal(j.permissions.length, 1);
+      t.equal(j.permissions[0].rsname, 'resource');
+      t.equal(j.permissions[0].scopes[0], 'update');
     });
   });
 });
 
 test('Should test no access to protected resource and scope delete.', t => {
-  t.plan(1);
+  t.plan(3);
   return getToken({ realmName }).then((token) => {
     var opt = {
       endpoint: app.address + '/protected/enforcer/resource',
@@ -76,12 +84,18 @@ test('Should test no access to protected resource and scope delete.', t => {
         Authorization: `Bearer ${token}`
       }
     };
-    return t.shouldFail(roi.del(opt), 'Access denied', 'Response should be access denied for resource:delete');
+
+    return roi.del(opt)
+    .catch(x => {
+      t.equal(x.length, 1);
+      t.equal(x[0].permissions, undefined);
+      t.equal(x[0], 'Access denied');
+    });
   });
 });
 
 test('Should test no access to protected resource and scope view and delete.', t => {
-  t.plan(1);
+  t.plan(3);
   return getToken({ realmName }).then((token) => {
     var opt = {
       endpoint: app.address + '/protected/enforcer/resource-view-delete',
@@ -89,12 +103,17 @@ test('Should test no access to protected resource and scope view and delete.', t
         Authorization: `Bearer ${token}`
       }
     };
-    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for resource:delete');
+    return roi.get(opt)
+      .catch(x => {
+        t.equal(x.length, 1);
+        t.equal(x[0].permissions, undefined);
+        t.equal(x[0], 'Access denied');
+      });
   });
 });
 
 test('Should test access to protected resource pushing claims.', t => {
-  t.plan(1);
+  t.plan(4);
   return getToken({ realmName }).then((token) => {
     var opt = {
       endpoint: app.address + '/protected/enforcer/resource-claims?user_agent=mozilla',
@@ -104,13 +123,17 @@ test('Should test access to protected resource pushing claims.', t => {
     };
     return roi.get(opt)
     .then(x => {
-      t.equal(JSON.parse(x.body).message, 'mozilla');
+      const j = JSON.parse(x.body);
+      t.equal(j.message, 'mozilla');
+      t.equal(j.permissions[0].rsname, 'photo');
+      t.equal(j.permissions[0].claims.user_agent.length, 1);
+      t.equal(j.permissions[0].claims.user_agent[0], 'mozilla');
     });
   });
 });
 
 test('Should test no access to protected resource wrong claims.', t => {
-  t.plan(1);
+  t.plan(3);
   return getToken({ realmName }).then((token) => {
     var opt = {
       endpoint: app.address + '/protected/enforcer/resource-claims?user_agent=ie',
@@ -118,12 +141,17 @@ test('Should test no access to protected resource wrong claims.', t => {
         Authorization: `Bearer ${token}`
       }
     };
-    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for resource:delete');
+    return roi.get(opt)
+      .catch(x => {
+        t.equal(x.length, 1);
+        t.equal(x[0].permissions, undefined);
+        t.equal(x[0], 'Access denied');
+      });
   });
 });
 
 test('Should test access to resources without any permission defined.', t => {
-  t.plan(1);
+  t.plan(2);
   return getToken({ realmName }).then((token) => {
     var opt = {
       endpoint: app.address + '/protected/enforcer/no-permission-defined',
@@ -133,7 +161,9 @@ test('Should test access to resources without any permission defined.', t => {
     };
     return roi.get(opt)
     .then(x => {
-      t.equal(JSON.parse(x.body).message, 'always grant, no permissions defined');
+      const j = JSON.parse(x.body);
+      t.equal(j.message, 'always grant');
+      t.equal(j.permissions, undefined);
     });
   });
 });
