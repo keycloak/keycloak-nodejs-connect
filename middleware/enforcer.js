@@ -129,6 +129,7 @@ Enforcer.prototype.enforce = function enforce (expectedPermissions) {
             }
           }
         })) {
+          request.permissions = permissions;
           return next();
         }
 
