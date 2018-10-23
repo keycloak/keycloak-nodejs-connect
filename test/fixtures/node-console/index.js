@@ -154,19 +154,19 @@ function NodeApp () {
     });
 
     app.get('/protected/enforcer/resource', keycloak.enforcer('resource:view'), function (req, res) {
-      res.json({message: 'resource:view'});
+      res.json({message: 'resource:view', permissions: req.permissions});
     });
 
     app.post('/protected/enforcer/resource', keycloak.enforcer('resource:update'), function (req, res) {
-      res.json({message: 'resource:update'});
+      res.json({message: 'resource:update', permissions: req.permissions});
     });
 
     app.delete('/protected/enforcer/resource', keycloak.enforcer('resource:delete'), function (req, res) {
-      res.json({message: 'resource:delete'});
+      res.json({message: 'resource:delete', permissions: req.permissions});
     });
 
     app.get('/protected/enforcer/resource-view-delete', keycloak.enforcer(['resource:view', 'resource:delete']), function (req, res) {
-      res.json({message: 'resource:delete'});
+      res.json({message: 'resource:delete', permissions: req.permissions});
     });
 
     app.get('/protected/enforcer/resource-claims', keycloak.enforcer(['photo'], {
@@ -176,11 +176,11 @@ function NodeApp () {
         };
       }
     }), function (req, res) {
-      res.json({message: req.query.user_agent});
+      res.json({message: req.query.user_agent, permissions: req.permissions});
     });
 
     app.get('/protected/enforcer/no-permission-defined', keycloak.enforcer(), function (req, res) {
-      res.json({message: 'always grant, no permissions defined'});
+      res.json({message: 'always grant', permissions: req.permissions});
     });
 
     app.use('*', function (req, res) {
