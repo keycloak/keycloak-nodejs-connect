@@ -133,12 +133,12 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
     let header = request.headers.authorization;
     let bearerToken;
 
-    if (header && header.indexOf('bearer ') === 0 || header.indexOf('Bearer ') === 0) {
+    if (header && (header.indexOf('bearer ') === 0 || header.indexOf('Bearer ') === 0)) {
       bearerToken = header.substring(7);
     }
 
     if (!bearerToken) {
-      return;
+      return Promise.reject('No bearer in header');
     }
 
     params.subject_token = bearerToken;

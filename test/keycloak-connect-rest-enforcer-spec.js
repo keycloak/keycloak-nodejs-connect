@@ -55,6 +55,20 @@ test('Should test access to protected resource and scope view.', t => {
   });
 });
 
+test('Should test access to protected resource and scope view without authorization header.', t => {
+  t.plan(2);
+  return getToken({ realmName }).then((token) => {
+    var opt = {
+      endpoint: app.address + '/protected/enforcer/resource'
+    };
+    return roi.get(opt)
+      .catch(x => {
+        t.equal(x.length, 1);
+        t.equal(x[0], 'Access denied');
+      });
+  });
+});
+
 test('Should test access to protected resource and scope update - and returned permissions.', t => {
   t.plan(4);
   return getToken({ realmName }).then((token) => {
