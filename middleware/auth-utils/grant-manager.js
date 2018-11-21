@@ -138,7 +138,11 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
     }
 
     if (!bearerToken) {
-      return Promise.reject('No bearer in header');
+      if (request.kauth && request.kauth.grant && request.kauth.grant.access_token) {
+        bearerToken = request.kauth.grant.access_token.token;
+      } else {
+        return Promise.reject('No bearer in header');
+      }
     }
 
     params.subject_token = bearerToken;

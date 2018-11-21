@@ -76,6 +76,10 @@ ConsolePage.prototype.print = function () {
   });
 };
 
+ConsolePage.prototype.grantedResourceButton = function () {
+    return driver.findElement(By.xpath("//button[text() = 'Granted Resource']"));
+};
+
 ConsolePage.prototype.login = function (user, pass) {
   waitForVisibleElement(By.id('username'), 100000);
   var username = driver.findElement(By.id('username'));
