@@ -65,16 +65,16 @@ Rotation.prototype.getJWK = function getJWK (kid) {
   }
   var self = this;
 
-    // check if we are allowed to send request
+  // check if we are allowed to send request
   var currentTime = new Date().getTime() / 1000;
   if (currentTime > this.lastTimeRequesTime + this.minTimeBetweenJwksRequests) {
     return this.retrieveJWKs()
-        .then(publicKeys => {
-          self.lastTimeRequesTime = currentTime;
-          self.jwks = publicKeys.keys;
-          var convertedKey = jwkToPem(self.jwks.find((key) => { return key.kid === kid; }));
-          return convertedKey;
-        });
+      .then(publicKeys => {
+        self.lastTimeRequesTime = currentTime;
+        self.jwks = publicKeys.keys;
+        var convertedKey = jwkToPem(self.jwks.find((key) => { return key.kid === kid; }));
+        return convertedKey;
+      });
   } else {
     console.error('Not enough time elapsed since the last request, blocking the request');
   }

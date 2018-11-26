@@ -238,13 +238,13 @@ test('GrantManager should not be able to refresh a grant when bearer only', (t) 
 
 test('GrantManager should reject with refresh token missing error', (t) => {
   manager.ensureFreshness({ isExpired: () => true })
-  .catch((e) => {
-    t.equal(e.message, 'Unable to refresh without a refresh token');
-  })
-  .then((grant) => {
-    t.equal(grant, undefined);
-  })
-  .then(t.end);
+    .catch((e) => {
+      t.equal(e.message, 'Unable to refresh without a refresh token');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
 });
 
 test('GrantManager validate empty access token', (t) => {
@@ -541,9 +541,9 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
   /* jshint loopfunc:true */
   for (const token of tokens) {
     manager.validateToken(token, 'Bearer')
-    .catch((err) => {
-      t.true(err instanceof Error, err.message);
-    });
+      .catch((err) => {
+        t.true(err instanceof Error, err.message);
+      });
   }
   t.end();
 });

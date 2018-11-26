@@ -30,9 +30,9 @@ const app = new NodeApp();
 test('setup', t => {
   return realmManager.then(() => {
     return admin.createClient(app.bearerOnly(), realmName)
-    .then((installation) => {
-      return app.build(installation);
-    });
+      .then((installation) => {
+        return app.build(installation);
+      });
   });
 });
 
@@ -42,9 +42,9 @@ test('Should test unprotected route.', t => {
     'endpoint': app.address + '/service/public'
   };
   return roi.get(opt)
-  .then(x => {
-    t.equal(JSON.parse(x.body).message, 'public');
-  });
+    .then(x => {
+      t.equal(JSON.parse(x.body).message, 'public');
+    });
 });
 
 test('Should test protected route.', t => {
@@ -73,9 +73,9 @@ test('Should test protected route with admin credentials.', t => {
       }
     };
     return roi.get(opt)
-    .then(x => {
-      t.equal(JSON.parse(x.body).message, 'admin');
-    });
+      .then(x => {
+        t.equal(JSON.parse(x.body).message, 'admin');
+      });
   });
 });
 
@@ -115,10 +115,10 @@ test('Access should be denied for bearer client with invalid public key.', t => 
   }).then(() => {
     someApp.destroy();
   })
-  .catch(err => {
-    someApp.destroy();
-    throw err;
-  });
+    .catch(err => {
+      someApp.destroy();
+      throw err;
+    });
 });
 
 test('Should test protected route after push revocation.', t => {
@@ -154,10 +154,10 @@ test('Should test protected route after push revocation.', t => {
   }).then(() => {
     app.destroy();
   })
-  .catch(err => {
-    app.destroy();
-    throw err;
-  });
+    .catch(err => {
+      app.destroy();
+      throw err;
+    });
 });
 
 test('Should invoke admin logout', t => {
@@ -194,10 +194,10 @@ test('Should invoke admin logout', t => {
   }).then(() => {
     app.destroy();
   })
-  .catch(err => {
-    app.destroy();
-    throw err;
-  });
+    .catch(err => {
+      app.destroy();
+      throw err;
+    });
 });
 
 test('teardown', t => {
