@@ -18,4 +18,8 @@ install:
 before_install:
   - ./scripts/start-server.sh
 
-script: make tests
+before_script:
+  - make lint
+
+script: 
+  - for i in `ls test/*.js`; do tape $i;done

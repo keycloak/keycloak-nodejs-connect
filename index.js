@@ -309,11 +309,11 @@ Keycloak.prototype.getGrant = function (request, response) {
   if (grantData && !grantData.error) {
     var self = this;
     return this.grantManager.createGrant(JSON.stringify(grantData))
-    .then(grant => {
-      self.storeGrant(grant, request, response);
-      return grant;
-    })
-    .catch(() => { return Promise.reject(); });
+      .then(grant => {
+        self.storeGrant(grant, request, response);
+        return grant;
+      })
+      .catch(() => { return Promise.reject(); });
   }
 
   return Promise.reject();

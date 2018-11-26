@@ -17,11 +17,9 @@
 
 const test = require('blue-tape');
 const admin = require('./utils/realm');
-const TestVector = require('./utils/helper').TestVector;
 
 const page = require('./utils/webdriver').newPage;
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
-const session = require('express-session');
 
 const realmManager = admin.createRealm();
 const app = new NodeApp();
@@ -29,9 +27,9 @@ const app = new NodeApp();
 test('setup', t => {
   return realmManager.then(() => {
     return admin.createClient(app.enforcerResourceServer())
-    .then((installation) => {
-      return app.build(installation);
-    });
+      .then((installation) => {
+        return app.build(installation);
+      });
   });
 });
 
@@ -62,4 +60,3 @@ test('teardown', t => {
     page.quit();
   });
 });
-

@@ -184,8 +184,8 @@ function NodeApp () {
     });
 
     app.get('/protected/web/resource', keycloak.enforcer(['resource:view']), function (req, res) {
-        var user = req.kauth.grant.access_token.content.preferred_username;
-        output(res, user, 'Granted');
+      var user = req.kauth.grant.access_token.content.preferred_username;
+      output(res, user, 'Granted');
     });
 
     app.use('*', function (req, res) {

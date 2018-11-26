@@ -29,9 +29,9 @@ const app = new NodeApp();
 test('setup', t => {
   return realmManager.then(() => {
     return admin.createClient(app.enforcerResourceServer(), realmName)
-    .then((installation) => {
-      return app.build(installation);
-    });
+      .then((installation) => {
+        return app.build(installation);
+      });
   });
 });
 
@@ -45,13 +45,13 @@ test('Should test access to protected resource and scope view.', t => {
       }
     };
     return roi.get(opt)
-    .then(x => {
-      const j = JSON.parse(x.body);
-      t.equal(j.message, 'resource:view');
-      t.equal(j.permissions.length, 1);
-      t.equal(j.permissions[0].rsname, 'resource');
-      t.equal(j.permissions[0].scopes[0], 'view');
-    });
+      .then(x => {
+        const j = JSON.parse(x.body);
+        t.equal(j.message, 'resource:view');
+        t.equal(j.permissions.length, 1);
+        t.equal(j.permissions[0].rsname, 'resource');
+        t.equal(j.permissions[0].scopes[0], 'view');
+      });
   });
 });
 
@@ -79,13 +79,13 @@ test('Should test access to protected resource and scope update - and returned p
       }
     };
     return roi.post(opt)
-    .then(x => {
-      const j = JSON.parse(x.body);
-      t.equal(j.message, 'resource:update');
-      t.equal(j.permissions.length, 1);
-      t.equal(j.permissions[0].rsname, 'resource');
-      t.equal(j.permissions[0].scopes[0], 'update');
-    });
+      .then(x => {
+        const j = JSON.parse(x.body);
+        t.equal(j.message, 'resource:update');
+        t.equal(j.permissions.length, 1);
+        t.equal(j.permissions[0].rsname, 'resource');
+        t.equal(j.permissions[0].scopes[0], 'update');
+      });
   });
 });
 
@@ -100,11 +100,11 @@ test('Should test no access to protected resource and scope delete.', t => {
     };
 
     return roi.del(opt)
-    .catch(x => {
-      t.equal(x.length, 1);
-      t.equal(x[0].permissions, undefined);
-      t.equal(x[0], 'Access denied');
-    });
+      .catch(x => {
+        t.equal(x.length, 1);
+        t.equal(x[0].permissions, undefined);
+        t.equal(x[0], 'Access denied');
+      });
   });
 });
 
@@ -136,13 +136,13 @@ test('Should test access to protected resource pushing claims.', t => {
       }
     };
     return roi.get(opt)
-    .then(x => {
-      const j = JSON.parse(x.body);
-      t.equal(j.message, 'mozilla');
-      t.equal(j.permissions[0].rsname, 'photo');
-      t.equal(j.permissions[0].claims.user_agent.length, 1);
-      t.equal(j.permissions[0].claims.user_agent[0], 'mozilla');
-    });
+      .then(x => {
+        const j = JSON.parse(x.body);
+        t.equal(j.message, 'mozilla');
+        t.equal(j.permissions[0].rsname, 'photo');
+        t.equal(j.permissions[0].claims.user_agent.length, 1);
+        t.equal(j.permissions[0].claims.user_agent[0], 'mozilla');
+      });
   });
 });
 
@@ -174,11 +174,11 @@ test('Should test access to resources without any permission defined.', t => {
       }
     };
     return roi.get(opt)
-    .then(x => {
-      const j = JSON.parse(x.body);
-      t.equal(j.message, 'always grant');
-      t.equal(j.permissions, undefined);
-    });
+      .then(x => {
+        const j = JSON.parse(x.body);
+        t.equal(j.message, 'always grant');
+        t.equal(j.permissions, undefined);
+      });
   });
 });
 

@@ -36,9 +36,9 @@ const getSessionCookie = response => response.headers['set-cookie'][0].split(';'
 test('setup', t => {
   return realmManager.then(() => {
     return admin.createClient(app.confidential(), realmName)
-    .then((installation) => {
-      return app.build(installation);
-    });
+      .then((installation) => {
+        return app.build(installation);
+      });
   });
 });
 
@@ -60,9 +60,9 @@ test('Should test protected route with admin credentials.', t => {
       }
     };
     return roi.get(opt)
-    .then(x => {
-      t.equal(JSON.parse(x.body).message, 'admin');
-    });
+      .then(x => {
+        t.equal(JSON.parse(x.body).message, 'admin');
+      });
   });
 });
 
@@ -84,28 +84,28 @@ test('Should handle direct access grants.', t => {
   t.plan(3);
 
   return roi.post({ endpoint }, auth)
-  .then(res => JSON.parse(res.body))
-  .then(body => {
-    t.ok(body.id_token, 'Response should contain an id_token');
-    t.ok(body.access_token, 'Response should contain an access_token');
-    t.ok(body.refresh_token, 'Response should contain an refresh_token');
-  });
-});
-
-test('Should store the grant.', t => {
-  const endpoint = app.address + '/service/grant';
-  t.plan(3);
-  return roi.post({ endpoint }, auth)
-  .then(res => getSessionCookie(res))
-  .then(cookie => {
-    return roi.get({ endpoint, headers: { cookie } })
     .then(res => JSON.parse(res.body))
     .then(body => {
       t.ok(body.id_token, 'Response should contain an id_token');
       t.ok(body.access_token, 'Response should contain an access_token');
       t.ok(body.refresh_token, 'Response should contain an refresh_token');
     });
-  });
+});
+
+test('Should store the grant.', t => {
+  const endpoint = app.address + '/service/grant';
+  t.plan(3);
+  return roi.post({ endpoint }, auth)
+    .then(res => getSessionCookie(res))
+    .then(cookie => {
+      return roi.get({ endpoint, headers: { cookie } })
+        .then(res => JSON.parse(res.body))
+        .then(body => {
+          t.ok(body.id_token, 'Response should contain an id_token');
+          t.ok(body.access_token, 'Response should contain an access_token');
+          t.ok(body.refresh_token, 'Response should contain an refresh_token');
+        });
+    });
 });
 
 test('Should not store grant on bearer request', t => {
@@ -114,44 +114,44 @@ test('Should not store grant on bearer request', t => {
   let sessionCookie;
 
   return roi.post({ endpoint }, auth)
-  .then(res => {
-    const data = {
-      cookie: getSessionCookie(res),
-      grant: JSON.parse(res.body)
-    };
-    sessionCookie = data.cookie;
-    return data;
-  })
-  .then(data => {
-    const opt = {
-      endpoint: app.address + '/service/secured',
-      headers: {
-        Authorization: 'Bearer ' + data.grant.access_token.token,
-        Cookie: data.cookie
-      }
-    };
-
-    return roi.get(opt)
-    .then(res => JSON.parse(res.body))
-    .then(body => {
-      t.equal(body.message, 'secured');
-
+    .then(res => {
+      const data = {
+        cookie: getSessionCookie(res),
+        grant: JSON.parse(res.body)
+      };
+      sessionCookie = data.cookie;
+      return data;
+    })
+    .then(data => {
       const opt = {
-        endpoint,
+        endpoint: app.address + '/service/secured',
         headers: {
-          Cookie: sessionCookie
+          Authorization: 'Bearer ' + data.grant.access_token.token,
+          Cookie: data.cookie
         }
       };
 
       return roi.get(opt)
-      .then(res => JSON.parse(res.body))
-      .then(body => {
-        t.ok(body.id_token, 'Response should contain an id_token');
-        t.ok(body.access_token, 'Response should contain an access_token');
-        t.ok(body.refresh_token, 'Response should contain an refresh_token');
-      });
+        .then(res => JSON.parse(res.body))
+        .then(body => {
+          t.equal(body.message, 'secured');
+
+          const opt = {
+            endpoint,
+            headers: {
+              Cookie: sessionCookie
+            }
+          };
+
+          return roi.get(opt)
+            .then(res => JSON.parse(res.body))
+            .then(body => {
+              t.ok(body.id_token, 'Response should contain an id_token');
+              t.ok(body.access_token, 'Response should contain an access_token');
+              t.ok(body.refresh_token, 'Response should contain an refresh_token');
+            });
+        });
     });
-  });
 });
 
 test('teardown', t => {
