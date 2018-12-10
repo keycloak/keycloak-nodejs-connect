@@ -15,9 +15,13 @@
  */
 'use strict';
 
+const querystring = require('querystring');
+
 module.exports = function (keycloak, logoutUrl) {
   return function logout (request, response, next) {
-    if (request.url !== logoutUrl) {
+    const baseUrl = request.url.split('?')[0];
+
+    if (baseUrl !== logoutUrl) {
       return next();
     }
 
@@ -30,7 +34,10 @@ module.exports = function (keycloak, logoutUrl) {
     let host = request.hostname;
     let headerHost = request.headers.host.split(':');
     let port = headerHost[1] || '';
-    let redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/';
+    let queryString = request.url.split('?')[1];
+    let query = querystring.parse(queryString || '');
+    let defaultRedirectUrl = encodeURIComponent(request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/');
+    let redirectUrl = query.redirectUrl || defaultRedirectUrl;
     let keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
 
     response.redirect(keycloakLogoutUrl);
