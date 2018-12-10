@@ -53,6 +53,15 @@ test('GrantManager in public mode should be able to refresh a grant', (t) => {
     .then(t.end);
 });
 
+test('GrantManager with custom agent should be able to refresh a grant', (t) => {
+  const keycloakCustomAgentConfig = require('./fixtures/auth-utils/keycloak-custom-agent.js');
+  const manager = getManager(keycloakCustomAgentConfig);
+
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => t.true(manager.isGrantRefreshable(grant)))
+    .then(t.end);
+});
+
 test('GrantManager should return empty with public key configured but invalid signature', (t) => {
   const manager = getManager('./test/fixtures/auth-utils/keycloak-with-public-key.json');
   manager.obtainDirectly('test-user', 'tiger')

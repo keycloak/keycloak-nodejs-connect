@@ -15,8 +15,6 @@
  */
 'use strict';
 const URL = require('url');
-const http = require('http');
-const https = require('https');
 const jwkToPem = require('jwk-to-pem');
 
 /**
@@ -31,6 +29,7 @@ function Rotation (config) {
   this.minTimeBetweenJwksRequests = config.minTimeBetweenJwksRequests;
   this.jwks = [];
   this.lastTimeRequesTime = 0;
+  this.request = config.request;
 }
 
 Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
@@ -38,7 +37,7 @@ Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
   const options = URL.parse(url);
   options.method = 'GET';
   const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request(options, (response) => {
+    const req = this.request.make(options, (response) => {
       if (response.statusCode < 200 || response.statusCode >= 300) {
         return reject('Error fetching JWK Keys');
       }
@@ -82,10 +81,6 @@ Rotation.prototype.getJWK = function getJWK (kid) {
 
 Rotation.prototype.clearCache = function clearCache () {
   this.jwks.length = 0;
-};
-
-const getProtocol = (opts) => {
-  return opts.protocol === 'https:' ? https : http;
 };
 
 const nodeify = (promise, cb) => {

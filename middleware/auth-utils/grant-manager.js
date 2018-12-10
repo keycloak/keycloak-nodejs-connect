@@ -16,13 +16,12 @@
 'use strict';
 
 const URL = require('url');
-const http = require('http');
-const https = require('https');
 const crypto = require('crypto');
 const querystring = require('querystring');
 const Grant = require('./grant');
 const Token = require('./token');
 var Rotation = require('./rotation');
+const Request = require('./request');
 
 /**
  * Construct a grant manager.
@@ -39,7 +38,8 @@ function GrantManager (config) {
   this.public = config.public;
   this.bearerOnly = config.bearerOnly;
   this.notBefore = 0;
-  this.rotation = new Rotation(config);
+  this.request = new Request(config);
+  this.rotation = new Rotation(Object.assign({ request: this.request }, config));
 }
 
 /**
@@ -294,7 +294,7 @@ GrantManager.prototype.userInfo = function userInfo (token, callback) {
   };
 
   const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request(options, (response) => {
+    const req = this.request.make(options, (response) => {
       if (response.statusCode < 200 || response.statusCode >= 300) {
         return reject('Error fetching account');
       }
@@ -461,10 +461,6 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
   });
 };
 
-const getProtocol = (opts) => {
-  return opts.protocol === 'https:' ? https : http;
-};
-
 const nodeify = (promise, cb) => {
   if (typeof cb !== 'function') return promise;
   return promise.then((res) => cb(null, res)).catch((err) => cb(err));
@@ -509,9 +505,9 @@ const fetch = (manager, handler, options, params) => {
     const data = (typeof params === 'string' ? params : querystring.stringify(params));
     options.headers['Content-Length'] = data.length;
 
-    const req = getProtocol(options).request(options, (response) => {
+    const req = manager.request.make(options, (response) => {
       if (response.statusCode < 200 || response.statusCode > 299) {
-        return reject(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]);
+        return reject(response.statusCode + ':' + manager.request.statusCodes(response.statusCode));
       }
       let json = '';
       response.on('data', (d) => (json += d.toString()));
