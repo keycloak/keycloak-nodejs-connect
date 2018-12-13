@@ -50,17 +50,31 @@ module.exports = function (keycloak, spec) {
 
   return function protect (request, response, next) {
     if (request.kauth && request.kauth.grant) {
-      if (!guard || guard(request.kauth.grant.access_token, request, response)) {
+      if (!guard) {
         return next();
+      } else {
+        if (guard.constructor.name === 'AsyncFunction') {
+          guard(request.kauth.grant.access_token, request, response).then(function (result) {
+            if (result) {
+              return next();
+            } else {
+              return keycloak.accessDenied(request, response, next);
+            }
+          });
+        } else {
+          if (guard(request.kauth.grant.access_token, request, response)) {
+            return next();
+          } else {
+            return keycloak.accessDenied(request, response, next);
+          }
+        }
       }
-
-      return keycloak.accessDenied(request, response, next);
-    }
-
-    if (keycloak.redirectToLogin(request)) {
-      forceLogin(keycloak, request, response);
     } else {
-      return keycloak.accessDenied(request, response, next);
+      if (keycloak.redirectToLogin(request)) {
+        forceLogin(keycloak, request, response);
+      } else {
+        return keycloak.accessDenied(request, response, next);
+      }
     }
   };
 };
