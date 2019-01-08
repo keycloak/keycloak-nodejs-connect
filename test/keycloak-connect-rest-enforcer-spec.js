@@ -19,7 +19,7 @@ const admin = require('./utils/realm');
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
 
 const test = require('blue-tape');
-const roi = require('roi');
+const axios = require('axios');
 const getToken = require('./utils/token');
 
 const realmName = 'policy-enforcer-realm';
@@ -38,33 +38,35 @@ test('setup', t => {
 test('Should test access to protected resource and scope view.', t => {
   t.plan(4);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/resource',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const opt = {
+      method: 'get',
+      url: `${app.address}/protected/enforcer/resource`,
+      headers: { Authorization: `Bearer ${token}` }
     };
-    return roi.get(opt)
-      .then(x => {
-        const j = JSON.parse(x.body);
-        t.equal(j.message, 'resource:view');
-        t.equal(j.permissions.length, 1);
-        t.equal(j.permissions[0].rsname, 'resource');
-        t.equal(j.permissions[0].scopes[0], 'view');
+    return axios(opt)
+      .then(response => {
+        t.equal(response.data.message, 'resource:view');
+        t.equal(response.data.permissions.length, 1);
+        t.equal(response.data.permissions[0].rsname, 'resource');
+        t.equal(response.data.permissions[0].scopes[0], 'view');
+      })
+      .catch(error => {
+        t.fail(error.response.data);
       });
   });
 });
 
 test('Should test access to protected resource and scope view without authorization header.', t => {
-  t.plan(2);
+  t.plan(1);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/resource'
+    const opt = {
+      method: 'get',
+      url: `${app.address}/protected/enforcer/resource`
     };
-    return roi.get(opt)
-      .catch(x => {
-        t.equal(x.length, 1);
-        t.equal(x[0], 'Access denied');
+    return axios(opt)
+      .then(_ => {})
+      .catch(error => {
+        t.equal(error.response.data, 'Access denied');
       });
   });
 });
@@ -72,56 +74,52 @@ test('Should test access to protected resource and scope view without authorizat
 test('Should test access to protected resource and scope update - and returned permissions.', t => {
   t.plan(4);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/resource',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const opt = {
+      method: 'post',
+      url: `${app.address}/protected/enforcer/resource`,
+      headers: { Authorization: `Bearer ${token}` }
     };
-    return roi.post(opt)
-      .then(x => {
-        const j = JSON.parse(x.body);
-        t.equal(j.message, 'resource:update');
-        t.equal(j.permissions.length, 1);
-        t.equal(j.permissions[0].rsname, 'resource');
-        t.equal(j.permissions[0].scopes[0], 'update');
+    return axios(opt)
+      .then(response => {
+        t.equal(response.data.message, 'resource:update');
+        t.equal(response.data.permissions.length, 1);
+        t.equal(response.data.permissions[0].rsname, 'resource');
+        t.equal(response.data.permissions[0].scopes[0], 'update');
       });
   });
 });
 
 test('Should test no access to protected resource and scope delete.', t => {
-  t.plan(3);
+  t.plan(2);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/resource',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const opt = {
+      method: 'delete',
+      url: `${app.address}/protected/enforcer/resource`,
+      headers: { Authorization: `Bearer ${token}` }
     };
 
-    return roi.del(opt)
-      .catch(x => {
-        t.equal(x.length, 1);
-        t.equal(x[0].permissions, undefined);
-        t.equal(x[0], 'Access denied');
+    return axios(opt)
+      .then(_ => {})
+      .catch(error => {
+        t.equal(error.response.data.permissions, undefined);
+        t.equal(error.response.data, 'Access denied');
       });
   });
 });
 
 test('Should test no access to protected resource and scope view and delete.', t => {
-  t.plan(3);
+  t.plan(2);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/resource-view-delete',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const opt = {
+      method: 'get',
+      url: `${app.address}/protected/enforcer/resource-view-delete`,
+      headers: { Authorization: `Bearer ${token}` }
     };
-    return roi.get(opt)
-      .catch(x => {
-        t.equal(x.length, 1);
-        t.equal(x[0].permissions, undefined);
-        t.equal(x[0], 'Access denied');
+    return axios(opt)
+      .then(_ => {})
+      .catch(error => {
+        t.equal(error.response.data.permissions, undefined);
+        t.equal(error.response.data, 'Access denied');
       });
   });
 });
@@ -129,37 +127,37 @@ test('Should test no access to protected resource and scope view and delete.', t
 test('Should test access to protected resource pushing claims.', t => {
   t.plan(4);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/resource-claims?user_agent=mozilla',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const opt = {
+      method: 'get',
+      url: `${app.address}/protected/enforcer/resource-claims?user_agent=mozilla`,
+      headers: { Authorization: `Bearer ${token}` }
     };
-    return roi.get(opt)
-      .then(x => {
-        const j = JSON.parse(x.body);
-        t.equal(j.message, 'mozilla');
-        t.equal(j.permissions[0].rsname, 'photo');
-        t.equal(j.permissions[0].claims.user_agent.length, 1);
-        t.equal(j.permissions[0].claims.user_agent[0], 'mozilla');
+    return axios(opt)
+      .then(response => {
+        t.equal(response.data.message, 'mozilla');
+        t.equal(response.data.permissions[0].rsname, 'photo');
+        t.equal(response.data.permissions[0].claims.user_agent.length, 1);
+        t.equal(response.data.permissions[0].claims.user_agent[0], 'mozilla');
+      })
+      .catch(error => {
+        t.fail(error.response.data);
       });
   });
 });
 
 test('Should test no access to protected resource wrong claims.', t => {
-  t.plan(3);
+  t.plan(2);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/resource-claims?user_agent=ie',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const opt = {
+      method: 'get',
+      url: `${app.address}/protected/enforcer/resource-claims?user_agent=ie`,
+      headers: { Authorization: `Bearer ${token}` }
     };
-    return roi.get(opt)
-      .catch(x => {
-        t.equal(x.length, 1);
-        t.equal(x[0].permissions, undefined);
-        t.equal(x[0], 'Access denied');
+    return axios(opt)
+      .then(_ => {})
+      .catch(error => {
+        t.equal(error.response.data.permissions, undefined);
+        t.equal(error.response.data, 'Access denied');
       });
   });
 });
@@ -167,17 +165,18 @@ test('Should test no access to protected resource wrong claims.', t => {
 test('Should test access to resources without any permission defined.', t => {
   t.plan(2);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/protected/enforcer/no-permission-defined',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const opt = {
+      method: 'get',
+      url: `${app.address}/protected/enforcer/no-permission-defined`,
+      headers: { Authorization: `Bearer ${token}` }
     };
-    return roi.get(opt)
-      .then(x => {
-        const j = JSON.parse(x.body);
-        t.equal(j.message, 'always grant');
-        t.equal(j.permissions, undefined);
+    return axios(opt)
+      .then(response => {
+        t.equal(response.data.message, 'always grant');
+        t.equal(response.data.permissions, undefined);
+      })
+      .catch(error => {
+        t.fail(error.response.data);
       });
   });
 });

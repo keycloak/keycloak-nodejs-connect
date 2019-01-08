@@ -35,6 +35,7 @@
     "jwk-to-pem": "^2.0.0"
   },
   "devDependencies": {
+    "axios": "^0.18.0",
     "blue-tape": "^1.0.0",
     "body-parser": "^1.13.3",
     "coveralls": "^3.0.1",
@@ -49,7 +50,6 @@
     "keycloak-request-token": "^0.1.0",
     "nock": "^9.0.2",
     "phantomjs-prebuilt": "^2.1.14",
-    "roi": "^0.15.0",
     "rsa-compat": "^1.2.7",
     "selenium-webdriver": "^3.6.0",
     "semistandard": "^9.2.1",
