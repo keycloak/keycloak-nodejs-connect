@@ -19,7 +19,7 @@ const admin = require('./utils/realm');
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
 
 const test = require('blue-tape');
-const roi = require('roi');
+const axios = require('axios');
 const getToken = require('./utils/token');
 
 const realmName = 'mixed-mode-realm';
@@ -45,23 +45,24 @@ test('setup', t => {
 test('Should test protected route.', t => {
   t.plan(1);
   const opt = {
-    'endpoint': app.address + '/service/admin'
+    url: `${app.address}/service/admin`
   };
-  return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for no credentials');
+  return t.shouldFail(axios(opt), 'Access denied', 'Response should be access denied for no credentials');
 });
 
 test('Should test protected route with admin credentials.', t => {
   t.plan(1);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/service/admin',
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
+    const opt = {
+      url: `${app.address}/service/admin`,
+      headers: { Authorization: `Bearer ${token}` }
     };
-    return roi.get(opt)
-      .then(x => {
-        t.equal(JSON.parse(x.body).message, 'admin');
+    return axios(opt)
+      .then(response => {
+        t.equal(response.data.message, 'admin');
+      })
+      .catch(error => {
+        t.fail(error.response.data);
       });
   });
 });
@@ -69,86 +70,83 @@ test('Should test protected route with admin credentials.', t => {
 test('Should test protected route with invalid access token.', t => {
   t.plan(1);
   return getToken({ realmName }).then((token) => {
-    var opt = {
-      endpoint: app.address + '/service/admin',
+    const opt = {
+      url: `${app.address}/service/admin`,
       headers: {
         Authorization: 'Bearer ' + token.replace(/(.+?\..+?\.).*/, '$1.Invalid')
       }
     };
-    return t.shouldFail(roi.get(opt), 'Access denied', 'Response should be access denied for invalid access token');
+    return t.shouldFail(axios(opt), 'Access denied', 'Response should be access denied for invalid access token');
   });
 });
 
 test('Should handle direct access grants.', t => {
-  const endpoint = app.address + '/service/grant';
   t.plan(3);
-
-  return roi.post({ endpoint }, auth)
-    .then(res => JSON.parse(res.body))
-    .then(body => {
-      t.ok(body.id_token, 'Response should contain an id_token');
-      t.ok(body.access_token, 'Response should contain an access_token');
-      t.ok(body.refresh_token, 'Response should contain an refresh_token');
+  return axios.post(`${app.address}/service/grant`, auth)
+    .then(response => {
+      t.ok(response.data.id_token, 'Response should contain an id_token');
+      t.ok(response.data.access_token, 'Response should contain an access_token');
+      t.ok(response.data.refresh_token, 'Response should contain an refresh_token');
+    })
+    .catch(error => {
+      t.fail(error.response.data);
     });
 });
 
 test('Should store the grant.', t => {
-  const endpoint = app.address + '/service/grant';
   t.plan(3);
-  return roi.post({ endpoint }, auth)
-    .then(res => getSessionCookie(res))
+  const endpoint = `${app.address}/service/grant`;
+  return axios.post(endpoint, auth)
+    .then(response => getSessionCookie(response))
     .then(cookie => {
-      return roi.get({ endpoint, headers: { cookie } })
-        .then(res => JSON.parse(res.body))
-        .then(body => {
-          t.ok(body.id_token, 'Response should contain an id_token');
-          t.ok(body.access_token, 'Response should contain an access_token');
-          t.ok(body.refresh_token, 'Response should contain an refresh_token');
+      return axios.get(endpoint, { headers: { cookie } })
+        .then(response => {
+          t.ok(response.data.id_token, 'Response should contain an id_token');
+          t.ok(response.data.access_token, 'Response should contain an access_token');
+          t.ok(response.data.refresh_token, 'Response should contain an refresh_token');
         });
     });
 });
 
 test('Should not store grant on bearer request', t => {
   t.plan(4);
-  const endpoint = app.address + '/service/grant';
+  const endpoint = `${app.address}/service/grant`;
   let sessionCookie;
 
-  return roi.post({ endpoint }, auth)
-    .then(res => {
+  return axios.post(endpoint, auth)
+    .then(response => {
       const data = {
-        cookie: getSessionCookie(res),
-        grant: JSON.parse(res.body)
+        cookie: getSessionCookie(response),
+        grant: response.data
       };
       sessionCookie = data.cookie;
       return data;
     })
     .then(data => {
       const opt = {
-        endpoint: app.address + '/service/secured',
+        url: `${app.address}/service/secured`,
         headers: {
           Authorization: 'Bearer ' + data.grant.access_token.token,
           Cookie: data.cookie
         }
       };
 
-      return roi.get(opt)
-        .then(res => JSON.parse(res.body))
-        .then(body => {
-          t.equal(body.message, 'secured');
+      return axios(opt)
+        .then(response => {
+          t.equal(response.data.message, 'secured');
 
           const opt = {
-            endpoint,
+            url: endpoint,
             headers: {
               Cookie: sessionCookie
             }
           };
 
-          return roi.get(opt)
-            .then(res => JSON.parse(res.body))
-            .then(body => {
-              t.ok(body.id_token, 'Response should contain an id_token');
-              t.ok(body.access_token, 'Response should contain an access_token');
-              t.ok(body.refresh_token, 'Response should contain an refresh_token');
+          return axios(opt)
+            .then(response => {
+              t.ok(response.data.id_token, 'Response should contain an id_token');
+              t.ok(response.data.access_token, 'Response should contain an access_token');
+              t.ok(response.data.refresh_token, 'Response should contain an refresh_token');
             });
         });
     });
