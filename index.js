@@ -183,8 +183,8 @@ Keycloak.prototype.middleware = function (options) {
  *
  * @param {String} spec The protection spec (optional)
  */
-Keycloak.prototype.protect = function (spec, route) {
-  return Protect(this, spec, route);
+Keycloak.prototype.protect = function (spec) {
+  return Protect(this, spec);
 };
 
 /**
