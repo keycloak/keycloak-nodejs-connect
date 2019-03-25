@@ -159,12 +159,12 @@ test('Should test protected route after push revocation.', t => {
           opt.url = `${app.address}/service/admin`;
 
           return axios(opt)
-          .then(response => {
-            t.equal(response.data, 'Not found!');
-          })
-          .catch(error => {
-            t.fail(error.response.data);
-          });
+            .then(response => {
+              t.equal(response.data, 'Not found!');
+            })
+            .catch(error => {
+              t.fail(error.response.data);
+            });
         });
     });
   }).then(() => {
@@ -204,12 +204,12 @@ test('Should invoke admin logout.', t => {
           opt.url = `${app.address}/service/admin`;
 
           return axios(opt)
-          .then(response => {
-            t.equal(response.data, 'Not found!');
-          })
-          .catch(error => {
-            t.fail(error.response.data);
-          });
+            .then(response => {
+              t.equal(response.data, 'Not found!');
+            })
+            .catch(error => {
+              t.fail(error.response.data);
+            });
         });
     });
   }).then(() => {

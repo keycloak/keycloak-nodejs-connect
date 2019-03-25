@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Pull the docker image with the latest changes on Keycloak
-docker pull jboss/keycloak:master
+docker pull quay.io/keycloak/keycloak:master
 
 # Start the image with default user/admin and import a default realm for integration tests
-docker run -d --name keycloak -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 8080:8080 -v `pwd`/test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json -it jboss/keycloak:master -b 0.0.0.0  -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/config/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+docker run -d --name keycloak -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 8080:8080 -v `pwd`/test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json -it quay.io/keycloak/keycloak:master -b 0.0.0.0  -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/config/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
 
 # For debugging purposes to make sure the image was started
 counter=0

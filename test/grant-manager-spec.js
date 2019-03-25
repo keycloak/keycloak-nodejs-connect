@@ -4,7 +4,7 @@ const GrantManager = require('../middleware/auth-utils/grant-manager');
 const Config = require('../middleware/auth-utils/config');
 const test = require('tape');
 const nock = require('nock');
-const extend = require('util')._extend;
+const extend = require('util').assign;
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const getManager = (fixture) => new GrantManager(new Config(fixture));
 const helper = require('./utils/helper');
@@ -360,7 +360,7 @@ test('GrantManager should return empty when trying to obtain from code with empt
 test('GrantManager should raise an error when trying to obtain from code with rogue params', (t) => {
   manager.obtainFromCode('', '', '', '', {})
     .catch((e) => {
-      t.equal(e, '400:Bad Request');
+      t.equal(e.message, '400:Bad Request');
       t.end();
     });
 });

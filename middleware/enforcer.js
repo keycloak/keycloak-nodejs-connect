@@ -78,7 +78,7 @@ Enforcer.prototype.enforce = function enforce (expectedPermissions) {
         authzRequest.permissions = [];
       }
 
-      let permission = {id: resource};
+      let permission = { id: resource };
 
       if (scope) {
         permission.scopes = [scope];

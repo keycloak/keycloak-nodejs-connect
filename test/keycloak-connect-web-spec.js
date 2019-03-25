@@ -77,7 +77,7 @@ test('Public client should be redirected to GitHub when idpHint is provided', t 
   var client = admin.createClient(app.publicClient('appIdP'));
 
   return client.then((installation) => {
-    app.build(installation, {store: new session.MemoryStore(), idpHint: 'github'});
+    app.build(installation, { store: new session.MemoryStore(), idpHint: 'github' });
     page.get(app.port, '/restricted');
     return page.h1().getText().then(text => {
       t.equal(text, 'Sign in to GitHub', 'Application should redirect to GitHub');

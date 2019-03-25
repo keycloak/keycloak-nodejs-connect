@@ -23,7 +23,7 @@ const By = webdriver.By;
 const until = webdriver.until;
 
 const driver = new webdriver.Builder()
-  .withCapabilities({'phantomjs.binary.path': phantomjs.path})
+  .withCapabilities({ 'phantomjs.binary.path': phantomjs.path })
   .forBrowser('phantomjs')
   .build();
 
