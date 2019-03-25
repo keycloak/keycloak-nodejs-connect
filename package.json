@@ -9,7 +9,7 @@
     "format": "semistandard",
     "test": "tape test/unit/*.js test/*.js",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
-    "coverage": "istanbul cover tape test/unit/*.js tape test/*.js"
+    "coverage": "nyc cover tape test/unit/*.js tape test/*.js"
   },
   "keywords": [
     "sso",
@@ -43,7 +43,7 @@
     "express-session": "^1.14.2",
     "hogan-express": "^0.5.2",
     "ink-docstrap": "^1.1.4",
-    "istanbul": "^0.4.5",
+    "nyc": "^13.3.0",
     "jsdoc": "^3.4.3",
     "jshint": "^2.9.6",
     "keycloak-admin-client": "bucharest-gold/keycloak-admin-client",
@@ -52,7 +52,7 @@
     "phantomjs-prebuilt": "^2.1.14",
     "rsa-compat": "^1.2.7",
     "selenium-webdriver": "^3.6.0",
-    "semistandard": "^9.2.1",
+    "semistandard": "^13.0.1",
     "server-destroy": "^1.0.1",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6"

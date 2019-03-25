@@ -141,7 +141,7 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
       if (request.kauth && request.kauth.grant && request.kauth.grant.access_token) {
         bearerToken = request.kauth.grant.access_token.token;
       } else {
-        return Promise.reject('No bearer in header');
+        return Promise.reject(new Error('No bearer in header'));
       }
     }
 
@@ -296,7 +296,7 @@ GrantManager.prototype.userInfo = function userInfo (token, callback) {
   const promise = new Promise((resolve, reject) => {
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        return reject('Error fetching account');
+        return reject(new Error('Error fetching account'));
       }
       let json = '';
       response.on('data', (d) => (json += d.toString()));
@@ -511,7 +511,7 @@ const fetch = (manager, handler, options, params) => {
 
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode > 299) {
-        return reject(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]);
+        return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]));
       }
       let json = '';
       response.on('data', (d) => (json += d.toString()));

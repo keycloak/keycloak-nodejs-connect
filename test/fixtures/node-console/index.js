@@ -122,15 +122,15 @@ function NodeApp () {
     });
 
     app.get('/service/public', function (req, res) {
-      res.json({message: 'public'});
+      res.json({ message: 'public' });
     });
 
     app.get('/service/secured', keycloak.protect('realm:user'), function (req, res) {
-      res.json({message: 'secured'});
+      res.json({ message: 'secured' });
     });
 
     app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
-      res.json({message: 'admin'});
+      res.json({ message: 'admin' });
     });
 
     app.get('/service/grant', keycloak.protect(), (req, res, next) => {
@@ -154,19 +154,19 @@ function NodeApp () {
     });
 
     app.get('/protected/enforcer/resource', keycloak.enforcer('resource:view'), function (req, res) {
-      res.json({message: 'resource:view', permissions: req.permissions});
+      res.json({ message: 'resource:view', permissions: req.permissions });
     });
 
     app.post('/protected/enforcer/resource', keycloak.enforcer('resource:update'), function (req, res) {
-      res.json({message: 'resource:update', permissions: req.permissions});
+      res.json({ message: 'resource:update', permissions: req.permissions });
     });
 
     app.delete('/protected/enforcer/resource', keycloak.enforcer('resource:delete'), function (req, res) {
-      res.json({message: 'resource:delete', permissions: req.permissions});
+      res.json({ message: 'resource:delete', permissions: req.permissions });
     });
 
     app.get('/protected/enforcer/resource-view-delete', keycloak.enforcer(['resource:view', 'resource:delete']), function (req, res) {
-      res.json({message: 'resource:delete', permissions: req.permissions});
+      res.json({ message: 'resource:delete', permissions: req.permissions });
     });
 
     app.get('/protected/enforcer/resource-claims', keycloak.enforcer(['photo'], {
@@ -176,11 +176,11 @@ function NodeApp () {
         };
       }
     }), function (req, res) {
-      res.json({message: req.query.user_agent, permissions: req.permissions});
+      res.json({ message: req.query.user_agent, permissions: req.permissions });
     });
 
     app.get('/protected/enforcer/no-permission-defined', keycloak.enforcer(), function (req, res) {
-      res.json({message: 'always grant', permissions: req.permissions});
+      res.json({ message: 'always grant', permissions: req.permissions });
     });
 
     app.get('/protected/web/resource', keycloak.enforcer(['resource:view']), function (req, res) {

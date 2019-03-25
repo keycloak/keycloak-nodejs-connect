@@ -40,7 +40,7 @@ Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
   const promise = new Promise((resolve, reject) => {
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        return reject('Error fetching JWK Keys');
+        return reject(new Error('Error fetching JWK Keys'));
       }
       let json = '';
       response.on('data', (d) => (json += d.toString()));

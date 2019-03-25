@@ -107,7 +107,7 @@ function Keycloak (config, keycloakConfig) {
  */
 Keycloak.prototype.middleware = function (options) {
   if (!options) {
-    options = {logout: '', admin: ''};
+    options = { logout: '', admin: '' };
   }
 
   options.logout = options.logout || '/logout';
@@ -313,10 +313,10 @@ Keycloak.prototype.getGrant = function (request, response) {
         self.storeGrant(grant, request, response);
         return grant;
       })
-      .catch(() => { return Promise.reject(); });
+      .catch(() => { return Promise.reject(new Error('Could not store grant code error')); });
   }
 
-  return Promise.reject();
+  return Promise.reject(new Error('Could not obtain grant code error'));
 };
 
 Keycloak.prototype.storeGrant = function (grant, request, response) {

@@ -41,7 +41,7 @@ test('setup', t => {
   };
 
   let memoryStore = new session.MemoryStore();
-  kc = new Keycloak({store: memoryStore, scope: 'offline_support'}, kcConfig);
+  kc = new Keycloak({ store: memoryStore, scope: 'offline_support' }, kcConfig);
   t.end();
 });
 
