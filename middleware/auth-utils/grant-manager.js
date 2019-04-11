@@ -427,7 +427,7 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
     } else if (token.content.typ !== expectedType) {
       reject(new Error('invalid token (wrong type)'));
     } else if (token.content.iat < this.notBefore) {
-      reject(new Error('invalid token (future dated)'));
+      reject(new Error('invalid token (stale token)'));
     } else if (token.content.iss !== this.realmUrl) {
       reject(new Error('invalid token (wrong ISS)'));
     } else {
