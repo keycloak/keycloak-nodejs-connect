@@ -1,128 +1,82 @@
-# Contributing to keycloak-nodejs-connect
+# Keycloak Community
 
-## Issue contributions
+Keycloak Node.js adapter is an Open Source adapter solution to protect non-Java modern Applications and Services.
 
-### Did you find a bug ?
+## Contributing to Node.js adapter
 
-Open a [new issue](https://issues.jboss.org/projects/KEYCLOAK) and be sure to include
-as much relevant information as possible, and a code sample or a test case demonstrating
-the expected behavior that is not occurring.
+Node.js adapter is an Open Source community-driven project and we welcome contributions as well as feedback from the community.
 
-Discussions can be done via:
+We do have a few guidelines in place to help you be successful with your contribution.
 
-[User Mailing List](https://lists.jboss.org/mailman/listinfo/keycloak-user) - Mailing list to ask for help and general questions about Keycloak.
+Here's a quick checklist for a good PR, more details below:
 
-[Developer Mailing List](https://lists.jboss.org/mailman/listinfo/keycloak-dev) - Mailing list to discuss development of Keycloak.
+1. [Keycloak Dev Mailing List](https://lists.jboss.org/mailman/listinfo/keycloak-dev)
+2. A JIRA associated with the PR
+3. One feature/change per PR
+4. One commit per PR
+5. PR rebased on master (`git rebase`, not `git pull`) 
+5. Commit message is prefixed by JIRA number
+6. No changes to code not directly related to your PR
+7. Includes test
+8. Includes documentation
 
-Documentation:
+Once you have submitted your PR please monitor it for comments/feedback. We reserve the right to close inactive PRs if
+you do not respond within 2 weeks (bear in mind you can always open a new PR if it is closed due to inactivity).
 
-[Web site docs](http://www.keycloak.org/documentation.html) - Authorization Services, Server Administration Guide, Server Developer Guide,
-Server Installation and Configuration Guide, Securing Applications and Services Guide, Getting Started Guide, Admin REST API and Javadocs
+Also, please remember that we do receive a fairly large amount of PRs and also have code to write ourselves, so we may
+not be able to respond to your PR immediately. The best place to ping us is on the thread you started on the dev mailing list.
 
-## Code contributions
+### Finding something to work on
 
-### Create a JIRA issue
+If you would like to contribute to Keycloak, but are not sure exactly what to work on, you can find a number of open
+issues that are awaiting contributions in the 
+[Keycloak JIRA](https://issues.jboss.org/projects/KEYCLOAK/versions/12340167).
 
-Copy with the JIRA Id e.g. KEYCLOAK-12345 to be your feature branch.
+### Open a discussion on Keycloak Dev Mailing List
 
-### Fork
+As Keycloak is a community-driven project we require contributors to send a description of what they are planning to 
+work on to the [Keycloak Dev Mailing List](https://lists.jboss.org/mailman/listinfo/keycloak-dev).
 
-Fork the project [on GitHub](https://github.com/keycloak/keycloak-nodejs-connect)
-and check out your copy locally.
+We recommend starting the discussion prior to submitting your PR. Through the mailing list you can get valuable
+feedback both from the core Keycloak team as well as the wider community.
 
-```shell
-$ git clone git@github.com:username/keycloak-nodejs-connect.git
-$ cd keycloak-nodejs-connect
-$ git remote add upstream https://github.com/keycloak/keycloak-nodejs-connect.git
-```
+### Create an issue in Keycloak JIRA
 
-### Branch
+Take your time to write a proper JIRA including a good summary and description. 
 
-Create a feature branch and start hacking:
+Remember this may be the first thing a reviewer of your PR will look at to get an idea of what you are proposing 
+and it will also be used by the community in the future to find about what new features and enhancements are included in 
+new releases.
 
-```shell
-$ git checkout -b KEYCLOAK-12345
-```
+### Implementing
 
-### Commit messages
+Details for building from source and working with the codebase are provided in the 
+[building and working with the code base](docs/building.md) guide.
 
-Writing good commit logs is important. A commit log should describe what
-changed and why. Follow these guidelines when writing one:
+Do not format or refactor code that is not directly related to your contribution. If you do this it will significantly
+increase our effort in reviewing your PR. If you have a strong need to refactor code then submit a separate PR for the
+refactoring.
 
-1. The first line should be 50 characters or less and contain a short
-   description of the change.
-2. Keep the second line blank.
-3. Wrap all other lines at 72 columns.
+### Documentation
 
-Example of commit message:
+We require contributions to include relevant documentation. Alongside your PR for code changes, prepare a PR to the [Keycloak Documentation](https://github.com/keycloak/keycloak-documentation).
 
-```
-fix a bug with download url.
+In the description of your PR include a link to the PR to [Keycloak Documentation](https://github.com/keycloak/keycloak-documentation).
 
-The download url was not using https.
-Body of commit message is a few lines of text, explaining things
-in more detail, possibly giving some background about the issue
-being fixed, etc. etc.
+### Submitting your PR
 
-The body of the commit message can be several paragraphs, and
-please do proper word-wrap and keep columns shorter than about
-72 characters or so. That way `git log` will show things
-nicely even when it is indented.
-```
+When preparing your PR make sure you have a single commit and your branch is rebased on the master branch from the 
+project repository.
 
-### Rebase to keep updated.
+This means use the `git rebase` command and not `git pull` when integrating changes from master to your branch. See
+[Git Documentation](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) for more details.
 
-Use `git rebase` to sync your work from time to time.
+We require that you squash to a single commit. You can do this with the `git rebase -i HEAD~X` command where X
+is the number of commits you want to squash. See the [Git Documentation](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History)
+for more details.
 
-```shell
-$ git fetch upstream
-$ git rebase upstream/master
-```
+The above helps us review your PR and also makes it easier for us to maintain the repository. It is also required by
+our automatic merging process. 
 
-### Start server | Code - Test - Code - Test... | Stop server
-
-Bug fixes and features should come with tests. Add your tests in the
-`keycloak-connect-test.js` file.
-
-To write the tests you will need keycloak server running, so run this script:
-
-```shell
-$ ./scripts/start-server.sh
-```
-This will download, configure and start keycloak server.
-
-Then you can start coding and watching the results of the tests with this command:
-
-```shell
-$ make
-```
-
-You can keep coding, testing and building with
-
-```shell
-$ make
-```
-
-Then to stop the server by running this script:
-
-```shell
-$ ./scripts/stop-server.sh
-```
-
-Make sure the jshint and semistandard are happy and that all tests pass. Please, do not submit
-patches that fail either check.
-
-### Running integration tests
-
-1. `node test/*spec.js`
-2. `./scripts/start-server.sh`
-3. `make tests` or `npm test`
-
-### Step 6: Push
-
-```shell
-$ git push origin KEYCLOAK-12345
-```
-
-Go to https://github.com/yourusername/keycloak-nodejs-connect and select your feature branch.
-Click the 'Pull Request' button and fill out the form.
+We also require that the commit message is prefixed with the Keycloak JIRA issue number (example commit message 
+"KEYCLOAK-9876 My super cool new feature").
