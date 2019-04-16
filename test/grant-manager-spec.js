@@ -4,7 +4,6 @@ const GrantManager = require('../middleware/auth-utils/grant-manager');
 const Config = require('../middleware/auth-utils/config');
 const test = require('tape');
 const nock = require('nock');
-const extend = require('util').assign;
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const getManager = (fixture) => new GrantManager(new Config(fixture));
 const helper = require('./utils/helper');
@@ -384,7 +383,7 @@ test('GrantManager should be able to validate invalid iat', (t) => {
       return manager.validateGrant(grant);
     })
     .catch((e) => {
-      t.equal(e.message, 'Grant validation failed. Reason: invalid token (future dated)');
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (stale token)');
     })
     .then(t.end);
 });
@@ -392,7 +391,7 @@ test('GrantManager should be ensure that a grant is fresh', (t) => {
   let originalGrant;
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
-      originalGrant = extend({}, grant);
+      originalGrant = Object.assign({}, grant);
       return manager.ensureFreshness(grant);
     })
     .then((result) => {

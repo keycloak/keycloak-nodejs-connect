@@ -7,6 +7,11 @@ node_js:
   - "10"
   - "11"
 
+env:
+  matrix:
+    - TESTS=group1
+    - TESTS=group2
+
 services:
   - docker
 
@@ -23,4 +28,4 @@ before_script:
   - make lint
 
 script: 
-  - for i in `ls test/*.js`; do tape $i;done
+  - ./travis-run-tests.sh $TESTS
