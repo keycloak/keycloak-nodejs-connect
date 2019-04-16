@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "jshint *.js stores/*.js middleware/*.js middleware/auth-utils/*.js example/*.js",
     "format": "semistandard",
-    "test": "tape test/unit/*.js test/*.js",
+    "test": "./run-tests.sh",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
     "coverage": "nyc cover tape test/unit/*.js tape test/*.js"
   },
