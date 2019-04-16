@@ -159,7 +159,7 @@ Config.prototype.configure = function configure (config) {
       this.publicKey += plainKey.substring(i, i + 64);
       this.publicKey += '\n';
     }
-    this.publicKey += '-----END PUBLIC KEY-----\n';
+    this.publicKey += '-----END PUBLIC KEY-----';
   }
 };
 
