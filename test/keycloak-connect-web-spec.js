@@ -156,6 +156,30 @@ test('Confidential client should be forbidden for invalid public key', t => {
   });
 });
 
+test('Should test check SSO after logging in and logging out', t => {
+  t.plan(3);
+
+  // make sure user is logged out
+  return page.logout(app.port).then(() => {
+    page.get(app.port, '/check-sso');
+    return page.output().getText().then(text => {
+      t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated');
+      page.logInButton().click();
+      page.login('alice', 'password');
+      page.get(app.port, '/check-sso');
+      return page.output().getText().then(text => {
+        t.equal(text, 'Check SSO Success (Authenticated)', 'User should be authenticated');
+        return page.logout(app.port);
+      }).then(() => {
+        page.get(app.port, '/check-sso');
+        return page.output().getText().then(text => {
+          t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated');
+        });
+      });
+    });
+  });
+});
+
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy();

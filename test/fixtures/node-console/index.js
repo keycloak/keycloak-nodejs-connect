@@ -116,6 +116,11 @@ function NodeApp () {
       output(res, JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4), 'Auth Success');
     });
 
+    app.get('/check-sso', keycloak.checkSso(), function (req, res) {
+      var authenticated = 'Check SSO Success (' + (req.session['keycloak-token'] ? 'Authenticated' : 'Not Authenticated') + ')';
+      output(res, authenticated);
+    });
+
     app.get('/restricted', keycloak.protect('realm:admin'), function (req, res) {
       var user = req.kauth.grant.access_token.content.preferred_username;
       output(res, user, 'Restricted access');
