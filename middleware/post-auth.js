@@ -23,6 +23,11 @@ module.exports = function (keycloak) {
       return next();
     }
 
+    //  During the check SSO process the Keycloak server answered the user is not logged in
+    if (request.query.error === 'login_required') {
+      return next();
+    }
+
     if (request.query.error) {
       return keycloak.accessDenied(request, response, next);
     }
