@@ -17,6 +17,7 @@
 
 const admin = require('./utils/realm');
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
+const TestVector = require('./utils/helper').TestVector;
 
 const test = require('blue-tape');
 const axios = require('axios');
@@ -150,6 +151,150 @@ test('Should not store grant on bearer request', t => {
             });
         });
     });
+});
+
+test('Should test admin logout endpoint with incomplete payload', t => {
+  t.plan(2);
+
+  var app = new NodeApp();
+  var client = admin.createClient(app.confidential('adminapp'), realmName);
+
+  return client.then((installation) => {
+    app.build(installation);
+
+    let opt = {
+      method: 'post',
+      url: `${app.address}/k_logout`,
+      data: TestVector.logoutIncompletePayload
+    };
+    return axios(opt).catch(err => {
+      t.equal(err.response.status, 401);
+      /* eslint no-useless-escape: "error" */
+      t.equal(err.response.data, 'Cannot read property \'kid\' of undefined');
+      app.destroy();
+    });
+  }).then(() => {
+    app.destroy();
+  });
+});
+
+test('Should test admin logout endpoint with payload signed by a different key pair', t => {
+  t.plan(2);
+
+  var app = new NodeApp();
+  var client = admin.createClient(app.confidential('adminapp2'), realmName);
+
+  return client.then((installation) => {
+    app.build(installation);
+
+    let opt = {
+      method: 'post',
+      url: `${app.address}/k_logout`,
+      data: TestVector.logoutWrongKeyPairPayload
+    };
+    return axios(opt).catch(err => {
+      t.equal(err.response.status, 401);
+      t.equal(err.response.data, 'admin request failed: invalid token (signature)');
+      app.destroy();
+    });
+  }).then(() => {
+    app.destroy();
+  });
+});
+
+test('Should test admin logout endpoint with valid payload', t => {
+  t.plan(1);
+
+  var app = new NodeApp();
+  var client = admin.createClient(app.confidential('adminapp3'), realmName);
+
+  return client.then((installation) => {
+    app.build(installation);
+    let opt = {
+      method: 'post',
+      url: `${app.address}/k_logout`,
+      data: TestVector.logoutValidPayload
+    };
+    return axios(opt).then(response => {
+      t.equal(response.status, 200);
+    }).catch(err => {
+      t.fail(err.response.data);
+    });
+  }).then(() => {
+    app.destroy();
+  });
+});
+
+test('Should test admin push_not_before endpoint with incomplete payload', t => {
+  t.plan(2);
+
+  var app = new NodeApp();
+  var client = admin.createClient(app.confidential('adminapp5'), realmName);
+
+  return client.then((installation) => {
+    app.build(installation);
+
+    let opt = {
+      method: 'post',
+      url: `${app.address}/k_push_not_before`,
+      data: TestVector.notBeforeIncompletePayload
+    };
+    return axios(opt).catch(err => {
+      t.equal(err.response.status, 401);
+      /* eslint no-useless-escape: "error" */
+      t.equal(err.response.data, 'Cannot read property \'kid\' of undefined');
+      app.destroy();
+    });
+  }).then(() => {
+    app.destroy();
+  });
+});
+
+test('Should test admin push_not_before endpoint with payload signed by a different key pair', t => {
+  t.plan(2);
+
+  var app = new NodeApp();
+  var client = admin.createClient(app.confidential('adminapp6'), realmName);
+
+  return client.then((installation) => {
+    app.build(installation);
+
+    let opt = {
+      method: 'post',
+      url: `${app.address}/k_push_not_before`,
+      data: TestVector.notBeforeWrongKeyPairPayload
+    };
+    return axios(opt).catch(err => {
+      t.equal(err.response.status, 401);
+      t.equal(err.response.data, 'admin request failed: invalid token (signature)');
+      app.destroy();
+    });
+  }).then(() => {
+    app.destroy();
+  });
+});
+
+test('Should test admin push_not_before endpoint with valid payload', t => {
+  t.plan(1);
+
+  var app = new NodeApp();
+  var client = admin.createClient(app.confidential('adminapp7'), realmName);
+
+  return client.then((installation) => {
+    app.build(installation);
+    let opt = {
+      method: 'post',
+      url: `${app.address}/k_push_not_before`,
+      data: TestVector.notBeforeValidPayload
+    };
+    return axios(opt).then(response => {
+      t.equal(response.status, 200);
+    }).catch(err => {
+      t.fail(err.response.data);
+    });
+  }).then(() => {
+    app.destroy();
+  });
 });
 
 test('teardown', t => {
