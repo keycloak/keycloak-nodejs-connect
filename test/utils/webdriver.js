@@ -150,8 +150,28 @@ ConsolePage.prototype.h1 = () => {
 
 var newPage = new ConsolePage();
 
+function RealmAccountPage () {}
+
+RealmAccountPage.prototype.get = function (port, realm) {
+  return driver.get(this.getUrl(port, realm));
+};
+
+RealmAccountPage.prototype.getUrl = function (port, realm) {
+  port = port || '8080';
+  realm = realm || 'test-realm';
+
+  return `http://127.0.0.1:${port}/auth/realms/${realm}/account`;
+};
+
+RealmAccountPage.prototype.logout = function () {
+  return driver.findElement(By.linkText('Sign Out')).then(webElement => webElement.click());
+};
+
+var realmAccountPage = new RealmAccountPage();
+
 module.exports = {
   driver: driver,
   webdriver: webdriver,
-  newPage: newPage
+  newPage: newPage,
+  realmAccountPage: realmAccountPage
 };

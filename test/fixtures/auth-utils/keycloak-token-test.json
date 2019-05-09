@@ -1,0 +1,10 @@
+{
+  "realm": "tokenRealmTest",
+  "auth-server-url": "http://localhost:8080/auth",
+  "ssl-required": "external",
+  "resource": "customer-portal",
+  "credentials": {
+    "secret": "password"
+  },
+  "confidential-port": 0
+}
