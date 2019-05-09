@@ -1,6 +1,7 @@
 {
     "clientId": "{{name}}",
     "rootUrl": "http://localhost:{{port}}",
+    "adminUrl": "http://localhost:{{port}}",
     "enabled": true,
     "redirectUris": [
         "http://localhost:{{port}}/*"

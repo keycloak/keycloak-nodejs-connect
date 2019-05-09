@@ -20,6 +20,8 @@ const admin = require('./utils/realm');
 const TestVector = require('./utils/helper').TestVector;
 
 const page = require('./utils/webdriver').newPage;
+const realmAccountPage = require('./utils/webdriver').realmAccountPage;
+const driver = require('./utils/webdriver').driver;
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
 const session = require('express-session');
 
@@ -75,6 +77,59 @@ test('Should login with admin credentials', t => {
           }));
       })
     );
+});
+
+test('Login should not change tokens when they are valid', t => {
+  t.plan(3);
+
+  return page.get(app.port).then(() =>
+    page.logInButton().click().then(() =>
+      page.login('test-admin', 'password').then(() =>
+        page.events().getText().then(text => {
+          t.equal(text, 'Auth Success', 'User should be authenticated');
+          return page.output().getText().then(firstToken =>
+            page.logInButton().click().then( // Invoke login for the second time, token shouldn't be changed
+              page.output().getText().then(secondToken => {
+                t.equal(secondToken, firstToken, 'Token should not be changed as first session is still valid');
+                page.logOutButton().click();
+                return page.output().getText().then(text => {
+                  t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+                });
+              })
+            )
+          );
+        })
+      )
+    )
+  );
+});
+
+test('SSO should work for nodejs app and testRealmAccountPage', t => {
+  return page.get(app.port).then(() =>
+    page.logInButton().click().then(() =>
+      page.login('test-admin', 'password').then(() =>
+        page.events().getText().then(text => {
+          t.equal(text, 'Auth Success', 'User should be authenticated');
+
+          return realmAccountPage.get().then(() =>
+            driver.getCurrentUrl().then(currentUrl => {
+              t.equal(currentUrl, realmAccountPage.getUrl(), 'Should be on account page');
+
+              return realmAccountPage.logout().then(() =>
+                driver.getCurrentUrl().then(currentUrl => {
+                  t.true(currentUrl.startsWith('http://127.0.0.1:8080/auth/realms/test-realm/protocol/openid-connect/auth'), 'Should be on login page after AccountPage logout, current url: ' + currentUrl);
+
+                  return page.get(app.port, '/login').then(() =>
+                    t.true(currentUrl.startsWith('http://127.0.0.1:8080/auth/realms/test-realm/protocol/openid-connect/auth'), 'Should be on login page, current url: ' + currentUrl)
+                  );
+                })
+              );
+            })
+          );
+        })
+      )
+    )
+  );
 });
 
 test('Public client should be redirected to GitHub when idpHint is provided', t => {
