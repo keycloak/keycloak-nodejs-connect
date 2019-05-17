@@ -44,31 +44,37 @@ test('setup', t => {
 test('Should be able to access public page', t => {
   t.plan(1);
 
-  page.get(app.port);
-
-  return page.output().getText().then(text => {
-    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-  });
+  return page.get(app.port)
+    .then(() => page.output().getText()
+      .then(text => {
+        t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+      })
+    );
 });
 
 test('Should login with admin credentials', t => {
   t.plan(3);
 
-  page.get(app.port);
-
-  return page.output().getText().then(text => {
-    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-    page.logInButton().click();
-    page.login('test-admin', 'password');
-
-    return page.events().getText().then(text => {
-      t.equal(text, 'Auth Success', 'User should be authenticated');
-      page.logOutButton().click();
-      return page.output().getText().then(text => {
+  return page.get(app.port)
+    .then(() => page.output().getText()
+      .then(text => {
         t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-      });
-    });
-  });
+        return page.logInButton()
+          .then(webElement => webElement.click())
+          .then(() => page.login('test-admin', 'password'))
+          .then(() => page.events().getText().then(text => {
+            t.equal(text, 'Auth Success', 'User should be authenticated');
+
+            return page.logOutButton()
+              .then(webElement => webElement.click())
+              .then(() => page.output().getText()
+                .then(text => {
+                  t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+                })
+              );
+          }));
+      })
+    );
 });
 
 test('Public client should be redirected to GitHub when idpHint is provided', t => {
@@ -78,27 +84,29 @@ test('Public client should be redirected to GitHub when idpHint is provided', t 
 
   return client.then((installation) => {
     app.build(installation, { store: new session.MemoryStore(), idpHint: 'github' });
-    page.get(app.port, '/restricted');
-    return page.h1().getText().then(text => {
-      t.equal(text, 'Sign in to GitHub', 'Application should redirect to GitHub');
-      return page.logout(app.port); // we need to wait a bit until the logout is fully completed
-    }).then(() => {
-      app.destroy();
-    }).catch(err => {
-      app.destroy();
-      throw err;
-    });
+    return page.get(app.port, '/restricted')
+      .then(() =>
+        page.h1().getText().then(text => {
+          t.equal(text, 'Sign in to GitHub', 'Application should redirect to GitHub');
+        })
+      ).then(() => {
+        app.destroy();
+      }).catch(err => {
+        app.destroy();
+        throw err;
+      });
   });
 });
 
 test('User should be forbidden to access restricted page', t => {
-  page.get(app.port, '/restricted');
-  page.login('alice', 'password');
-
-  return page.body().getText().then(text => {
-    t.equal(text, 'Access denied', 'Message should be access denied');
-    return page.logout(app.port); // we need to wait a bit until the logout is fully completed
-  });
+  return page.get(app.port, '/restricted').then(() =>
+    page.login('alice', 'password').then(() =>
+      page.body().getText().then(text => {
+        t.equal(text, 'Access denied', 'Message should be access denied');
+        return page.logout(app.port); // we need to wait a bit until the logout is fully completed
+      })
+    )
+  );
 });
 
 test('Public client should be forbidden for invalid public key', t => {
@@ -109,49 +117,51 @@ test('Public client should be forbidden for invalid public key', t => {
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
     app.build(installation);
-    page.get(app.port);
-
-    return page.output().getText().then(text => {
-      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-      page.logInButton().click();
-      page.login('test-admin', 'password');
-
-      return page.body().getText().then(text => {
-        t.equal(text, 'Access denied', 'Message should be access denied');
-      }).then(() => {
-        app.destroy();
+    return page.get(app.port).then(() =>
+      page.output().getText().then(text => {
+        t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+        return page.logInButton().click().then(() =>
+          page.login('test-admin', 'password').then(() =>
+            page.body().getText().then(text => {
+              t.equal(text, 'Access denied', 'Message should be access denied');
+            })
+          )
+        );
       })
-        .catch(err => {
-          app.destroy();
-          throw err;
-        });
+    ).then(() => {
+      app.destroy();
+    }).catch(err => {
+      app.destroy();
+      throw err;
     });
   });
 });
 
 test('Confidential client should be forbidden for invalid public key', t => {
-  t.plan(2);
+  t.plan(3);
   var app = new NodeApp();
   var client = admin.createClient(app.confidential('app3'));
 
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
     app.build(installation);
-    page.get(app.port);
-
-    return page.output().getText().then(text => {
-      t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-      page.logInButton().click();
-
-      return page.body().getText().then(text => {
-        t.equal(text, 'Access denied', 'Message should be access denied');
-      }).then(() => {
-        app.destroy();
+    return page.get(app.port).then(() =>
+      page.output().getText().then(text => {
+        t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+        return page.logInButton().click().then(() =>
+          page.body().getText().then(text => {
+            t.equal(text, 'Access denied', 'Message should be access denied');
+          })
+            .then(() => page.logout(app.port))
+            .then(() => page.get(app.port, '/check-sso'))
+            .then(() => page.output().getText().then(text => t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated')))
+        );
       })
-        .catch(err => {
-          app.destroy();
-          throw err;
-        });
+    ).then(() => {
+      app.destroy();
+    }).catch(err => {
+      app.destroy();
+      throw err;
     });
   });
 });
@@ -160,24 +170,28 @@ test('Should test check SSO after logging in and logging out', t => {
   t.plan(3);
 
   // make sure user is logged out
-  return page.logout(app.port).then(() => {
-    page.get(app.port, '/check-sso');
-    return page.output().getText().then(text => {
+  page.get(app.port, '/check-sso').then(() =>
+    page.output().getText().then(text => {
       t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated');
-      page.logInButton().click();
-      page.login('alice', 'password');
-      page.get(app.port, '/check-sso');
-      return page.output().getText().then(text => {
-        t.equal(text, 'Check SSO Success (Authenticated)', 'User should be authenticated');
-        return page.logout(app.port);
-      }).then(() => {
-        page.get(app.port, '/check-sso');
-        return page.output().getText().then(text => {
-          t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated');
-        });
-      });
-    });
-  });
+
+      page.logInButton().click().then(() =>
+        page.login('alice', 'password').then(() =>
+          page.get(app.port, '/check-sso').then(() =>
+            page.output().getText().then(text => {
+              t.equal(text, 'Check SSO Success (Authenticated)', 'User should be authenticated');
+              return page.logout(app.port);
+            }).then(() => {
+              page.get(app.port, '/check-sso').then(() =>
+                page.output().getText().then(text => {
+                  t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated');
+                })
+              );
+            })
+          )
+        )
+      );
+    })
+  );
 });
 
 test('teardown', t => {
