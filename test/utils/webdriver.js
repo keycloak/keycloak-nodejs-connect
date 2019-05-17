@@ -46,7 +46,7 @@ function ConsolePage () {}
 
 ConsolePage.prototype.get = function (port, resource) {
   resource = resource || '';
-  driver.get(`http://localhost:${port}${resource}`);
+  return driver.get(`http://localhost:${port}${resource}`);
 };
 
 ConsolePage.prototype.quit = function () {
@@ -90,7 +90,7 @@ ConsolePage.prototype.login = function (user, pass) {
   password.clear();
   password.sendKeys(pass);
 
-  driver.findElement(By.name('login')).click();
+  return driver.findElement(By.name('login')).then(webElement => webElement.click());
 };
 
 /**
