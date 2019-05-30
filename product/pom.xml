@@ -39,7 +39,7 @@
     <properties>
         <frontend.registry.url></frontend.registry.url>
         <frontend.download.root></frontend.download.root>
-        <phantomjs.download.root>${frontend.download.root}/node/npm</phantomjs.download.root>
+        <chromedriver.download.root>${frontend.download.root}/node/npm</chromedriver.download.root>
         <version.js.node>v6.10.3</version.js.node>
         <version.js.npm>2.15.11</version.js.npm>
     </properties>
@@ -92,7 +92,7 @@
                         <configuration>
                             <file>${project.basedir}/../package.json</file>
                             <properties>
-                                <version.js.phantomjs>$.devDependencies.phantomjs-prebuilt</version.js.phantomjs>
+                                <version.js.chromedriver>$.devDependencies.chromedriver</version.js.chromedriver>
                             </properties>
                         </configuration>
                     </execution>
@@ -161,13 +161,13 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm-install-phantomjs</id>
+                        <id>npm-install-chromedriver</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <phase>compile</phase>
                         <configuration>
-                            <arguments>install phantomjs-prebuilt@${version.js.phantomjs} --phantomjs_cdnurl=${phantomjs.download.root}</arguments>
+                            <arguments>install chromedriver@${version.js.chromedriver} --chromedriver_cdnurl=${chromedriver.download.root}</arguments>
                         </configuration>
                     </execution>
                     <execution>
