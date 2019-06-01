@@ -32,7 +32,12 @@ function forceLogin (keycloak, request, response) {
 
   let uuid = UUID();
   let loginURL = keycloak.loginUrl(uuid, redirectUrl);
-  response.redirect(loginURL);
+  if (request.xhr) {
+    response.status(401).send();
+  } else {
+    response.redirect(loginURL);
+  }
+  
 }
 
 function simpleGuard (role, token) {
