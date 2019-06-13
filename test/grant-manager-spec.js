@@ -460,6 +460,37 @@ test('GrantManager should fail with invalid signature', (t) => {
     .then(t.end);
 });
 
+test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
+  const expiredToken = {
+    isExpired: () => true
+  };
+  const unsignedToken = {
+    isExpired: () => false,
+    signed: undefined
+  };
+  const notBeforeToken = {
+    isExpired: () => false,
+    signed: true,
+    content: { iat: -1 }
+  };
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-https.json');
+  const tokens = [
+    undefined,
+    expiredToken,
+    unsignedToken,
+    notBeforeToken
+  ];
+
+  /* jshint loopfunc:true */
+  for (const token of tokens) {
+    manager.validateToken(token, 'Bearer')
+      .catch((err) => {
+        t.true(err instanceof Error, err.message);
+      });
+  }
+  t.end();
+});
+
 test('GrantManager#obtainDirectly should work with https', (t) => {
   nock('https://localhost:8080')
     .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
@@ -490,8 +521,8 @@ test('GrantManager#ensureFreshness should fetch new access token with client id 
     'not-before-policy': 1462208947,
     'session_state': 'ess-sion-tat-se'
   };
-  nock('http://localhost:8080')
-    .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
+  nock('http://localhost:8180')
+    .post('/auth/realms/nodejs-test-mock/protocol/openid-connect/token', {
       grant_type: 'refresh_token',
       client_id: 'public-client',
       refresh_token: 'i-Am-The-Refresh-Token'
@@ -508,41 +539,10 @@ test('GrantManager#ensureFreshness should fetch new access token with client id 
     }
   };
 
-  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public-mock.json');
   manager.createGrant = (t) => { return Promise.resolve(t); };
   manager.ensureFreshness(grant)
     .then((grant) => {
       t.true(grant === JSON.stringify(refreshedToken));
     }).then(t.end);
-});
-
-test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
-  const expiredToken = {
-    isExpired: () => true
-  };
-  const unsignedToken = {
-    isExpired: () => false,
-    signed: undefined
-  };
-  const notBeforeToken = {
-    isExpired: () => false,
-    signed: true,
-    content: { iat: -1 }
-  };
-  const manager = getManager('./test/fixtures/auth-utils/keycloak-https.json');
-  const tokens = [
-    undefined,
-    expiredToken,
-    unsignedToken,
-    notBeforeToken
-  ];
-
-  /* jshint loopfunc:true */
-  for (const token of tokens) {
-    manager.validateToken(token, 'Bearer')
-      .catch((err) => {
-        t.true(err instanceof Error, err.message);
-      });
-  }
-  t.end();
 });
