@@ -6,6 +6,7 @@
 *.tar
 *.tmp
 node_modules/
+test_results/
 /keycloak-*/
 coverage
 pid.txt
