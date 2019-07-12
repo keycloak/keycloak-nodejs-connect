@@ -118,7 +118,7 @@ declare namespace KeycloakConnect {
      * Returns a user info JSON Object
      * @param {Token|String} token
      */
-    userInfo<T extends Token|string, C extends StandardClaims>(token: T): Promise<C>
+    userInfo<T extends Token|string, C>(token: T): Promise<C>
 
     /**
      * Create a `Grant` object from a string of JSON data.
