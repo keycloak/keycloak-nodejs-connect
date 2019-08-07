@@ -62,7 +62,7 @@
                                     <directory>${project.basedir}/../</directory>
                                     <includes>
                                         <include>example/**</include>
-                                        <include>index.js</include>
+                                        <include>keycloak.js</include>
                                         <include>middleware/**</include>
                                         <include>package.json</include>
                                         <include>package-lock.json</include>
