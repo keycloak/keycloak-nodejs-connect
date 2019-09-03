@@ -23,9 +23,11 @@ function forceCheckSSO (keycloak, request, response) {
   const headerHost = request.headers.host.split(':');
   const port = headerHost[1] || '';
   const protocol = request.protocol;
-  let hasQuery = ~(request.originalUrl || request.url).indexOf('?');
+  const hasQuery = ~(request.originalUrl || request.url).indexOf('?');
+  const applicationUrl = keycloak.config.applicationUrl;
+  const createdUrl = protocol + '://' + host + (port === '' ? '' : ':' + port);
 
-  const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
+  const redirectUrl = (applicationUrl || createdUrl) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
 
   if (request.session) {
     request.session.auth_redirect_uri = redirectUrl;
