@@ -15,5 +15,9 @@
         "dependencyExclusion.org.jboss:jboss-parent@*": "19.0.0.redhat-2",
         "jsonUpdate": "../package.json:$.devDependencies.keycloak-admin-client:^0.12.0"
     }
-  }
+  },
+  "prereqs": [
+    "npm config set strict-ssl=false",
+    "npm config set cafile /tmp/indy-proxy-ca.crt"
+  ]
 }
