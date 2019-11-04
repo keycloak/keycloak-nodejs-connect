@@ -24,7 +24,8 @@
     "stores",
     "test",
     "index.js",
-    "uuid.js"
+    "uuid.js",
+    "keycloak.d.ts"
   ],
   "typings": "keycloak.d.ts",
   "author": {
