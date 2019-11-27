@@ -69,7 +69,7 @@
                                         <include>stores/**</include>
                                         <include>test/**</include>
                                         <include>uuid.js</include>
-										<include>keycloak.d.ts</include>
+                                        <include>keycloak.d.ts</include>
                                     </includes>
                                 </resource>
                             </resources>
