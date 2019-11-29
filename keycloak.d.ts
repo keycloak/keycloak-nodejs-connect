@@ -42,9 +42,9 @@ declare namespace KeycloakConnect {
 
   interface Token {
     isExpired(): boolean
-    hasRole(): boolean
-    hasApplicationRole(): boolean
-    hasRealmRole(): boolean
+    hasRole(roleName: string): boolean
+    hasApplicationRole(appName: string, roleName: string): boolean
+    hasRealmRole(roleName: string): boolean
   }
 
   interface GrantManager {
