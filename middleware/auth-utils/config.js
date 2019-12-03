@@ -122,7 +122,7 @@ Config.prototype.configure = function configure (config) {
    * Authentication server URL
    * @type {String}
    */
-  this.authServerUrl = resolveValue(config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl);
+  this.authServerUrl = (resolveValue(config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl) || '').replace(/\/$/, '');
 
   /**
    * Root realm URL.
