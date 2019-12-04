@@ -424,7 +424,7 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
     } else if (token.content.iat < this.notBefore) {
       reject(new Error('invalid token (stale token)'));
     } else if (token.content.iss !== this.realmUrl) {
-      reject(new Error('invalid token (wrong ISS)'));
+      reject(new Error(`invalid token (wrong ISS): issuer on token is ${token.content.iss} but realmUrl is ${this.realmUrl}`));
     } else {
       const verify = crypto.createVerify('RSA-SHA256');
       // if public key has been supplied use it to validate token
