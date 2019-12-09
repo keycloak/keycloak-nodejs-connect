@@ -12,7 +12,7 @@ application that uses Keycloak for its authentication and authorization needs.
 ## Help and Documentation
 
 * [Documentation](https://www.keycloak.org/documentation.html)
-* [User Mailing List](https://lists.jboss.org/mailman/listinfo/keycloak-user) - Mailing list for help and general questions about Keycloak
+* [User Mailing List](https://groups.google.com/d/forum/keycloak-user) - Mailing list for help and general questions about Keycloak
 * [JIRA](https://issues.jboss.org/projects/KEYCLOAK) - Issue tracker for bugs and feature requests
 
 ## Reporting Security Vulnerabilities
