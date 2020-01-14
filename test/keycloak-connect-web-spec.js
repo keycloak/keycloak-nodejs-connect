@@ -249,6 +249,42 @@ test('Should test check SSO after logging in and logging out', t => {
   );
 });
 
+test('Public client should work with slash in the end of auth-server-url', t => {
+  t.plan(3);
+  var app = new NodeApp();
+  var client = admin.createClient(app.publicClient('authServerSlashes'));
+
+  return client.then((installation) => {
+    installation['auth-server-url'] = 'http://localhost:8080/auth/';
+    app.build(installation);
+    return page.get(app.port)
+      .then(() => page.output().getText()
+        .then(text => {
+          t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+          return page.logInButton()
+            .then(webElement => webElement.click())
+            .then(() => page.login('test-admin', 'password'))
+            .then(() => page.events().getText().then(text => {
+              t.equal(text, 'Auth Success', 'User should be authenticated');
+
+              return page.logOutButton()
+                .then(webElement => webElement.click())
+                .then(() => page.output().getText()
+                  .then(text => {
+                    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+                  })
+                );
+            }));
+        })
+      ).then(() => {
+        app.destroy();
+      }).catch(err => {
+        app.destroy();
+        throw err;
+      });
+  });
+});
+
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy();
