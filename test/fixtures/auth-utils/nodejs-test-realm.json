@@ -2893,6 +2893,17 @@
         "claim.name" : "clientAddress",
         "jsonType.label" : "String"
       }
+    },
+    {
+      "name": "confidential-aud",
+      "protocol": "openid-connect",
+      "protocolMapper": "oidc-audience-mapper",
+      "consentRequired": false,
+      "config": {
+        "included.client.audience": "confidential-client",
+        "id.token.claim": "false",
+        "access.token.claim": "true"
+      }
     } ],
     "defaultClientScopes" : [ "web-origins", "role_list", "roles", "profile", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
@@ -3049,6 +3060,17 @@
         "access.token.claim" : "true",
         "claim.name" : "clientAddress",
         "jsonType.label" : "String"
+      }
+    },
+    {
+      "name": "public-aud",
+      "protocol": "openid-connect",
+      "protocolMapper": "oidc-audience-mapper",
+      "consentRequired": false,
+      "config": {
+        "included.client.audience": "public-client",
+        "id.token.claim": "false",
+        "access.token.claim": "true"
       }
     } ],
     "defaultClientScopes" : [ "web-origins", "role_list", "roles", "profile", "email" ],

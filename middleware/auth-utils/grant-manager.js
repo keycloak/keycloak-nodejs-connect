@@ -40,6 +40,7 @@ function GrantManager (config) {
   this.bearerOnly = config.bearerOnly;
   this.notBefore = 0;
   this.rotation = new Rotation(config);
+  this.verifyTokenAudience = config.verifyTokenAudience;
 }
 
 /**
@@ -426,6 +427,19 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
     } else if (token.content.iss !== this.realmUrl) {
       reject(new Error('invalid token (wrong ISS)'));
     } else {
+      var audienceData = Array.isArray(token.content.aud) ? token.content.aud : [token.content.aud];
+      if (expectedType === 'ID') {
+        if (!audienceData.includes(this.clientId)) {
+          reject(new Error('invalid token (wrong audience)'));
+        }
+        if (token.content.azp && token.content.azp !== this.clientId) {
+          reject(new Error('invalid token (authorized party should match client id)'));
+        }
+      } else if (this.verifyTokenAudience) {
+        if (!audienceData.includes(this.clientId)) {
+          reject(new Error('invalid token (wrong audience)'));
+        }
+      }
       const verify = crypto.createVerify('RSA-SHA256');
       // if public key has been supplied use it to validate token
       if (this.publicKey) {

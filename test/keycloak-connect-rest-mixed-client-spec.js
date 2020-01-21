@@ -274,6 +274,29 @@ test('Should test admin push_not_before endpoint with payload signed by a differ
   });
 });
 
+test('Should verify during authentication if the token contains the client name as audience.', t => {
+  t.plan(3);
+  const someapp = new NodeApp();
+  var client = admin.createClient(someapp.confidential('audience-app'), realmName);
+
+  return client.then((installation) => {
+    installation.verifyTokenAudience = true;
+    someapp.build(installation);
+
+    return axios.post(`${someapp.address}/service/grant`, auth)
+      .then(response => {
+        t.ok(response.data.id_token, 'Response should contain an id_token');
+        t.ok(response.data.access_token, 'Response should contain an access_token');
+        t.ok(response.data.refresh_token, 'Response should contain an refresh_token');
+      })
+      .catch(error => {
+        t.fail(error.response.data);
+      });
+  }).then(() => {
+    someapp.destroy();
+  });
+});
+
 test('Should test admin push_not_before endpoint with valid payload', t => {
   t.plan(1);
 
