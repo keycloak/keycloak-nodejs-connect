@@ -73,6 +73,86 @@ test('GrantManager in public mode should be able to get userinfo', (t) => {
     .then(t.end);
 });
 
+test('GrantManager in public mode should fail if audience of ID token is not valid', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.aud = [];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in public mode should fail if audience of ID token is not valid with a dummy client in single array', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.aud = ['public-client-dummy'];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in public mode should fail if audience of ID token is not valid with a dummy client in strings', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.aud = 'public-client-dummy';
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in public mode should fail if authorized party for ID token is not valid', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.azp = [];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (authorized party should match client id)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in public mode should fail if audience of Access token is not valid', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.content.aud = [];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
 const manager = getManager('./test/fixtures/auth-utils/keycloak-confidential.json');
 
 test('GrantManager in confidential mode should be able to get userinfo', (t) => {
@@ -169,6 +249,83 @@ test('GrantManager in confidential mode should be able to obtain a service accou
       return manager.validateAccessToken(grant.access_token.token);
     })
     .then((result) => t.equal(result, false))
+    .then(t.end);
+});
+
+test('GrantManager in confidential mode should fail if audience of ID token is not valid', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.aud = [];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in confidential mode should fail if audience of ID token is not valid with a dummy client in strings', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.aud = 'confidential-client-dummy';
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in confidential mode should fail if audience of ID token is not valid with a dummy client in single array', (t) => {
+  const manager = getManager('./test/fixtures/auth-utils/keycloak-public.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.aud = ['confidential-client-dummy'];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in confidential mode should fail if authorized party for ID token is not valid', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.id_token.content.azp = [];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (authorized party should match client id)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
+    .then(t.end);
+});
+
+test('GrantManager in confidential mode should fail if audience of Access token is not valid', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.content.aud = [];
+      return manager.validateGrant(grant);
+    })
+    .catch((e) => {
+      t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
+    })
+    .then((grant) => {
+      t.equal(grant, undefined);
+    })
     .then(t.end);
 });
 

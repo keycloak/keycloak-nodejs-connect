@@ -3,5 +3,6 @@
   "realm" : "nodejs-test",
   "min-time-between-jwks-requests" : 0,
   "resource" : "public-client",
-  "public-client" : true
+  "public-client" : true,
+  "verify-token-audience" : true
 }
