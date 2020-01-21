@@ -10,5 +10,18 @@
         "http://localhost:{{port}}/*"
     ],
     "publicClient": false,
-    "secret": "5b5120a0-5e41-4cdd-af8a-72c470db0b59"
+    "secret": "5b5120a0-5e41-4cdd-af8a-72c470db0b59",
+    "protocolMappers": [
+      {
+        "name": "{{name}}-aud",
+        "protocol": "openid-connect",
+        "protocolMapper": "oidc-audience-mapper",
+        "consentRequired": false,
+        "config": {
+          "included.client.audience": "{{name}}",
+          "id.token.claim": "false",
+          "access.token.claim": "true"
+        }
+      }
+    ]
 }

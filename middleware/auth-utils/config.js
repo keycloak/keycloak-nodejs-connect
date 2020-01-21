@@ -161,6 +161,12 @@ Config.prototype.configure = function configure (config) {
     }
     this.publicKey += '-----END PUBLIC KEY-----';
   }
+
+  /**
+   * Verify token audience
+   * @type {Boolean}
+   */
+  this.verifyTokenAudience = resolveValue(config['verify-token-audience'] || config.verifyTokenAudience || false);
 };
 
 module.exports = Config;
