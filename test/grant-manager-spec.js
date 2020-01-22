@@ -460,6 +460,15 @@ test('GrantManager should fail with invalid signature', (t) => {
     .then(t.end);
 });
 
+test('GrantManager should return false when resource_access is undefined', (t) => {
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.content = {};
+      t.false(grant.access_token.hasApplicationRole('test'));
+    })
+    .then(t.end);
+});
+
 test('GrantManager#validateToken returns undefined for an invalid token', (t) => {
   const expiredToken = {
     isExpired: () => true
