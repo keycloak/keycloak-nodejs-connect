@@ -105,6 +105,10 @@ Token.prototype.hasRole = function hasRole (name) {
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
 Token.prototype.hasApplicationRole = function hasApplicationRole (appName, roleName) {
+  if (!this.content.resource_access) {
+    return false;
+  }
+
   var appRoles = this.content.resource_access[appName];
 
   if (!appRoles) {
