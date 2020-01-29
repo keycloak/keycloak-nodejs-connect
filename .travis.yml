@@ -6,10 +6,10 @@ cache:
 addons:
   chrome: stable
 node_js:
-  - "6"
-  - "8"
   - "10"
   - "11"
+  - "12"
+  - "13"
 
 services:
   - docker
