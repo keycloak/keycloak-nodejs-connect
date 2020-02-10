@@ -70,6 +70,7 @@
                                         <include>test/**</include>
                                         <include>uuid.js</include>
                                         <include>keycloak.d.ts</include>
+                                        <include>run-tests.sh</include>
                                     </includes>
                                 </resource>
                             </resources>

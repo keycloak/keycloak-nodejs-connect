@@ -25,7 +25,8 @@
     "test",
     "index.js",
     "uuid.js",
-    "keycloak.d.ts"
+    "keycloak.d.ts",
+    "run-tests.sh"
   ],
   "typings": "keycloak.d.ts",
   "author": {
