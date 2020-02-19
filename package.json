@@ -61,7 +61,7 @@
     "tape-catch": "^1.0.6"
   },
   "optionalDependencies": {
-    "chromedriver": "*"
+    "chromedriver": "latest"
   },
   "semistandard": {
     "ignore": [
