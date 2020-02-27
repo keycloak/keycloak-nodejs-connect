@@ -8,11 +8,11 @@ import * as express from 'express'
  * To achieve this we export "KeycloakConnect" that references a namespace
  * containing our typings, and a static instance exposing the constructor
  */
-declare const KeycloakConnect: KeycloakConnectStatic
+declare const KeycloakConnect: KeycloakConnectStatic;
 export = KeycloakConnect
 
 interface KeycloakConnectStatic {
-  new (options: KeycloakConnect.KeycloakOptions, config: KeycloakConnect.KeycloakConfig): KeycloakConnect.Keycloak
+  new (options?: KeycloakConnect.KeycloakOptions, config?: KeycloakConnect.KeycloakConfig|string): KeycloakConnect.Keycloak
 }
 
 declare namespace KeycloakConnect {
@@ -33,9 +33,9 @@ declare namespace KeycloakConnect {
   }
 
   interface GrantProperties {
-    access_token?: string
-    refresh_token?: string
-    id_token?: string
+    access_token?: Token
+    refresh_token?: Token
+    id_token?: Token
     expires_in?: string
     token_type?: string
   }
@@ -192,7 +192,21 @@ declare namespace KeycloakConnect {
     isExpired(): boolean
   }
 
-  type GaurdFn = (accessToken: string, req: express.Request, res: express.Response) => boolean
+  type GaurdFn = (accessToken: Token, req: express.Request, res: express.Response) => boolean
+
+  interface EnforcerOptions {
+    response_mode?: string,
+    resource_server_id?: string,
+    claims?: (...args: any[]) => any
+  }
+
+  interface AuthZRequest {
+    audience?: string,
+    response_mode?: string,
+    claim_token?: string,
+    claim_token_format?: string,
+    permissions: {id: string, scopes: string[]}[]
+  }
 
 
   interface Keycloak {
@@ -280,7 +294,67 @@ declare namespace KeycloakConnect {
      *
      * @param {String} spec The protection spec (optional)
      */
-    protect(spec: GaurdFn|string): express.RequestHandler
+    protect(spec?: GaurdFn|string): express.RequestHandler
+
+    /**
+     * Enforce access based on the given permissions. This method operates in two modes, depending on the `response_mode`
+     * defined for this policy enforcer.
+     *
+     * If `response_mode` is set to `token`, permissions are obtained using an specific grant type. As a consequence, the
+     * token with the permissions granted by the server is updated and made available to the application via `request.kauth.grant.access_token`.
+     * Use this mode when your application is using sessions and you want to cache previous decisions from the server, as well automatically handle
+     * refresh tokens. This mode is especially useful for applications acting as client and resource server.
+     *
+     * If `response_mode` is set to `permissions`, the server only returns the list of granted permissions (no oauth2 response).
+     * Previous decisions are not cached and the policy enforcer will query the server every time to get a decision.
+     * This is the default `response_mode`.
+     *
+     * You can set `response_mode` as follows:
+     *
+     *      keycloak.enforcer('item:read', {response_mode: 'token'})
+     *
+     * In all cases, if the request is already populated with a valid access token (for instance, bearer tokens sent by clients to the application),
+     * the policy enforcer will first try to resolve permissions from the current token before querying the server.
+     *
+     * By default, the policy enforcer will use the `client_id` defined to the application (for instance, via `keycloak.json`) to
+     * reference a client in Keycloak that supports Keycloak Authorization Services. In this case, the client can not be public given
+     * that it is actually a resource server.
+     *
+     * If your application is acting as a client and resource server, you can use the following configuration to specify the client
+     * in Keycloak with the authorization settings:
+     *
+     *      keycloak.enforcer('item:read', {resource_server_id: 'nodejs-apiserver'})
+     *
+     * It is recommended to use separated clients in Keycloak to represent your frontend and backend.
+     *
+     * If the application you are protecting is enabled with Keycloak authorization services and you have defined client credentials
+     * in `keycloak.json`, you can push additional claims to the server and make them available to your policies in order to make decisions.
+     * For that, you can define a `claims` configuration option which expects a `function` that returns a JSON with the claims you want to push:
+     *
+     *      app.get('/protected/resource', keycloak.enforcer(['resource:view', 'resource:write'], {
+          claims: function(request) {
+            return {
+              "http.uri": ["/protected/resource"],
+              "user.agent": // get user agent  from request
+            }
+          }
+        }), function (req, res) {
+          // access granted
+        });
+     *
+     * @param {string[]} permissions A single string representing a permission or an arrat of strings representing the permissions. For instance, 'item:read' or ['item:read', 'item:write'].
+     */
+    enforcer(permissions: string[]|string, config?: EnforcerOptions): express.RequestHandler
+
+    /**
+     * Apply check SSO middleware to an application or specific URL.
+     *
+     * Check SSO will only authenticate the client if the user is already logged-in,
+     * if the user is not logged-in the browser will be redirected back
+     * to the originally-requested URL and remain unauthenticated.
+     *
+     */
+    checkSso(): express.RequestHandler
 
     /**
      * Callback made upon successful authentication of a user.
@@ -327,7 +401,6 @@ declare namespace KeycloakConnect {
      */
     accessDenied(req: express.Request, res: express.Response): void
 
-
     getGrant(req: express.Request, res: express.Response): Promise<Grant>
 
     storeGrant(grant: Grant, req: express.Request, res: express.Response): Grant
@@ -335,6 +408,8 @@ declare namespace KeycloakConnect {
     unstoreGrant(sessionId: string): void
 
     getGrantFromCode(code: string, req: express.Request, res: express.Response): Promise<Grant>
+
+    checkPermissions(authzRequest: AuthZRequest, request: express.Request, callback?: (json: any) => any): Promise<Grant>
 
     loginUrl(uuid: string, redirectUrl: string): string
 
@@ -346,6 +421,8 @@ declare namespace KeycloakConnect {
     // getAccount
 
     redirectToLogin(req: express.Request): boolean
+
+    getConfig(): KeycloakConfig
   }
 
 }
