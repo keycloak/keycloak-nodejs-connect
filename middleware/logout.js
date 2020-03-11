@@ -15,9 +15,12 @@
  */
 'use strict';
 
+const URL = require('url');
+
 module.exports = function (keycloak, logoutUrl) {
   return function logout (request, response, next) {
-    if (request.url !== logoutUrl) {
+    let parsedRequest = URL.parse(request.url, true);
+    if (parsedRequest.pathname !== logoutUrl) {
       return next();
     }
 
@@ -27,10 +30,14 @@ module.exports = function (keycloak, logoutUrl) {
       delete request.kauth.grant;
     }
 
-    let host = request.hostname;
-    let headerHost = request.headers.host.split(':');
-    let port = headerHost[1] || '';
-    let redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/';
+    let queryParams = parsedRequest.query;
+    let redirectUrl = queryParams && queryParams.redirect_url;
+    if (!redirectUrl) {
+      let host = request.hostname;
+      let headerHost = request.headers.host.split(':');
+      let port = headerHost[1] || '';
+      redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/';
+    }
     let keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
 
     response.redirect(keycloakLogoutUrl);
