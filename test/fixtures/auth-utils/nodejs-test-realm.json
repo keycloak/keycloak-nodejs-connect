@@ -3752,11 +3752,11 @@
     "firstBrokerLoginFlowAlias" : "first broker login",
     "postBrokerLoginFlowAlias" : "browser",
     "config" : {
-      "userInfoUrl" : "userInfoUrl",
+      "userInfoUrl" : "https://userInfoUrl",
       "clientSecret" : "clientSecret",
       "clientId" : "clientId",
-      "tokenUrl" : "tokenUrl",
-      "authorizationUrl" : "authorizationUrl"
+      "tokenUrl" : "https://tokenUrl",
+      "authorizationUrl" : "https://authorizationUrl"
     }
   } ],
   "components" : {
