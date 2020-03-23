@@ -70,9 +70,9 @@
       "storeToken": "false",
       "postBrokerLoginFlowAlias" : "browser",
       "config": {
-        "authorizationUrl": "authorizationUrl",
-        "tokenUrl": "tokenUrl",
-        "userInfoUrl": "userInfoUrl",
+        "authorizationUrl": "https://authorizationUrl",
+        "tokenUrl": "https://tokenUrl",
+        "userInfoUrl": "https://userInfoUrl",
         "clientId": "clientId",
         "clientSecret": "clientSecret"
       }
