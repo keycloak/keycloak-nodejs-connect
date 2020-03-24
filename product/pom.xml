@@ -9,7 +9,7 @@
 
     <groupId>org.keycloak</groupId>
     <artifactId>keycloak-connect</artifactId>
-    <version>9.0.1-dev</version>
+    <version>9.0.4-dev</version>
     <packaging>pom</packaging>
 
     <name>Keycloak Connect Middleware</name>
