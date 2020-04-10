@@ -12,7 +12,7 @@ declare const KeycloakConnect: KeycloakConnectStatic
 export = KeycloakConnect
 
 interface KeycloakConnectStatic {
-  new (options: KeycloakConnect.KeycloakOptions, config: KeycloakConnect.KeycloakConfig): KeycloakConnect.Keycloak
+  new (options: KeycloakConnect.KeycloakOptions, config?: KeycloakConnect.KeycloakConfig): KeycloakConnect.Keycloak
 }
 
 declare namespace KeycloakConnect {
