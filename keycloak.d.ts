@@ -280,7 +280,7 @@ declare namespace KeycloakConnect {
      *
      * @param {String} spec The protection spec (optional)
      */
-    protect(spec: GaurdFn|string): express.RequestHandler
+    protect(spec?: GaurdFn|string): express.RequestHandler
 
     /**
      * Callback made upon successful authentication of a user.
