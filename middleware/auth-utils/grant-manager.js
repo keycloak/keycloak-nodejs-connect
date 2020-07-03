@@ -41,7 +41,7 @@ function GrantManager (config) {
   this.notBefore = 0;
   this.rotation = new Rotation(config);
   this.verifyTokenAudience = config.verifyTokenAudience;
-  this.useCustomHeaders = config.useCustomHeaders || true;
+  this.useCustomHeaders = config.useCustomHeaders;
 }
 
 /**
