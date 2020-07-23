@@ -18,7 +18,6 @@
  * An utility with the specifics for selenium
  */
 const chrome = require('selenium-webdriver/chrome');
-const chromedriver = require('chromedriver');
 const webdriver = require('selenium-webdriver');
 const args = require('minimist')(process.argv.slice(2));
 const By = webdriver.By;
@@ -54,7 +53,13 @@ function createDriver () {
 }
 
 function determineChromedriverPath () {
-  let path = args.chromedriverPath || (process.env.CHROMEDRIVER_PATH || chromedriver.path);
+  let path = args.chromedriverPath || process.env.CHROMEDRIVER_PATH;
+
+  if (!path) {
+    const chromedriver = require('chromedriver');
+    path = chromedriver.path;
+  }
+
   console.log('Using chromedriver from path: ' + path);
   return path;
 }
