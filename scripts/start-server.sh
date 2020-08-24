@@ -4,7 +4,7 @@
 docker pull quay.io/keycloak/keycloak
 
 # Start the image with default user/admin and import a default realm for integration tests
-docker run -d --privileged --name keycloak -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 8080:8080 -v `pwd`/test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json -it quay.io/keycloak/keycloak -b 0.0.0.0  -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/config/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+docker run -d --privileged --name keycloak -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 8080:8080 -v `pwd`/test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json -it quay.io/keycloak/keycloak -b 0.0.0.0 -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.profile.feature.account2=disabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/config/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
 
 # For debugging purposes to make sure the image was started
 counter=0
