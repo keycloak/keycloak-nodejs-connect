@@ -18,6 +18,12 @@ const URL = require('url');
 const http = require('http');
 const https = require('https');
 const jwkToPem = require('jwk-to-pem');
+const HttpsProxyAgent = require('https-proxy-agent');
+
+var proxyServer = process.env.http_proxy ||
+                  process.env.HTTP_PROXY ||
+                  process.env.https_proxy ||
+                  process.env.HTTPS_PROXY ;
 
 /**
  * Construct a Rotation instance
@@ -37,6 +43,7 @@ Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
   const url = this.realmUrl + '/protocol/openid-connect/certs';
   const options = URL.parse(url);
   options.method = 'GET';
+  options.agent = new HttpsProxyAgent(proxyServer);
   const promise = new Promise((resolve, reject) => {
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode >= 300) {

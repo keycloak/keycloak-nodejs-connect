@@ -18,11 +18,17 @@
 const URL = require('url');
 const http = require('http');
 const https = require('https');
+const HttpsProxyAgent = require('https-proxy-agent');
 const crypto = require('crypto');
 const querystring = require('querystring');
 const Grant = require('./grant');
 const Token = require('./token');
 var Rotation = require('./rotation');
+
+var proxyServer = process.env.http_proxy ||
+                  process.env.HTTP_PROXY ||
+                  process.env.https_proxy ||
+                  process.env.HTTPS_PROXY ;
 
 /**
  * Construct a grant manager.
@@ -293,6 +299,7 @@ GrantManager.prototype.userInfo = function userInfo (token, callback) {
     'Accept': 'application/json',
     'X-Client': 'keycloak-nodejs-connect'
   };
+  options.agent = new HttpsProxyAgent(proxyServer);
 
   const promise = new Promise((resolve, reject) => {
     const req = getProtocol(options).request(options, (response) => {
@@ -517,7 +524,8 @@ const fetch = (manager, handler, options, params) => {
   return new Promise((resolve, reject) => {
     const data = (typeof params === 'string' ? params : querystring.stringify(params));
     options.headers['Content-Length'] = data.length;
-
+    options.agent = new HttpsProxyAgent(proxyServer);
+    
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode > 299) {
         return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]));
