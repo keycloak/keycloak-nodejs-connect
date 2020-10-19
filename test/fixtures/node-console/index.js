@@ -20,6 +20,7 @@ const bodyParser = require('body-parser');
 const hogan = require('hogan-express');
 const express = require('express');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const enableDestroy = require('server-destroy');
 const parseClient = require('../../utils/helper').parseClient;
 
@@ -34,6 +35,7 @@ Keycloak.prototype.obtainDirectly = function (user, pass) {
 
 function NodeApp () {
   var app = express();
+  app.use(cookieParser());
   var server = app.listen(0);
   enableDestroy(server);
   this.close = function () {
@@ -124,6 +126,11 @@ function NodeApp () {
     app.get('/restricted', keycloak.protect('realm:admin'), function (req, res) {
       var user = req.kauth.grant.access_token.content.preferred_username;
       output(res, user, 'Restricted access');
+    });
+
+    app.get('/cookie', keycloak.protect(), function (req, res) {
+      var authenticated = req.cookies['keycloak-token'] ? 'Auth Success' : 'Auth Failed';
+      output(res, JSON.stringify(JSON.parse(req.cookies['keycloak-token']), null, 4), authenticated);
     });
 
     app.get('/service/public', function (req, res) {

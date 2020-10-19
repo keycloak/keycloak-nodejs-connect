@@ -37,7 +37,8 @@ var CheckSso = require('./middleware/check-sso');
  * The `config` hash, if provided, may include either `store`, pointing
  * to the actual session-store used by your application, or `cookies`
  * with boolean `true` as the value to support using cookies as your
- * authentication store.
+ * authentication store. Bear in mind that cookies session store expects
+ * a cookie parser to be present, e.g. "cookie-parser" in case of Express.js.
  *
  * A session-based store is recommended, as it allows more assured control
  * from the Keycloak console to explicitly logout some or all sessions.
