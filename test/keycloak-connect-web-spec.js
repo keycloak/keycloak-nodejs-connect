@@ -285,6 +285,30 @@ test('Public client should work with slash in the end of auth-server-url', t => 
   });
 });
 
+test('App should be able to use cookie-store', t => {
+  t.plan(1);
+  var app = new NodeApp();
+  var client = admin.createClient(app.publicClient('appCookies'));
+
+  return client.then((installation) => {
+    app.build(installation, { cookies: true });
+    return page.get(app.port, '/cookie').then(() => {
+      page.login('alice', 'password').then(() => {
+        driver.navigate().refresh().then(() => {
+          page.events().getText().then(text => {
+            t.equal(text, 'Auth Success', 'User should be authenticated');
+          });
+        });
+      });
+    }).then(() => {
+      app.destroy();
+    }).catch(err => {
+      app.destroy();
+      throw err;
+    });
+  });
+});
+
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy();

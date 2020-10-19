@@ -44,6 +44,7 @@
     "coveralls": "^3.0.1",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
+    "cookie-parser": "^1.4.5",
     "hogan-express": "^0.5.2",
     "ink-docstrap": "^1.1.4",
     "jsdoc": "^3.6.3",
