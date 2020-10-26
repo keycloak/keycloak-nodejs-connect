@@ -420,6 +420,24 @@ declare namespace KeycloakConnect {
     // Uses deprecated method
     // getAccount
 
+    /**
+     * Replaceable function to handle redirect behaviour.
+     *
+     * By default, all unauthorized requests will be redirected to the 
+     * Keycloak login page unless your client is bearer-only. 
+     * However, a confidential or public client may host both browsable and API endpoints. 
+     * To prevent redirects on unauthenticated API requests and instead return an HTTP 401, 
+     * you can override the redirectToLogin function.
+     * 
+     * For example, this override checks if the url contains /api/ and disables login redirects:
+     * 
+     * Keycloak.prototype.redirectToLogin = function(req) {
+     *   var apiReqMatcher = /\/api\//i;
+     *   return !apiReqMatcher.test(req.originalUrl || req.url);
+     * };
+     * 
+     * @param {Object} request The HTTP request.
+     */
     redirectToLogin(req: express.Request): boolean
 
     getConfig(): KeycloakConfig
