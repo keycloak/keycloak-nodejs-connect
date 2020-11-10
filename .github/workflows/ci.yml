@@ -1,0 +1,19 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 11.x, 12.x, 13.x]
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v2
+    - name: Start Docker image
+      run: ./scripts/start-server.sh
+    - name: Run Node.js ${{ matrix.node }} tests
+      uses: actions/setup-node@v2-beta
+      with:
+        node-version: ${{ matrix.node }}
+    - run: make lint
+    - run: ./run-tests.sh
