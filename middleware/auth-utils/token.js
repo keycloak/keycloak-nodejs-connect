@@ -51,7 +51,7 @@ function Token (token, clientId) {
  *
  * In case of an offline_access refresh token expire value is undefined,
  * so that token will never get expired.
- * 
+ *
  * @return {boolean} `true` if it is expired, otherwise `false`.
  */
 Token.prototype.isExpired = function isExpired () {
