@@ -167,6 +167,12 @@ Config.prototype.configure = function configure (config) {
    * @type {Boolean}
    */
   this.verifyTokenAudience = resolveValue(config['verify-token-audience'] || config.verifyTokenAudience || false);
+
+  /**
+   * Proxy URL
+   * @type {String}
+   */
+  this.proxyUrl = resolveValue(config['proxy-url'] || config.proxyUrl);
 };
 
 module.exports = Config;

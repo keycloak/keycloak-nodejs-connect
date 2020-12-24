@@ -16,13 +16,12 @@
 'use strict';
 
 const URL = require('url');
-const http = require('http');
-const https = require('https');
 const crypto = require('crypto');
 const querystring = require('querystring');
 const Grant = require('./grant');
 const Token = require('./token');
 var Rotation = require('./rotation');
+const request = require('request');
 
 /**
  * Construct a grant manager.
@@ -41,6 +40,7 @@ function GrantManager (config) {
   this.notBefore = 0;
   this.rotation = new Rotation(config);
   this.verifyTokenAudience = config.verifyTokenAudience;
+  this.proxyUrl = config.proxyUrl;
 }
 
 /**
@@ -281,34 +281,33 @@ GrantManager.prototype.validateAccessToken = function validateAccessToken (token
 };
 
 GrantManager.prototype.userInfo = function userInfo (token, callback) {
-  const url = this.realmUrl + '/protocol/openid-connect/userinfo';
-  const options = URL.parse(url);
-  options.method = 'GET';
-
   let t = token;
   if (typeof token === 'object') t = token.token;
 
-  options.headers = {
-    'Authorization': 'Bearer ' + t,
-    'Accept': 'application/json',
-    'X-Client': 'keycloak-nodejs-connect'
+  const uri = this.realmUrl + '/protocol/openid-connect/userinfo';
+  const options = {
+    uri,
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + t,
+      'Accept': 'application/json',
+      'X-Client': 'keycloak-nodejs-connect'
+    }
   };
 
+  if (this.proxyUrl) {
+    options.proxy = this.proxyUrl;
+  }
+
   const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode >= 300) {
+    const req = request(options, (error, response, body) => {
+      if (error || response.statusCode < 200 || response.statusCode >= 300) {
         return reject(new Error('Error fetching account'));
       }
-      let json = '';
-      response.on('data', (d) => (json += d.toString()));
-      response.on('end', () => {
-        const data = JSON.parse(json);
-        if (data.error) reject(data);
-        else resolve(data);
-      });
+      const data = JSON.parse(body);
+      resolve(data);
     });
     req.on('error', reject);
-    req.end();
   });
 
   return nodeify(promise, callback);
@@ -470,10 +469,6 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
   });
 };
 
-const getProtocol = (opts) => {
-  return opts.protocol === 'https:' ? https : http;
-};
-
 const nodeify = (promise, cb) => {
   if (typeof cb !== 'function') return promise;
   return promise.then((res) => cb(null, res)).catch((err) => cb(err));
@@ -517,21 +512,20 @@ const fetch = (manager, handler, options, params) => {
   return new Promise((resolve, reject) => {
     const data = (typeof params === 'string' ? params : querystring.stringify(params));
     options.headers['Content-Length'] = data.length;
+    options.body = data;
 
-    const req = getProtocol(options).request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode > 299) {
+    if (this.proxyUrl) {
+      options.proxy = this.proxyUrl;
+    }
+
+    const req = request(options, (error, response, body) => {
+      if (error || response.statusCode < 200 || response.statusCode > 299) {
         return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]));
       }
-      let json = '';
-      response.on('data', (d) => (json += d.toString()));
-      response.on('end', () => {
-        handler(resolve, reject, json);
-      });
+      handler(resolve, reject, body);
     });
 
-    req.write(data);
     req.on('error', reject);
-    req.end();
   });
 };
 

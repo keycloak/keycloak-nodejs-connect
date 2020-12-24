@@ -15,8 +15,7 @@
  */
 'use strict';
 const URL = require('url');
-const http = require('http');
-const https = require('https');
+const request = require('request');
 const jwkToPem = require('jwk-to-pem');
 
 /**
@@ -31,27 +30,27 @@ function Rotation (config) {
   this.minTimeBetweenJwksRequests = config.minTimeBetweenJwksRequests;
   this.jwks = [];
   this.lastTimeRequesTime = 0;
+  this.proxyUrl = config.proxyUrl;
 }
 
 Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
-  const url = this.realmUrl + '/protocol/openid-connect/certs';
-  const options = URL.parse(url);
-  options.method = 'GET';
+  const uri = this.realmUrl + '/protocol/openid-connect/certs';
+  const options = {
+    uri,
+    method: 'GET'
+  };
+  if (this.proxyUrl) {
+    options.proxy = this.proxyUrl;
+  }
   const promise = new Promise((resolve, reject) => {
-    const req = getProtocol(options).request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode >= 300) {
+    const req = request(options, (error, response, body) => {
+      if (error || response.statusCode < 200 || response.statusCode >= 300) {
         return reject(new Error('Error fetching JWK Keys'));
       }
-      let json = '';
-      response.on('data', (d) => (json += d.toString()));
-      response.on('end', () => {
-        const data = JSON.parse(json);
-        if (data.error) reject(data);
-        else resolve(data);
-      });
+      const data = JSON.parse(body);
+      resolve(data);
     });
     req.on('error', reject);
-    req.end();
   });
   return nodeify(promise, callback);
 };
@@ -82,10 +81,6 @@ Rotation.prototype.getJWK = function getJWK (kid) {
 
 Rotation.prototype.clearCache = function clearCache () {
   this.jwks.length = 0;
-};
-
-const getProtocol = (opts) => {
-  return opts.protocol === 'https:' ? https : http;
 };
 
 const nodeify = (promise, cb) => {
