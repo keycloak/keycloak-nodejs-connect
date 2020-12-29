@@ -27,7 +27,7 @@ SessionStore.prototype.get = (request) => {
   } catch (error) {
     // ignore
   }
-}
+};
 
 SessionStore.prototype.clear = function (sessionId) {
   let self = this;
