@@ -54,6 +54,7 @@
     "keycloak-request-token": "^0.1.0",
     "nock": "^12.0.3",
     "nyc": "^15.0.0",
+    "restify": "^8.5.1",
     "rsa-compat": "^1.2.7",
     "selenium-webdriver": "^3.6.0",
     "semistandard": "^13.0.1",
