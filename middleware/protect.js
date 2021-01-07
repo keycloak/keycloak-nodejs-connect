@@ -33,10 +33,10 @@ function forceLogin (keycloak, request, response, next) {
   let uuid = UUID();
   let loginURL = keycloak.loginUrl(uuid, redirectUrl);
   try {
-    // expressjs not happy with next param
+    // express.js not happy with next param
     response.redirect(301, loginURL);
   } catch (ex) {
-    console.log('using Restify? expected error. Switching redirect call ..');
+    console.debug('using Restify? expected error. Switching redirect call ..', ex);
     // for restify mandatory next param
     response.redirect(301, loginURL, next);
   }
