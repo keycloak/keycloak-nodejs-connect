@@ -35,8 +35,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "jwk-to-pem": "^2.0.0",
-    "restify": "^8.5.1"
+    "jwk-to-pem": "^2.0.0"
   },
   "devDependencies": {
     "axios": "^0.19.0",
