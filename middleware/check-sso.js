@@ -35,7 +35,7 @@ function forceCheckSSO (keycloak, request, response) {
   const loginURL = keycloak.loginUrl(uuid, redirectUrl);
   const checkSsoUrl = loginURL + '&response_mode=query&prompt=none';
 
-  response.redirect(checkSsoUrl);
+  response.writeHead(302, { Location: checkSsoUrl }).end()
 }
 
 module.exports = function (keycloak) {
@@ -67,7 +67,7 @@ module.exports = function (keycloak) {
       request.session.auth_is_check_sso_complete = true;
 
       //  Redirect back to the original URL
-      return response.redirect(cleanUrl);
+      response.writeHead(302, { Location: cleanUrl }).end()
     }
 
     if (keycloak.redirectToLogin(request)) {

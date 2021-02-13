@@ -52,7 +52,8 @@ module.exports = function (keycloak) {
         } catch (err) {
           console.log(err);
         }
-        response.redirect(cleanUrl);
+
+        response.writeHead(302, { Location: cleanUrl }).end()
       }).catch((err) => {
         keycloak.accessDenied(request, response, next);
         console.error('Could not obtain grant code: ' + err);

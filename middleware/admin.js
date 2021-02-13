@@ -47,7 +47,7 @@ function adminLogout (request, response, keycloak) {
           let sessionIDs = token.content.adapterSessionIds;
           if (!sessionIDs) {
             keycloak.grantManager.notBefore = token.content.notBefore;
-            response.send('ok');
+            response.end('ok');
             return;
           }
           if (sessionIDs && sessionIDs.length > 0) {
@@ -56,20 +56,23 @@ function adminLogout (request, response, keycloak) {
               keycloak.unstoreGrant(id);
               ++seen;
               if (seen === sessionIDs.length) {
-                response.send('ok');
+                response.end('ok');
               }
             });
           } else {
-            response.send('ok');
+            response.end('ok');
           }
         } else {
-          response.status(400).end();
+          response.statusCode = 400
+          response.end();
         }
       }).catch((err) => {
-        response.status(401).end(err.message);
+        response.statusCode =401
+        response.end(err.message);
       });
     } catch (err) {
-      response.status(400).end(err.message);
+      response.statusCode = 400
+      response.end(err.message);
     }
   });
 }
@@ -88,13 +91,15 @@ function adminNotBefore (request, response, keycloak) {
       signature.verify(token).then(token => {
         if (token.content.action === 'PUSH_NOT_BEFORE') {
           keycloak.grantManager.notBefore = token.content.notBefore;
-          response.send('ok');
+          response.end('ok');
         }
       }).catch((err) => {
-        response.status(401).end(err.message);
+        response.statusCode = 401
+        response.end(err.message);
       });
     } catch (err) {
-      response.status(400).end(err.message);
+      response.statusCode = 400
+      response.end(err.message);
     }
   });
 }
