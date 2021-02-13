@@ -40,6 +40,6 @@ module.exports = function (keycloak, logoutUrl) {
     }
     let keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
 
-    response.writeHead(302, { Location: keycloakLogoutUrl }).end()
+    response.writeHead(302, { Location: keycloakLogoutUrl }).end();
   };
 };

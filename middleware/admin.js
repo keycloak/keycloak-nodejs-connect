@@ -63,15 +63,15 @@ function adminLogout (request, response, keycloak) {
             response.end('ok');
           }
         } else {
-          response.statusCode = 400
+          response.statusCode = 400;
           response.end();
         }
       }).catch((err) => {
-        response.statusCode =401
+        response.statusCode = 401;
         response.end(err.message);
       });
     } catch (err) {
-      response.statusCode = 400
+      response.statusCode = 400;
       response.end(err.message);
     }
   });
@@ -94,11 +94,11 @@ function adminNotBefore (request, response, keycloak) {
           response.end('ok');
         }
       }).catch((err) => {
-        response.statusCode = 401
+        response.statusCode = 401;
         response.end(err.message);
       });
     } catch (err) {
-      response.statusCode = 400
+      response.statusCode = 400;
       response.end(err.message);
     }
   });
