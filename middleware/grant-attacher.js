@@ -21,6 +21,10 @@ module.exports = function (keycloak) {
       .then(grant => {
         request.kauth.grant = grant;
       })
-      .then(next).catch(() => next());
+      .then(next)
+      .catch(error => {
+        request.kauth.error = error;
+        next()
+      });
   };
 };
