@@ -24,7 +24,7 @@ module.exports = function (keycloak) {
       .then(next)
       .catch(error => {
         request.kauth.error = error;
-        next()
+        next();
       });
   };
 };
