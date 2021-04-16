@@ -23,7 +23,7 @@ module.exports = function (keycloak) {
       })
       .then(next)
       .catch(error => {
-        request.kauth.error = error && error.message;
+        request.kauth.error = (error || {}).message;
         next();
       });
   };
