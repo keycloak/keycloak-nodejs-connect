@@ -327,7 +327,7 @@ Keycloak.prototype.getGrant = function (request, response) {
         self.storeGrant(grant, request, response);
         return grant;
       })
-      .catch(error => { return Promise.reject(error.message); });
+      .catch(error => { return Promise.reject(error || new Error('Could not store grant code error')); });
   }
 
   return Promise.reject(new Error('Could not obtain grant code error'));
