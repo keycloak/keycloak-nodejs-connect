@@ -16,14 +16,16 @@ services:
       # MYSQL_ROOT_HOST: "%"
       MYSQL_USER: keycloak
       MYSQL_PASSWORD: password
-      mYSQL_DATABASE: keycloak
+      MYSQL_DATABASE: keycloak
     healthcheck:
       test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
       start_period: 10s
       timeout: 20s
       retries: 10
     volumes:
-      - ./DockerVolumes/mysql-data:/var/lib/mysql
+      # On Windows if your Keycloak times out setting up the DB then try to put the volume on a faster drive (C: is an SSD!!!)
+      #- ./DockerVolumes/mysql-data:/var/lib/mysql
+      - C:/docker/volumes/mysql-data2:/var/lib/mysql
     ports:
       - 3306:3306
     cap_add:
@@ -95,13 +97,18 @@ services:
       JDBC_PARAMS: "useSSL=FALSE&allowPublicKeyRetrieval=TRUE&connectTimeout=60000"
       JAVA_OPTS: "-Djboss.as.management.blocking.timeout=3600"
       #------------------------------------------------------------------------------------------------------------
-      # DO NOT work with Keycloak 12, see https://stackoverflow.com/questions/33910615/is-there-an-api-call-for-changing-user-password-on-keycloak/35014705
-      # keycloak.profile.feature.account_api=disabled 
-      # keycloak.profile.feature.account2=disabled 
-      # keycloak.migration.action=import 
-      # keycloak.migration.provider=singleFile 
-      # keycloak.migration.file=/config/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+      # Export Realm, see https://hub.docker.com/r/jboss/keycloak/
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # Import Realm, see https://hub.docker.com/r/jboss/keycloak/
+      # KEYCLOAK_IMPORT: /config/nodejs-test-realm.json 
       #------------------------------------------------------------------------------------------------------------
+    command:
+      # see https://stackoverflow.com/questions/61184888/how-to-import-multiple-realm-in-keycloak
+      - "-b 0.0.0.0"
+      - "-Dkeycloak.migration.action=import"
+      - "-Dkeycloak.migration.provider=singleFile"
+      - "-Dkeycloak.migration.file=/config/nodejs-test-realm.json"
+      - "-Dkeycloak.migration.strategy=IGNORE_EXISTING"
     volumes:
       - ./test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json 
     ports:

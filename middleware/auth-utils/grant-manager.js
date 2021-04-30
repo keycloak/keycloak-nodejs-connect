@@ -487,6 +487,7 @@ const createHandler = (manager) => (resolve, reject, json) => {
   }
 };
 
+// eslint-disable-next-line no-unused-vars
 const refreshHandler = (manager, grant) => (resolve, reject, json) => {
   manager.createGrant(json)
     .then((grant) => resolve(grant))

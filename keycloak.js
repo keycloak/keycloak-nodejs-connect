@@ -270,6 +270,7 @@ Keycloak.prototype.checkSso = function () {
  *
  * @param {Object} request The HTTP request.
  */
+// eslint-disable-next-line no-unused-vars
 Keycloak.prototype.authenticated = function (request) {
   // no-op
 };
@@ -283,6 +284,7 @@ Keycloak.prototype.authenticated = function (request) {
  *
  * @param {Object} request The HTTP request.
  */
+// eslint-disable-next-line no-unused-vars
 Keycloak.prototype.deauthenticated = function (request) {
   // no-op
 };
@@ -414,6 +416,7 @@ Keycloak.prototype.getAccount = function (token) {
   return this.grantManager.getAccount(token);
 };
 
+// eslint-disable-next-line no-unused-vars
 Keycloak.prototype.redirectToLogin = function (request) {
   return !this.config.bearerOnly;
 };

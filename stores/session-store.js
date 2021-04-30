@@ -37,12 +37,14 @@ SessionStore.prototype.clear = function (sessionId) {
 };
 
 let store = (grant) => {
+  // eslint-disable-next-line no-unused-vars
   return (request, response) => {
     request.session[SessionStore.TOKEN_KEY] = grant.__raw;
   };
 };
 
-let unstore = (request, response) => {
+  // eslint-disable-next-line no-unused-vars
+  let unstore = (request, response) => {
   delete request.session[SessionStore.TOKEN_KEY];
 };
 

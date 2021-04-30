@@ -11,12 +11,18 @@ portainer:
 	$(UP) portainer
 
 
+up:
+	$(UP) portainer mysql adminer 
+	sleep 10
+	$(UP) keycloak
+
+
 upALL:
 	$(UP) portainer mysql adminer 
 	sleep 10
 	$(UP) keycloak
 
-up:
+upMin:
 	$(UP) mysql
 	sleep 10
 	$(UP) keycloak

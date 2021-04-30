@@ -95,6 +95,15 @@ When developing your test depending on the feature or enhancement you are testin
 existing test, or to write a test from scratch. For the latter, we recommend finding another test that is close to what 
 you need and use that as a basis.
 
+If you need to power off your compter and want to continue testing later run the following command to stop docker containers:
+
+    make stop
+
+After you have finished testing run the following command to remove the docker containers:
+
+    make down
+
+
 ## Contributing
 
 Please read https://github.com/keycloak/keycloak/blob/master/CONTRIBUTING.md and follow these guidelines when contributing to Keycloak
