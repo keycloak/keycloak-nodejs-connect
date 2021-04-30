@@ -1,0 +1,26 @@
+{
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true
+  },
+  "parserOptions": {
+     "ecmaFeatures": {
+       "jsx": true
+    },
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "globals": {
+    "request": true,
+    "appRoot": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "plugins": [
+  ],
+  "rules": {
+    "strict": "off"
+  }
+}

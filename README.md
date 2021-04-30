@@ -24,19 +24,81 @@ If you've found a security vulnerability, please look at the [instructions on ho
 If you believe you have discovered a defect in the Node.js adapter please open an issue in our [Issue Tracker](https://issues.jboss.org/projects/KEYCLOAK).
 Please remember to provide a good summary, description as well as steps to reproduce the issue.
 
-## Getting started
+## Use the NodeJS Package
 
 To run Node.js adapter examples please try one of our [quickstarts](https://github.com/keycloak/keycloak-quickstarts.git).
 
 For more details refer to the [Keycloak Documentation](https://www.keycloak.org/documentation.html).
 
-### Writing Tests
+## Building from source
 
-To write tests refer to the [writing tests](docs/tests-development.md) guide.
+Ensure you have Node.js 8.17 or newer and Git installed. Run the following commands to find their versions:
+
+    node --version
+    git --version
+
+First clone the Node.js adapter repository:
+
+    git clone https://github.com/keycloak/keycloak-nodejs-connect.git
+    cd keycloak-nodejs-connect
+
+To install the package dependencies run the following:
+
+    npm install
+    or
+    yarn install
+
+To build the package tgz run the following command:
+
+    npm pack
+    or
+    yarn pack
+
+You can then use the tgz for any application development to test your changes before creating a pull request.
+
+## Working with the codebase
+
+To ensure there is a consistent code quality, which currenty does very few rules, before submitting any pull request, please run the following:
+
+    npm lint
+    or
+    yarn lint
+
+If your changes require introducing new dependencies or updating dependency versions please discuss this first on the
+dev mailing list. We do not accept new dependencies to be added lightly, so try to use what is available.
+
+### Unit/Integration Test
+
+## Writing tests
+
+When writing tests please follow the same approach as we have taken in the other tests. There are many ways to
+test software and we have chosen ours, so please appreciate that.
+
+The main tests are provided in `test` folder. Before executing them, first make sure that the Keycloak server was started to run all the integration tests:
+
+    make up
+
+NOTES: 
+* On Windows to install make and other Unix utilites install GOW,  <https://github.com/bmatzelle/gow/releases>
+* ***The docker confguration has TBA TBA TBA***
+
+Running the tests:
+
+    npm test
+    or
+    yarn test
+
+Running specific tests:
+    ./node_modules/.bin/tape test/grant-manager-spec.js
+
+When developing your test depending on the feature or enhancement you are testing you may find it best to add to an
+existing test, or to write a test from scratch. For the latter, we recommend finding another test that is close to what 
+you need and use that as a basis.
 
 ## Contributing
 
-Before contributing to Node.js adapter please read our [contributing guidelines](CONTRIBUTING.md).
+Please read https://github.com/keycloak/keycloak/blob/master/CONTRIBUTING.md and follow these guidelines when contributing to Keycloak
+
 
 ## Other Keycloak Projects
 

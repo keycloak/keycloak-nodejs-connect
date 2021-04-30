@@ -1,14 +1,47 @@
-tests: lint
-	npm run test
+.PHONY: status up upALL portainer restart down pull stop commands
 
-lint: node_modules
-	npm run lint
-	npm run format
+status:
+	docker ps -a --format "table {{.Names}}\t{{.ID}}\t{{.Status}}\t{{.Command}}\t{{.Ports}}"
 
-cleanup:
-	rm -rf node_modules
+USERNAME := $(shell whoami)
 
-node_modules: package.json
-	npm install
+UP=docker-compose up -d
 
-.PHONY: node_modules
+portainer:
+	$(UP) portainer
+
+
+upALL:
+	$(UP) portainer mysql adminer 
+	sleep 10
+	$(UP) keycloak
+
+up:
+	$(UP) mysql
+	sleep 10
+	$(UP) keycloak
+
+restart:
+	docker-compose stop
+	docker-compose start mongo mariadb
+	sleep 1
+	docker-compose start rest-service
+	sleep 1
+	docker-compose start portainer
+
+down:
+	docker-compose down --remove-orphans --volumes
+
+pull:
+	docker-compose pull
+
+stop:
+	docker-compose stop
+
+commands:
+	@echo "================================================"
+	@echo "make commands:                                  "
+	@echo "    up                 down                     "
+	@echo "    restart            pull                     "
+	@echo "    stop               status                   "
+	@echo "================================================"

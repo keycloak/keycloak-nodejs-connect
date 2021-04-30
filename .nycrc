@@ -1,0 +1,46 @@
+{
+  "all": true,
+  "check-coverage": false,
+  "report-dir": ".nyc_output/nyc_coverage",
+  "lines": 20,
+  "branches": 15,
+  "statements": 20,
+  "functions": 15,
+  "watermarks": {
+    "lines": [
+      80,
+      95
+    ],
+    "functions": [
+      80,
+      95
+    ],
+    "branches": [
+      80,
+      95
+    ],
+    "statements": [
+      80,
+      95
+    ]
+  },
+  "instrument": true,
+  "reporter": [
+    "lcov",
+    "text",
+    "text-summary"
+  ],
+  "sourceMap": true,
+  "extension": [
+    ".js",
+    ".ts",
+    ".tsx"
+  ],
+  "include": [
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "src/contract/*.js",
+    "test/**/*.js"
+  ]
+}
