@@ -38,7 +38,7 @@
     "jwk-to-pem": "^2.0.0"
   },
   "devDependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "blue-tape": "^1.0.0",
     "body-parser": "^1.13.3",
     "coveralls": "^3.0.1",
