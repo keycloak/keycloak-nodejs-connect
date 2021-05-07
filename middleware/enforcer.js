@@ -17,7 +17,7 @@
 
 function handlePermissions (permissions, callback) {
   for (let i = 0; i < permissions.length; i++) {
-console.log(`handlePermissions ${i} : ${permissions[i]}`);
+//console.log(`handlePermissions ${i} : ${permissions[i]}`);
     const expected = permissions[i].split(':');
     const resource = expected[0];
     let scope;

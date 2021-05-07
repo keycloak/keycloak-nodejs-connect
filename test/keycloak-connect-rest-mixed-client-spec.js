@@ -388,7 +388,7 @@ t.test('Should logout with redirect url', t => {
     .then(cookie => {
       return axios.get(logoutEndpoint, { headers: { cookie } })
         .then(response => {
-          t.assert(response.request.path, '/bye', 'Expected redirect after logout');
+          t.ok(response.request.path, '/bye', 'Expected redirect after logout');
         });
     });
 });

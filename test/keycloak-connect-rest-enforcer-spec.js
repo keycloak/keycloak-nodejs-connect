@@ -34,12 +34,12 @@ t.test('setup', async t => {
       return appFileTest.enforcerResourceServer();
     })
     .then((clientRep) => {
-      //console.log(`clientRep : ${JSON.stringify(clientRep, null, 2)}`);
-      console.log(`clientRep : ${clientRep}`);
+      // console.log(`clientRep : ${JSON.stringify(clientRep, null, 2)}`);
+      // console.log(`clientRep : ${clientRep}`);
       return admin.createClient(clientRep, realmName);
     })
     .then((installation) => {
-      console.log(`installation : ${JSON.stringify(installation, null, 2)}`);
+      // console.log(`installation : ${JSON.stringify(installation, null, 2)}`);
       return appFileTest.build(installation);
     })
     .catch((err) => {

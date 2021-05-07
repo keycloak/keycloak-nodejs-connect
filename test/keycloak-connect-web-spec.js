@@ -250,7 +250,6 @@ t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
     return webDriverClass.getCurrentUrl();
   })
   .then(currentUrl => {
-    console.log(`currentUrl : ${currentUrl}`);
     t.ok(currentUrl.startsWith(webDriverClass.getAccoutUrl(realmName, 8080)), 'Should be on account page'); // Watch the "/#/"" at the end
   })
   .then(() => {
