@@ -27,7 +27,7 @@ const realmName = `UnitTesting-${__filename.slice(__dirname.length + 1, -3)}`;
 const appFileTest = new NodeApp();
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 
-t.setTimeout(100000); // Change timeout from 30 sec to 100 sec
+t.setTimeout(300000); // Change timeout from 30 sec to 300 sec
 
 t.test('setup', (t) => {
   t.comment(`START TESTING FILE : ${__filename}`);

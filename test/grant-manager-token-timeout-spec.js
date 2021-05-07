@@ -5,7 +5,7 @@ const Config = require('../middleware/auth-utils/config');
 const t = require('tap');
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 
-t.setTimeout(200000); // Change timeout from 30 sec to 200 sec
+t.setTimeout(360000); // Change timeout from 30 sec to 360 sec
 
 t.test('GrantManager should be able to refresh token after accessTokenLifespan', (t) => {
   t.comment(`START TESTING FILE : ${__filename}`);
