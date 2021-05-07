@@ -8,7 +8,7 @@
     "lint": "./node_modules/.bin/eslint *.js *.ts example/**/*.js middleware/**/*.js stores/**/*.js test/**/*.js",
     "doc": "./node_modules/.bin/rimraf docs && ./node_modules/.bin/jsdoc -c .jsdoc.json",
     "clean": "./node_modules/.bin/rimraf docs .nyc_output",
-    "test_1": "./node_modules/.bin/tap --no-coverage test/grant-manager-spec.js",
+    "test_1": "node test/grant-manager-spec.js",
     "test_2": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-web-enforcer-spec.js",
     "test_3": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-rest-mixed-client-spec.js",
     "test_4": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-rest-enforcer-spec.js",
@@ -17,7 +17,7 @@
     "test_7": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-web-spec.js",
     "test_8": "./node_modules/.bin/tap --no-coverage test/unit/hconfig-test-spec.js",
     "test_9": "./node_modules/.bin/tap --no-coverage test/unit/keycloak-object-test-spec.js",
-    "test": "./node_modules/.bin/rimraf .nyc_output && ./node_modules/.bin/nyc ./node_modules/.bin/tap -j1 test/**/*-spec.js"
+    "test": "./node_modules/.bin/rimraf .nyc_output && ./node_modules/.bin/nyc ./node_modules/.bin/tap -j1 test/*-spec.js"
   },
   "keywords": [
     "sso",
