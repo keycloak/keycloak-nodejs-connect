@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# For Travic CI wait until the Keycloak app has finished setting up before exiting this script
+
+# For TravisCI wait until the Keycloak app has finished setting up before exiting this script
 counter=0
 printf 'Waiting for Keycloak server to start'
 until $(curl --output /dev/null --silent --head --fail http://localhost:8080/auth/realms/master/account); do
