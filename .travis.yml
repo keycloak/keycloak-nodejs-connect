@@ -1,12 +1,15 @@
 sudo: required
 dist: focal
 language: node_js
-env:
-  - DOCKER_COMPOSE_VERSION=1.29.0
+
 cache:
   yarn: false
+
 addons:
   chrome: stable
+  apt:
+    packages:
+      - docker-ce  
 
 node_js:
   - "10"
@@ -17,14 +20,9 @@ node_js:
 services:
   - docker
 
-after_success:
-  - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
-
 before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
+  - docker --version
+  - docker-compose --version
   - make up
 
 install:
@@ -35,3 +33,7 @@ before_script:
 
 script: 
   - yarn test
+
+after_success:
+  - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
+
