@@ -35,6 +35,7 @@ before_script:
   - yarn lint
 
 script:
+  - chmod +x ./WaitKeycloakAppRunning.sh
   - ./WaitKeycloakAppRunning.sh
   - yarn test
 
