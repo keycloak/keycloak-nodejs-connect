@@ -72,14 +72,14 @@ t.test('Should test access to protected resource and scope view.', t => {
 
 t.test('Should test access to protected resource and scope view without authorization header.', t => {
   t.plan(1);
-  // eslint-disable-next-line no-unused-vars
-  return getToken({ realmName }).then((token) => {
+  return getToken({ realmName })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .then((token) => {
     const opt = {
       method: 'get',
       url: `${appFileTest.address}/protected/enforcer/resource`
     };
     return axios(opt)
-      .then( () => {})
       .catch(error => {
         t.equal(error.response.data, 'Access denied');
       });
@@ -114,7 +114,6 @@ t.test('Should test no access to protected resource and scope delete.', t => {
     };
 
     return axios(opt)
-      .then( () => {})
       .catch(error => {
         t.equal(error.response.data.permissions, undefined);
         t.equal(error.response.data, 'Access denied');
@@ -131,7 +130,6 @@ t.test('Should test no access to protected resource and scope view and delete.',
       headers: { Authorization: `Bearer ${token}` }
     };
     return axios(opt)
-      .then( () => {})
       .catch(error => {
         t.equal(error.response.data.permissions, undefined);
         t.equal(error.response.data, 'Access denied');
@@ -169,7 +167,6 @@ t.test('Should test no access to protected resource wrong claims.', t => {
       headers: { Authorization: `Bearer ${token}` }
     };
     return axios(opt)
-      .then( () => {})
       .catch(error => {
         t.equal(error.response.data.permissions, undefined);
         t.equal(error.response.data, 'Access denied');

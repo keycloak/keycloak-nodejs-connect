@@ -24,6 +24,7 @@ SessionStore.TOKEN_KEY = 'keycloak-token';
 SessionStore.prototype.get = (request) => request.session[SessionStore.TOKEN_KEY];
 
 SessionStore.prototype.clear = function (sessionId) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   let self = this;
   this.store.get(sessionId, (err, session) => {
     if (err) {
@@ -37,13 +38,13 @@ SessionStore.prototype.clear = function (sessionId) {
 };
 
 let store = (grant) => {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return (request, response) => {
     request.session[SessionStore.TOKEN_KEY] = grant.__raw;
   };
 };
 
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let unstore = (request, response) => {
   delete request.session[SessionStore.TOKEN_KEY];
 };

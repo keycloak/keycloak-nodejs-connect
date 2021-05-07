@@ -53,6 +53,7 @@ function parseClient (file, httpPort, name) {
  * Utility to provide testing vectors instead of
  * a bunch of duplicate files with small changes
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function TestVector () {
 }
 

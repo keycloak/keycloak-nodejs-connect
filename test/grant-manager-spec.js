@@ -10,7 +10,7 @@ const helper = require('./utils/helper');
 t.test('GrantManager with empty configuration', (t) => {
   t.comment(`START TESTING FILE : ${__filename}`);
   t.throws(function () {
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let manager = new GrantManager(undefined); 
   }, Error, 'Expect Config to throw error as the fixture does NOT exist!');
   t.end();
@@ -681,6 +681,7 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
 
   t.test('GrantManager should return empty when trying to obtain from code with empty params', (t) => {
     t.plan(1);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     manager.obtainFromCode('', '', '', '', function () {})
       .then((result) => {
         t.equal(result, undefined);

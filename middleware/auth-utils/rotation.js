@@ -59,10 +59,12 @@ Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
 Rotation.prototype.getJWK = function getJWK (kid) {
   let key = this.jwks.find((key) => { return key.kid === kid; });
   if (key) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(jwkToPem(key));
     });
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var self = this;
 
   // check if we are allowed to send request

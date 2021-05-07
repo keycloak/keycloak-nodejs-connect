@@ -239,7 +239,7 @@ class WebDriverAccessClass {
    */
   logout (port) {
     this.getPage(port, '/logout');
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, 2000);

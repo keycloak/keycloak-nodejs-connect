@@ -8,7 +8,6 @@
     "lint": "./node_modules/.bin/eslint *.js *.ts example/**/*.js middleware/**/*.js stores/**/*.js test/**/*.js",
     "doc": "./node_modules/.bin/rimraf docs && ./node_modules/.bin/jsdoc -c .jsdoc.json",
     "clean": "./node_modules/.bin/rimraf docs .nyc_output",
-
     "test_1": "./node_modules/.bin/tap --no-coverage test/grant-manager-spec.js",
     "test_2": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-web-enforcer-spec.js",
     "test_3": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-rest-mixed-client-spec.js",
@@ -47,9 +46,10 @@
     "keycloak-admin-client": "bucharest-gold/keycloak-admin-client"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
-    "bogota": "^2.0.4",
     "cookie-parser": "^1.4.5",
     "coveralls": "^3.1.0",
     "defaults-deep": "^0.2.4",
@@ -67,11 +67,8 @@
     "rsa-compat": "^2.0.8",
     "selenium-webdriver": "^3.6.0",
     "server-destroy": "^1.0.1",
-    "tap": "^15.0.6"
-  },
-  "old_packages": {
-    "tape": "^5.2.2",
-    "selenium-webdriver": "^4.0.0-beta.3"
+    "tap": "^15.0.6",
+    "typescript": "^4.2.4"
   },
   "optionalDependencies": {
     "chromedriver": "latest"

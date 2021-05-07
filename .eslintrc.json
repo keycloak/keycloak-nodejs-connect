@@ -16,12 +16,18 @@
     "appRoot": true
   },
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "plugins": [
+    "@typescript-eslint"
   ],
+  "parser": "@typescript-eslint/parser",
   "rules": {
     "strict": "off",
-    "no-debugger":"off"    
+    "no-debugger": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }
