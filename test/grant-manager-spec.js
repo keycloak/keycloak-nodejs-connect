@@ -38,7 +38,7 @@ t.test('GrantManager in public mode should be able to obtain a grant', (t) => {
       t.fail(err, "Enexpected error thrown");
     })
     .finally( () => {
-      t.end;
+      t.end();
     })
 });
 
@@ -55,7 +55,7 @@ t.test('GrantManager in public mode should be able to obtain a raw grant', (t) =
       t.equal(e.message, 'Unexpected error thrown');
     })
     .finally( () => {
-      t.end;
+      t.end();
     })
 });
 
@@ -69,7 +69,9 @@ t.test('GrantManager in public mode with public key configured should be able to
       debugger;
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (expired)');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in public mode should be able to refresh a grant', (t) => {
@@ -82,7 +84,9 @@ t.test('GrantManager in public mode should be able to refresh a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager should return empty with public key configured but invalid signature', (t) => {
@@ -101,7 +105,9 @@ t.test('GrantManager should return empty with public key configured but invalid 
     .catch((e) => {
       t.equal(e.message, 'invalid token (signature)');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in public mode should be able to get userinfo', (t) => {
@@ -115,7 +121,9 @@ t.test('GrantManager in public mode should be able to get userinfo', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in public mode should fail if audience of ID token is not valid', (t) => {
@@ -134,7 +142,9 @@ t.test('GrantManager in public mode should fail if audience of ID token is not v
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in public mode should fail if audience of ID token is not valid with a dummy client in single array', (t) => {
@@ -152,7 +162,9 @@ t.test('GrantManager in public mode should fail if audience of ID token is not v
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in public mode should fail if audience of ID token is not valid with a dummy client in strings', (t) => {
@@ -170,7 +182,9 @@ t.test('GrantManager in public mode should fail if audience of ID token is not v
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in public mode should fail if authorized party for ID token is not valid', (t) => {
@@ -188,7 +202,9 @@ t.test('GrantManager in public mode should fail if authorized party for ID token
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (authorized party should match client id)');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in public mode should fail if audience of Access token is not valid', (t) => {
@@ -206,7 +222,9 @@ t.test('GrantManager in public mode should fail if audience of Access token is n
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 
@@ -226,7 +244,9 @@ t.test('GrantManager in confidential mode should fail if audience of ID token is
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
     })
-   .finally(t.end);
+       .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager in confidential mode should fail if audience of ID token is not valid with a dummy client in single array', (t) => {
@@ -244,7 +264,9 @@ t.test('GrantManager in confidential mode should fail if audience of ID token is
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
     })
-   .finally(t.end);
+       .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
@@ -264,7 +286,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to obtain a grant', (t) => {
@@ -275,7 +299,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to refresh a grant', (t) => {
@@ -300,7 +326,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to validate a valid token', (t) => {
@@ -319,7 +347,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to validate an invalid token', (t) => {
@@ -332,7 +362,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to validate a token has an invalid signature', (t) => {
@@ -347,7 +379,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to validate a valid token string', (t) => {
@@ -366,7 +400,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to validate an invalid token string', (t) => {
@@ -381,7 +417,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should be able to obtain a service account grant', (t) => {
@@ -396,7 +434,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
         debugger;
         t.equal(e.message, 'Unexpected error thrown');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should fail if audience of ID token is not valid', (t) => {
@@ -412,7 +452,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
       .catch((e) => {
         t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
     });
 
   t.test('GrantManager in confidential mode should fail if authorized party for ID token is not valid', (t) => {
@@ -428,7 +470,9 @@ t.test('GrantManager using keycloak-confidential.json fixture', (t) => {
       .catch((e) => {
         t.equal(e.message, 'Grant validation failed. Reason: invalid token (authorized party should match client id)');
       })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
 t.test('GrantManager in confidential mode should fail if audience of Access token is not valid', (t) => {
@@ -444,7 +488,9 @@ t.test('GrantManager in confidential mode should fail if audience of Access toke
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong audience)');
     })
-   .finally(t.end);
+       .finally( () => {
+      t.end();
+    })
 });
 
 t.test('GrantManager should be able to validate tokens in a grant', (t) => {
@@ -467,7 +513,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
      debugger;
      t.equal(e.message, 'Unexpected error thrown');
    })
-   .finally(t.end);
+       .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should be able to remove invalid tokens from a grant', (t) => {
@@ -485,7 +533,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
     .catch((e) => {
       t.equal(e.message, 'Grant validation failed. Reason: invalid token (public key signature)');
     })
-   .finally(t.end);
+       .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should reject with token missing error when bearer only', (t) => {
@@ -502,7 +552,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch((e) => {
         t.equal(e.message, 'Grant validation failed. Reason: invalid token (missing)');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
   })
 
   t.test('GrantManager should not be able to refresh a grant when bearer only', (t) => {
@@ -527,7 +579,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch((e) => {
         t.equal(e.message, 'Unable to refresh without a refresh token');
       })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager validate empty access token', (t) => {
@@ -540,7 +594,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager return user realm role', (t) => {
@@ -553,7 +609,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager validate non existent role', (t) => {
@@ -566,7 +624,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should be false for user with no realm level roles', (t) => {
@@ -580,7 +640,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager validate non existent role app', (t) => {
@@ -593,7 +655,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager validate existent role app', (t) => {
@@ -606,7 +670,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager validate role app with empty clientId', (t) => {
@@ -620,7 +686,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager validate empty role app', (t) => {
@@ -633,7 +701,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager return user realm role based on realm name', (t) => {
@@ -646,7 +716,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager in confidential mode should use callback if provided and validate access token', (t) => {
@@ -676,7 +748,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch((e) => {
         t.equal(e.message, 'Grant validation failed. Reason: invalid token (expired)');
       })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should return empty when trying to obtain from code with empty params', (t) => {
@@ -690,7 +764,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should raise an error when trying to obtain from code with rogue params', (t) => {
@@ -699,7 +775,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch((e) => {
         t.equal(e.message, '400 : Bad Request');
       })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should be able to validate invalid ISS', (t) => {
@@ -712,7 +790,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch((e) => {
         t.equal(e.message, 'Grant validation failed. Reason: invalid token (wrong ISS)');
       })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should be able to validate invalid iat', (t) => {
@@ -725,7 +805,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch((e) => {
         t.equal(e.message, 'Grant validation failed. Reason: invalid token (stale token)');
       })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should be ensure that a grant is fresh', (t) => {
@@ -743,7 +825,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should raise an error when access token and refresh token do not exist', (t) => {
@@ -757,7 +841,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch(e => {
         t.equal(e.message, 'Unable to refresh without a refresh token');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should validate unsigned token', (t) => {
@@ -770,7 +856,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch(e => {
         t.equal(e.message, 'invalid token (not signed)');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should not validate token with wrong type', (t) => {
@@ -782,7 +870,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch(e => {
         t.equal(e.message, 'invalid token (wrong type)');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should fail to load public key when kid is empty', (t) => {
@@ -795,7 +885,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch(e => {
         t.equal(e.message, 'failed to load public key to verify token. Reason: Expected "jwk" to be an Object');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should fail with invalid signature', (t) => {
@@ -808,7 +900,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       .catch(e => {
         t.equal(e.message, 'invalid token (public key signature)');
       })
-      .finally(t.end);
+      .finally( () => {
+      t.end();
+    })
   });
 
   t.test('GrantManager should return false when resource_access is undefined', (t) => {
@@ -822,7 +916,9 @@ t.test('GrantManager should be able to validate tokens in a grant', (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
   });
 
 
@@ -935,7 +1031,9 @@ t.test('GrantManager#obtainDirectly should work with https', async (t) => {
       debugger;
       t.equal(e.message, 'Unexpected error thrown');
     })
-    .finally(t.end);
+    .finally( () => {
+      t.end();
+    })
 });
 
 // test.skip('GrantManager#ensureFreshness should fetch new access token with client id ', (t) => {
@@ -980,5 +1078,7 @@ t.test('GrantManager#obtainDirectly should work with https', async (t) => {
 //       debugger;
 //       t.equal(e.message, 'Unexpected error thrown');
 //     })
-//     .finally(t.end);
+//     .finally( () => {
+//       t.end();
+//     })
 // });

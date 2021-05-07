@@ -37,7 +37,7 @@ Ensure you have Node.js 10.0.0 or newer and Git installed. Run the following com
     node --version
     git --version
 
-Note: NodeJS >= 10 is required due to Node tape package requirment. 
+Note: NodeJS >= 10 is required due to Node tap package requirment.
 
 First clone the Node.js adapter repository:
 
@@ -74,7 +74,7 @@ dev mailing list. We do not accept new dependencies to be added lightly, so try 
 ## Writing tests
 
 When writing tests please follow the same approach as we have taken in the other tests. There are many ways to
-test software and we have chosen ours, so please appreciate that.
+test software and we have chosen ours, so please appreciate that. For tap package testing see <https://node-tap.org/>.
 
 The main tests are provided in `test` folder. Before executing them, first make sure that the Keycloak server was started to run all the integration tests:
 
