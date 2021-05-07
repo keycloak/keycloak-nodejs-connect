@@ -35,12 +35,18 @@ function parse (file, realmName) {
 }
 
 function parseClient (file, httpPort, name) {
-  var port = httpPort || '3000';
-  var content = fs.readFileSync(file, 'utf8')
-    .replace(/{{name}}/g, name)
-    .replace(/{{port}}/g, port);
-  var json = JSON.parse(content);
-  return json;
+  return new Promise(function (resolve, reject) {
+    var port = httpPort || '3000';
+    try {
+      var content = fs.readFileSync(file, 'utf8')
+        .replace(/{{name}}/g, name)
+        .replace(/{{port}}/g, port)
+      var json = JSON.parse(content);
+    } catch (err) {
+      reject(err);
+    }
+    resolve(json);
+  });  
 }
 
 /**

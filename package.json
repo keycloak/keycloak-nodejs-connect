@@ -8,7 +8,17 @@
     "lint": "./node_modules/.bin/eslint *.js *.ts example/**/*.js middleware/**/*.js stores/**/*.js test/**/*.js",
     "doc": "./node_modules/.bin/rimraf docs && ./node_modules/.bin/jsdoc -c .jsdoc.json",
     "clean": "./node_modules/.bin/rimraf docs .nyc_output",
-    "test": "./node_modules/.bin/rimraf .nyc_output && ./node_modules/.bin/nyc ./node_modules/.bin/tape test/*-spec.js | tap-nyc"
+
+    "test_1": "./node_modules/.bin/tap --no-coverage test/grant-manager-spec.js",
+    "test_2": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-web-enforcer-spec.js",
+    "test_3": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-rest-mixed-client-spec.js",
+    "test_4": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-rest-enforcer-spec.js",
+    "test_5": "./node_modules/.bin/tap --no-coverage test/grant-manager-token-timeout-spec.js",
+    "test_6": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-rest-spec.js",
+    "test_7": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-web-spec.js",
+    "test_8": "./node_modules/.bin/tap --no-coverage test/unit/hconfig-test-spec.js",
+    "test_9": "./node_modules/.bin/tap --no-coverage test/unit/keycloak-object-test-spec.js",
+    "test": "./node_modules/.bin/rimraf .nyc_output && ./node_modules/.bin/nyc ./node_modules/.bin/tap -j1 test/**/*-spec.js"
   },
   "keywords": [
     "sso",
@@ -25,7 +35,6 @@
     "index.js",
     "uuid.js",
     "keycloak.d.ts",
-    "run-tests.sh"
   ],
   "typings": "keycloak.d.ts",
   "author": {
@@ -35,14 +44,15 @@
   "license": "Apache-2.0",
   "dependencies": {
     "jwk-to-pem": "^2.0.5",
-    "keycloak-admin": "^1.14.15"
+    "keycloak-admin-client": "bucharest-gold/keycloak-admin-client"
   },
   "devDependencies": {
     "axios": "^0.21.1",
-    "blue-tape": "^1.0.0",
     "body-parser": "^1.19.0",
+    "bogota": "^2.0.4",
     "cookie-parser": "^1.4.5",
     "coveralls": "^3.1.0",
+    "defaults-deep": "^0.2.4",
     "eslint": "^7.25.0",
     "eslint-plugin-react": "^7.23.2",
     "express": "^4.17.1",
@@ -50,17 +60,18 @@
     "hogan-express": "^0.5.2",
     "ink-docstrap": "^1.3.2",
     "jsdoc": "^3.6.6",
-    "jshint": "^2.12.0",
+    "keycloak-request-token": "^0.1.0",
     "minimist": "^1.2.5",
     "nock": "^13.0.11",
     "nyc": "^15.1.0",
     "rsa-compat": "^2.0.8",
     "selenium-webdriver": "^3.6.0",
-    "semistandard": "^16.0.0",
     "server-destroy": "^1.0.1",
-    "tap-nyc": "^1.0.3",
+    "tap": "^15.0.6"
+  },
+  "old_packages": {
     "tape": "^5.2.2",
-    "tape-catch": "^1.0.6"
+    "selenium-webdriver": "^4.0.0-beta.3"
   },
   "optionalDependencies": {
     "chromedriver": "latest"
@@ -71,7 +82,7 @@
     ]
   },
   "engines": {
-    "node": ">=8.17.0"
+    "node": ">=10.0.0"
   },
   "repository": {
     "type": "git",

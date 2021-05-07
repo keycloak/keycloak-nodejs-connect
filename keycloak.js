@@ -60,6 +60,10 @@ var CheckSso = require('./middleware/check-sso');
  */
 function Keycloak (config, keycloakConfig) {
   // If keycloakConfig is null, Config() will search for `keycloak.json`.
+  if (keycloakConfig === undefined)
+  {
+    console.error(`Keycloak called with no keycloakConfig specified`);
+  }
   this.config = new Config(keycloakConfig);
 
   this.grantManager = new GrantManager(this.config);

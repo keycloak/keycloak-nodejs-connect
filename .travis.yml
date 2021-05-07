@@ -2,14 +2,15 @@ sudo: required
 dist: focal
 language: node_js
 cache:
-  npm: false
+  yarn: false
 addons:
   chrome: stable
+
 node_js:
   - "10"
-  - "11"
   - "12"
-  - "13"
+  - "14"
+  - "16"
 
 services:
   - docker
@@ -17,14 +18,14 @@ services:
 after_success:
   - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
 
-install:
-  - npm install
-
 before_install:
-  - ./scripts/start-server.sh
+  - make up
+
+install:
+  - yarn install
 
 before_script:
-  - make lint
+  - yarn lint
 
 script: 
-  - ./run-tests.sh
+  - yarn test

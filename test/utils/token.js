@@ -8,7 +8,7 @@ const defaultSettings = {
   password: 'password',
   grant_type: 'password',
   client_id: 'admin-app',
-  realmName: 'service-node-realm'
+  realmName: 'UnitTesting-service-node-realm'
 };
 
 module.exports = (options) => {

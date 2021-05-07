@@ -174,6 +174,7 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
     if (!params.permission) {
       params.permission = [];
     }
+console.log(`checkPermissions : ${permission}`);
 
     params.permission.push(permission);
   }
@@ -521,7 +522,7 @@ const fetch = (manager, handler, options, params) => {
 
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode > 299) {
-        return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]));
+        return reject(new Error(`${response.statusCode} : ${http.STATUS_CODES[ response.statusCode ]}`));
       }
       let json = '';
       response.on('data', (d) => (json += d.toString()));

@@ -2,10 +2,10 @@
   "all": true,
   "check-coverage": false,
   "report-dir": ".nyc_output/nyc_coverage",
-  "lines": 20,
-  "branches": 15,
-  "statements": 20,
-  "functions": 15,
+  "lines": 85,
+  "branches": 70,
+  "statements": 80,
+  "functions": 85,
   "watermarks": {
     "lines": [
       80,
@@ -37,10 +37,9 @@
     ".tsx"
   ],
   "include": [
-    "src/**/*.js"
+    "middleware/**/*.js"
   ],
   "exclude": [
-    "src/contract/*.js",
     "test/**/*.js"
   ]
 }

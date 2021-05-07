@@ -1,6 +1,6 @@
-import * as express from 'express'
+import * as express from 'express';
 
-/**
+/*
  * The JavaScript module is exported as a single function, but for TypeScript we
  * need to export the function and a set of interfaces so developers can assign
  * types such as Grant, Token, etc. to variables in their own code.

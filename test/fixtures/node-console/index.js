@@ -38,35 +38,37 @@ function NodeApp () {
   app.use(cookieParser());
   var server = app.listen(0);
   enableDestroy(server);
-  this.close = function () {
-    server.close();
-  };
-  this.destroy = function () {
-    server.destroy();
+
+  this.destroy = async function () {
+    // await server.close();
+    return await server.destroy();
   };
   this.port = server.address().port;
-  this.address = 'http://127.0.0.1:' + this.port;
+  this.address = 'http://localhost:' + this.port;
 
-  console.log('Testing app listening at http://localhost:%s', this.port);
+  // console.log('Testing app listening at %s', this.address);
 
-  this.publicClient = function (app) {
+  this.publicClient = async function (app) {
     var name = app || 'public-app';
-    return parseClient('test/fixtures/templates/public-template.json', this.port, name);
+    return await parseClient('test/fixtures/templates/public-template.json', this.port, name).then(result => {return result});
   };
 
   this.bearerOnly = function (app) {
     var name = app || 'bearer-app';
-    return parseClient('test/fixtures/templates/bearerOnly-template.json', this.port, name);
+    return parseClient('test/fixtures/templates/bearerOnly-template.json', this.port, name).then(result => {return result});
   };
 
   this.confidential = function (app) {
     var name = app || 'confidential-app';
-    return parseClient('test/fixtures/templates/confidential-template.json', this.port, name);
+    return parseClient('test/fixtures/templates/confidential-template.json', this.port, name).then(result => {return result});
   };
 
   this.enforcerResourceServer = function (app) {
     var name = app || 'resource-server-app';
-    return parseClient('test/fixtures/templates/resource-server-template.json', this.port, name);
+    return parseClient('test/fixtures/templates/resource-server-template.json', this.port, name)
+    .then(result => {
+      return result;
+    });
   };
 
   this.build = function (kcConfig, params) {
@@ -138,11 +140,11 @@ function NodeApp () {
     });
 
     app.get('/service/secured', keycloak.protect('realm:user'), function (req, res) {
-      res.json({ message: 'secured' });
+        res.json({ message: 'secured' });
     });
 
     app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
-      res.json({ message: 'admin' });
+        res.json({ message: 'admin' });
     });
 
     app.get('/service/grant', keycloak.protect(), (req, res, next) => {
@@ -200,8 +202,12 @@ function NodeApp () {
       output(res, user, 'Granted');
     });
 
+    app.use('/auth/realms/UnitTesting-keycloak-connect-web-spec/account', function (req, res) {
+      res.send('Account Not found in fake keycloak server!');
+    });
+
     app.use('*', function (req, res) {
-      res.send('Not found!');
+      res.send('URL Not found in fake keycloak server!');
     });
   };
 }

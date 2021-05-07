@@ -7,7 +7,7 @@
 Keycloak is an Open Source Identity and Access Management solution for modern Applications and Services.
 
 This repository contains the source code for the Keycloak Node.js adapter. This module makes it simple to implement a Node.js Connect-friendly
-application that uses Keycloak for its authentication and authorization needs. 
+application that uses Keycloak for its authentication and authorization needs.
 
 ## Help and Documentation
 
@@ -32,10 +32,12 @@ For more details refer to the [Keycloak Documentation](https://www.keycloak.org/
 
 ## Building from source
 
-Ensure you have Node.js 8.17 or newer and Git installed. Run the following commands to find their versions:
+Ensure you have Node.js 10.0.0 or newer and Git installed. Run the following commands to find their versions:
 
     node --version
     git --version
+
+Note: NodeJS >= 10 is required due to Node tape package requirment. 
 
 First clone the Node.js adapter repository:
 
@@ -78,7 +80,8 @@ The main tests are provided in `test` folder. Before executing them, first make 
 
     make up
 
-NOTES: 
+NOTES:
+
 * On Windows to install make and other Unix utilites install GOW,  <https://github.com/bmatzelle/gow/releases>
 * ***The docker confguration has TBA TBA TBA***
 
@@ -92,7 +95,7 @@ Running specific tests:
     ./node_modules/.bin/tape test/grant-manager-spec.js
 
 When developing your test depending on the feature or enhancement you are testing you may find it best to add to an
-existing test, or to write a test from scratch. For the latter, we recommend finding another test that is close to what 
+existing test, or to write a test from scratch. For the latter, we recommend finding another test that is close to what
 you need and use that as a basis.
 
 If you need to power off your compter and want to continue testing later run the following command to stop docker containers:
@@ -103,11 +106,9 @@ After you have finished testing run the following command to remove the docker c
 
     make down
 
-
 ## Contributing
 
-Please read https://github.com/keycloak/keycloak/blob/master/CONTRIBUTING.md and follow these guidelines when contributing to Keycloak
-
+Please read ***<https://github.com/keycloak/keycloak/blob/master/CONTRIBUTING.md>*** and follow these guidelines when contributing to Keycloak
 
 ## Other Keycloak Projects
 
