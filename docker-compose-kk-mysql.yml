@@ -8,6 +8,45 @@ x-logging:
     max-file: "2"
 
 services:
+  mysql:
+    image: mysql:8.0.23
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ChangeMe
+      # MYSQL_ROOT_HOST: "%"
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: keycloak
+    healthcheck:
+      test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
+      start_period: 10s
+      timeout: 20s
+      retries: 10
+    volumes:
+      # On Windows if your Keycloak times out setting up the DB then try to put the volume on a faster drive (C: is an SSD!!!)
+      #- ./DockerVolumes/mysql-data:/var/lib/mysql
+      - C:/docker/volumes/mysql-keycloak-testing:/var/lib/mysql
+    ports:
+      - 3306:3306
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+    networks:
+      - docker-network
+    logging: *default-logging      
+    
+  adminer:
+    image: adminer
+    hostname: adminer
+    container_name: adminer
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - 8081:8080    
+    networks:
+      - docker-network
+    logging: *default-logging      
+    
   portainer:
     image: portainer/portainer-ce:2.1.1-alpine
     hostname: portainer
