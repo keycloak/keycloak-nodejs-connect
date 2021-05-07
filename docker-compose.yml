@@ -9,7 +9,7 @@ x-logging:
 
 services:
   keycloak_SA:
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:12.0.4
     hostname: keycloak_SA
     container_name: keycloak_SA
     restart: unless-stopped
