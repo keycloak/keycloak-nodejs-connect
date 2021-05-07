@@ -44,9 +44,9 @@ services:
       - docker-network
     logging: *default-logging      
 
-    networks:
-      docker-network:
-       name: docker-network
+networks:
+  docker-network:
+    name: docker-network
     
     
 # ------------------------------------------------------------------------------------------------------------------------------------
