@@ -11,7 +11,11 @@ portainer:
 	$(UP) portainer
 
 up:
-	$(UP) portainer keycloak_SA
+	$(UP) keycloak_SA
+
+up2:
+	$(UP) keycloak_SA portainer
+
 
 upMAX:
 	$(UP) portainer mysql adminer 
