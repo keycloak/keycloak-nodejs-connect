@@ -34,7 +34,8 @@ install:
 before_script:
   - yarn lint
 
-script: 
+script:
+  - ./WaitKeycloakAppRunning.sh
   - yarn test
 
 after_success:
