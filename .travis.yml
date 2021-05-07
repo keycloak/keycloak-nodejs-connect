@@ -1,16 +1,17 @@
-sudo: required
+os: linux
 dist: focal
-language: node_js
 
-cache:
-  yarn: false
-
+env:
+  - DOCKER_COMPOSE_VERSION=1.4.2
 addons:
   chrome: stable
   apt:
     packages:
       - docker-ce  
 
+language: node_js
+cache:
+  yarn: false
 node_js:
   - "10"
   - "12"
@@ -23,6 +24,23 @@ services:
 before_install:
   - docker --version
   - docker-compose --version
+
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce  
+
+  - docker --version
+  - docker-compose --version
+
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+  - docker --version
+  - docker-compose --version
+
   - make up
 
 install:
