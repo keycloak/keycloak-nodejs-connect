@@ -15,9 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
-        # Only enable one while testinf github actions and fixing failing tests on github test environment.
-        # node-version: [10.x, 12.x, 14.x, 16.x]
+        node-version: [10.x, 12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     name: Kycloak-nodejs-connect test for NodeJS version ${{ matrix.node-version }}
