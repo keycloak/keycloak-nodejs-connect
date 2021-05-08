@@ -23,6 +23,8 @@ const NodeApp = require('./fixtures/node-console/index').NodeApp;
 const realmName = `UnitTesting-${__filename.slice(__dirname.length + 1, -3)}`;
 const appFileTest = new NodeApp();
 
+t.setTimeout(60000); // Change timeout from 30 sec to 360 sec
+
 t.test('setup', async t => {
   t.comment(`START TESTING FILE : ${__filename}`);
   return admin.destroy(realmName, {ignoreDestroyRealNowFound: true})

@@ -7,6 +7,8 @@ const nock = require('nock');
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 const helper = require('./utils/helper');
 
+t.setTimeout(60000); // Change timeout from 30 sec to 360 sec
+
 t.test('GrantManager with empty configuration', (t) => {
   t.comment(`START TESTING FILE : ${__filename}`);
   t.throws(function () {

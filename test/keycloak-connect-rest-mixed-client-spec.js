@@ -33,6 +33,8 @@ const auth = {
 
 const getSessionCookie = response => response.headers['set-cookie'][0].split(';')[0];
 
+t.setTimeout(60000); // Change timeout from 30 sec to 360 sec
+
 t.test('setup', async t => {
   t.comment(`START TESTING FILE : ${__filename}`);
   return admin.destroy(realmName, {ignoreDestroyRealNowFound: true})

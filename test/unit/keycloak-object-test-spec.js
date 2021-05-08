@@ -23,6 +23,8 @@ const session = require('express-session');
 
 let kc = null;
 
+t.setTimeout(60000); // Change timeout from 30 sec to 360 sec
+
 t.test('Should raise an error when no configuration is provided.', t => {
   t.throws(function () {
     var k = new Keycloak();

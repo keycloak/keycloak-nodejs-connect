@@ -4,6 +4,8 @@ const t = require('tap');
 const RSA = require('rsa-compat').RSA;
 const Config = require('../../middleware/auth-utils/config');
 
+t.setTimeout(60000); // Change timeout from 30 sec to 360 sec
+
 t.test('Config#configure', (t) => {
   let cfg = new Config({ 'realm': 'UnitTesting-test-realm' });
 
