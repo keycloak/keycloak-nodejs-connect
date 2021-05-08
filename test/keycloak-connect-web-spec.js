@@ -27,8 +27,6 @@ const realmName = `UnitTesting-${__filename.slice(__dirname.length + 1, -3)}`;
 const appFileTest = new NodeApp();
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms));
 
-t.setTimeout(300000); // Change timeout from 30 sec to 300 sec
-
 t.test('setup', (t) => {
   t.comment(`START TESTING FILE : ${__filename}`);
 
@@ -47,6 +45,7 @@ t.test('setup', (t) => {
     .catch((err) => {
       console.error('Failure: ', err);
       t.fail(err.message);
+      t.end();
     });
   });
 });
@@ -69,6 +68,7 @@ t.test('Should be able to access public page', t => {
     })
     .finally( async () => {
       await webDriverClass.logout(appFileTest.port); // Logout just in case
+      t.end();
     })
   });
 
@@ -123,8 +123,9 @@ t.test('Should login with admin credentials', t => {
     })
     .finally( async () => {
       await webDriverClass.logout(appFileTest.port); // Logout just in case
+      t.end();
     })
-});
+  });
 
 t.test('Login should not change tokens when they are valid', t => {
   // NOTE: This test was failing with "selenium-webdriver": "^4.0.0-beta.3" ,
@@ -200,10 +201,11 @@ t.test('Login should not change tokens when they are valid', t => {
   })
   .finally( async () => {
     await webDriverClass.logout(appFileTest.port); // Logout just in case
+    t.end();
   })
 });
 
-t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
+t.test('SSO should work for nodejs app and test RealmAccountPage', t => {
   t.plan(6);
 
   return webDriverClass.logout(appFileTest.port)
@@ -215,6 +217,7 @@ t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
     return webDriverClass.getCurrentUrl();
   })
   .then(currentUrl => {
+    // TAP test #1
     t.ok(currentUrl.startsWith(`http://localhost:${appFileTest.port}/`), 'Should be on application main page, current url: ' + currentUrl);
   })
   .then(() => {
@@ -228,6 +231,7 @@ t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
     return webDriverClass.getCurrentUrl();
   })
   .then(currentUrl => {
+    // TAP test #2
     t.ok(currentUrl.startsWith(`http://127.0.0.1:8080/auth/realms/${realmName}/protocol/openid-connect/auth`), 'Should be on main login page, current url: ' + currentUrl);
   })
   .then(() => {
@@ -240,6 +244,7 @@ t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
     return webElement.getText();
   })
   .then(text => {
+    // TAP test #3
     t.equal(text, 'Auth Success', 'User should be authenticated');
   })
   .then(() => {
@@ -250,6 +255,7 @@ t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
     return webDriverClass.getCurrentUrl();
   })
   .then(currentUrl => {
+    // TAP test #4
     t.ok(currentUrl.startsWith(webDriverClass.getAccoutUrl(realmName, 8080)), 'Should be on account page'); // Watch the "/#/"" at the end
   })
   .then(() => {
@@ -260,6 +266,7 @@ t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
     return webDriverClass.getCurrentUrl();
   })
   .then(currentUrl => {
+    // TAP test #5
     t.ok(currentUrl.startsWith(webDriverClass.getAccoutUrl(realmName, 8080)), 'Should be on account page'); // Watch the "/#/"" at the end
    })
   .then(() => {
@@ -270,13 +277,15 @@ t.test('SSO should work for nodejs app and testRealmAccountPage', t => {
     return webDriverClass.getCurrentUrl();
   })
   .then(currentUrl => {
+    // TAP test #6
     t.ok(currentUrl.startsWith(`http://localhost:${appFileTest.port}/login`), 'Should be on application main page, current url: ' + currentUrl);
   })
   .catch(err => {
     t.fail(err, "Enexpected error thrown");
   })
   .finally(async () => {
-    return await webDriverClass.logout(appFileTest.port);
+    await webDriverClass.logout(appFileTest.port);
+    t.end();
   })
 });
 
@@ -314,6 +323,7 @@ t.test('Public client should be redirected to GitHub when idpHint is provided', 
   .finally( async () => {
     await webDriverClass.logout(appUnitTest.port); // Logout just in case
     await appUnitTest.destroy();
+    t.end();
   })
 });
 
@@ -340,7 +350,8 @@ t.test('User should be forbidden to access restricted page', t => {
     t.fail(err, "Enexpected error thrown");
   })
   .finally( async () => {
-    return await webDriverClass.logout(appFileTest.port); // we need to wait a bit until the logout is fully completed
+    await webDriverClass.logout(appFileTest.port); // we need to wait a bit until the logout is fully completed
+    t.end();
   })
 });
 
@@ -391,6 +402,7 @@ t.test('Public client should be forbidden for invalid public key', async t => {
   .finally( async () => {
     await webDriverClass.logout(appUnitTest.port); // Logout just in case
     await appUnitTest.destroy();
+    t.end();
   })
 });
 
@@ -460,6 +472,7 @@ t.test('Confidential client should be forbidden for invalid public key', async t
   .finally( async () => {
     await webDriverClass.logout(appUnitTest.port); // Logout just in case
     await appUnitTest.destroy();
+    t.end();
   })
 });
 
@@ -521,6 +534,7 @@ t.test('Should test check SSO after logging in and logging out', t => {
   })
   .finally( async () => {
     await webDriverClass.logout(appFileTest.port); // Logout just in case
+    t.end();
   })
 });
 
@@ -593,6 +607,7 @@ t.test('Public client should work with slash in the end of auth-server-url', asy
   .finally( async () => {
     await webDriverClass.logout(appUnitTest.port); // Logout just in case
     await appUnitTest.destroy();
+    t.end();
   })
 });
 
@@ -630,6 +645,7 @@ t.test('App should be able to use cookie-store', async t => {
   .finally( async () => {
     await webDriverClass.logout(appUnitTest.port); // Logout just in case
     await appUnitTest.destroy();
+    t.end();
   })
 });
 

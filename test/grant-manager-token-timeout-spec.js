@@ -52,6 +52,9 @@ t.test('GrantManager should be able to refresh token after accessTokenLifespan',
 
 t.test('GrantManager should not be able to refresh token after ssoSessionIdleTimeout', (t) => {
   t.plan(2);
+
+  t.setTimeout(360000); // Change timeout from 30 sec to 360 sec
+
   const fixtureConfig = new Config('./test/fixtures/auth-utils/keycloak-token-test.json');
   const manager = new GrantManager(fixtureConfig);
   manager.obtainDirectly('bburke@redhat.com', 'password')

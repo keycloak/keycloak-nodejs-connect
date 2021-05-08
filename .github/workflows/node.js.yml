@@ -11,26 +11,39 @@ jobs:
 
     runs-on: ubuntu-20.04
 
+    timeout-minutes: 30   # Just in case something goes realy real realy BAD.....
+
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x, 16.x]
+        node-version: [16.x]
+        # Only enable one while testinf github actions and fixing failing tests on github test environment.
+        # node-version: [10.x, 12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+    name: Kycloak-nodejs-connect test for NodeJS version ${{ matrix.node-version }}
+    
     steps:
     - uses: actions/checkout@v2
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: Install dependencies
       run: yarn install --frozen-lockfile   # will run `yarn install --frozen-lockfile` command
+
     - name: Lint code 
       run: yarn lint
-    - name: Start Keycloak docker container
-      run: make up
-    - run: chmod +x ./WaitKeycloakAppRunning.sh
-    - run: ./WaitKeycloakAppRunning.sh
+
+    - name: Start Keycloak docker container and finish startup processing
+      run: |
+        make up
+        chmod +x ./WaitKeycloakAppRunning.sh
+        ./WaitKeycloakAppRunning.sh
+
     - name: Run test against code
       run: yarn test
+
     - name: Pacakge code 
       run: yarn pack
