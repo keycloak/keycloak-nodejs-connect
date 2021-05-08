@@ -17,7 +17,7 @@
     "test_7": "./node_modules/.bin/tap --no-coverage test/keycloak-connect-web-spec.js",
     "test_8": "./node_modules/.bin/tap --no-coverage test/unit/hconfig-test-spec.js",
     "test_9": "./node_modules/.bin/tap --no-coverage test/unit/keycloak-object-test-spec.js",
-    "test": "./node_modules/.bin/rimraf .nyc_output && ./node_modules/.bin/nyc ./node_modules/.bin/tap -j1 test/*-spec.js"
+    "test": "./node_modules/.bin/rimraf .nyc_output && ./node_modules/.bin/nyc ./node_modules/.bin/tap --timeout=60 -j1 test/*-spec.js"
   },
   "keywords": [
     "sso",
