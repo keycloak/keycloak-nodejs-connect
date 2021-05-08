@@ -25,9 +25,9 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile   # will run `yarn install --frozen-lockfile` command
     - name: Lint code 
+      run: yarn lint
     - name: Start Keycloak docker container
       run: make up
-    - run: yarn lint
     - run: chmod +x ./WaitKeycloakAppRunning.sh
     - run: ./WaitKeycloakAppRunning.sh
     - name: Run test against code
