@@ -28,7 +28,7 @@ SessionStore.prototype.clear = function (sessionId) {
   let self = this;
   this.store.get(sessionId, (err, session) => {
     if (err) {
-      console.log(err);
+      console.error(err);
     }
     if (session) {
       delete session[SessionStore.TOKEN_KEY];
@@ -44,8 +44,8 @@ let store = (grant) => {
   };
 };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let unstore = (request, response) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let unstore = (request, response) => {
   delete request.session[SessionStore.TOKEN_KEY];
 };
 

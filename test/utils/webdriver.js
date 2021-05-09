@@ -19,7 +19,7 @@
  */
 const chrome = require('selenium-webdriver/chrome');
 const webdriver = require('selenium-webdriver');
-//const {Capabilities} = require('selenium-webdriver');
+//const {Capabilities} = require('selenium-webdriver');  // For "selenium-webdriver": "^4.0.0-beta.3",
 
 const args = require('minimist')(process.argv.slice(2));
 const By = webdriver.By;
@@ -100,18 +100,6 @@ class WebDriverAccessClass {
           return element;
         }
   
-        // this.driver.getPageSource()
-        // .then((pageSource) => {
-        //   this.driver.getCurrentUrl()
-        //   .then((url) => {
-        //     if( pageSource.indexOf('locator') >= 0) {
-        //       console.log(`Page ${url} contains "${locator}".`);
-        //     } else {
-        //       console.error(`Page ${url} does NOT contain "${locator}".`);
-        //     }
-        //   });
-        // });
-      
         return (null);
       });
     }), timeout);

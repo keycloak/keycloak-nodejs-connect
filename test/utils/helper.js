@@ -40,7 +40,7 @@ function parseClient (file, httpPort, name) {
     try {
       var content = fs.readFileSync(file, 'utf8')
         .replace(/{{name}}/g, name)
-        .replace(/{{port}}/g, port)
+        .replace(/{{port}}/g, port);
       var json = JSON.parse(content);
     } catch (err) {
       reject(err);

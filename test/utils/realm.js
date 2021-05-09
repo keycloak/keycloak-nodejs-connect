@@ -43,7 +43,7 @@ function createRealm (realmName) {
       });  
   }).catch((err) => {
     console.error('Failure: ', err);
-  });  
+  });
 }
 
 /**
@@ -62,11 +62,11 @@ function createClient (clientRep, realmName) {
     })
     .catch(err => {
       console.error(`ERROR: a) createClient - ${err}`);
-    });  
+    });
   })
   .catch(err => {
     console.error(`ERROR: b) createClient - ${err}`);
-  });  
+  });
 }
 /**
  * Remove the realm based on the name provided

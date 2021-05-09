@@ -174,7 +174,6 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
     if (!params.permission) {
       params.permission = [];
     }
-// console.log(`checkPermissions : ${permission}`);
 
     params.permission.push(permission);
   }

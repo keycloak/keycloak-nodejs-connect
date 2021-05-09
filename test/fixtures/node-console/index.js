@@ -50,17 +50,26 @@ function NodeApp () {
 
   this.publicClient = async function (app) {
     var name = app || 'public-app';
-    return await parseClient('test/fixtures/templates/public-template.json', this.port, name).then(result => {return result});
+    return await parseClient('test/fixtures/templates/public-template.json', this.port, name)
+    .then(result => {
+      return result;
+    });
   };
 
   this.bearerOnly = function (app) {
     var name = app || 'bearer-app';
-    return parseClient('test/fixtures/templates/bearerOnly-template.json', this.port, name).then(result => {return result});
+    return parseClient('test/fixtures/templates/bearerOnly-template.json', this.port, name)
+    .then(result => {
+      return result;
+    });
   };
 
   this.confidential = function (app) {
     var name = app || 'confidential-app';
-    return parseClient('test/fixtures/templates/confidential-template.json', this.port, name).then(result => {return result});
+    return parseClient('test/fixtures/templates/confidential-template.json', this.port, name)
+    .then(result => {
+      return result;
+    });
   };
 
   this.enforcerResourceServer = function (app) {
@@ -140,11 +149,11 @@ function NodeApp () {
     });
 
     app.get('/service/secured', keycloak.protect('realm:user'), function (req, res) {
-        res.json({ message: 'secured' });
+      res.json({ message: 'secured' });
     });
 
     app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
-        res.json({ message: 'admin' });
+      res.json({ message: 'admin' });
     });
 
     app.get('/service/grant', keycloak.protect(), (req, res, next) => {
