@@ -124,6 +124,7 @@ Please read ***<https://github.com/keycloak/keycloak/blob/master/CONTRIBUTING.md
 * [Keycloak Docker](https://github.com/jboss-dockerfiles/keycloak) - Docker images for Keycloak
 * [Keycloak Node.js Admin Client](https://github.com/keycloak/keycloak-nodejs-admin-client) - Node.js library for Keycloak Admin REST API
 
-## License
+## License - Apache License
 
-* [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0) or <LICENSE.txt>
+* [Apache License, Version 2.0](LICENSE.txt)
+  
