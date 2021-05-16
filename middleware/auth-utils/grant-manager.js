@@ -178,8 +178,8 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
     params.permission.push(permission);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   let manager = this;
-
   var handler = (resolve, reject, json) => {
     try {
       if (authzRequest.response_mode === 'decision' || authzRequest.response_mode === 'permissions') {
@@ -373,6 +373,7 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  * rejects with an error if any of the tokens are invalid.
  */
 GrantManager.prototype.validateGrant = function validateGrant (grant) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var self = this;
   const validateGrantToken = (grant, tokenName, expectedType) => {
     return new Promise((resolve, reject) => {
@@ -487,6 +488,7 @@ const createHandler = (manager) => (resolve, reject, json) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const refreshHandler = (manager, grant) => (resolve, reject, json) => {
   manager.createGrant(json)
     .then((grant) => resolve(grant))
@@ -520,7 +522,7 @@ const fetch = (manager, handler, options, params) => {
 
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode > 299) {
-        return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]));
+        return reject(new Error(`${response.statusCode} : ${http.STATUS_CODES[ response.statusCode ]}`));
       }
       let json = '';
       response.on('data', (d) => (json += d.toString()));

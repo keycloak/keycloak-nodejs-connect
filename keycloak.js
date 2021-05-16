@@ -60,6 +60,10 @@ var CheckSso = require('./middleware/check-sso');
  */
 function Keycloak (config, keycloakConfig) {
   // If keycloakConfig is null, Config() will search for `keycloak.json`.
+  if (keycloakConfig === undefined)
+  {
+    console.error(`Keycloak called with no keycloakConfig specified`);
+  }
   this.config = new Config(keycloakConfig);
 
   this.grantManager = new GrantManager(this.config);
@@ -270,6 +274,7 @@ Keycloak.prototype.checkSso = function () {
  *
  * @param {Object} request The HTTP request.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 Keycloak.prototype.authenticated = function (request) {
   // no-op
 };
@@ -283,6 +288,7 @@ Keycloak.prototype.authenticated = function (request) {
  *
  * @param {Object} request The HTTP request.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 Keycloak.prototype.deauthenticated = function (request) {
   // no-op
 };
@@ -321,6 +327,7 @@ Keycloak.prototype.getGrant = function (request, response) {
   }
 
   if (grantData && !grantData.error) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     var self = this;
     return this.grantManager.createGrant(JSON.stringify(grantData))
       .then(grant => {
@@ -366,6 +373,7 @@ Keycloak.prototype.getGrantFromCode = function (code, request, response) {
 
   var sessionId = request.session.id;
 
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var self = this;
   return this.grantManager.obtainFromCode(request, code, sessionId)
     .then(function (grant) {
@@ -375,6 +383,7 @@ Keycloak.prototype.getGrantFromCode = function (code, request, response) {
 };
 
 Keycloak.prototype.checkPermissions = function (authzRequest, request, callback) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var self = this;
   return this.grantManager.checkPermissions(authzRequest, request, callback)
     .then(function (grant) {
@@ -414,6 +423,7 @@ Keycloak.prototype.getAccount = function (token) {
   return this.grantManager.getAccount(token);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 Keycloak.prototype.redirectToLogin = function (request) {
   return !this.config.bearerOnly;
 };

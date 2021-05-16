@@ -1,19 +1,47 @@
-name: CI
-on: [push, pull_request]
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+
+    runs-on: ubuntu-20.04
+
+    timeout-minutes: 30   # Just in case something goes realy real realy BAD.....
+
     strategy:
       matrix:
-        node-version: [10.x, 11.x, 12.x, 13.x]
+        node-version: [10.x, 12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    name: Kycloak-nodejs-connect test for NodeJS version ${{ matrix.node-version }}
+    
     steps:
-    - name: Check out the code
-      uses: actions/checkout@v2
-    - name: Start Docker image
-      run: ./scripts/start-server.sh
-    - name: Run Node.js ${{ matrix.node }} tests
-      uses: actions/setup-node@v2-beta
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node }}
-    - run: make lint
-    - run: ./run-tests.sh
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Lint code 
+      run: npm run lint
+
+    - name: Start Keycloak docker container and finish startup processing
+      run: |
+        make up
+        chmod +x ./WaitKeycloakAppRunning.sh
+        ./WaitKeycloakAppRunning.sh
+
+    - name: Run test against code
+      run: npm run test
+
+    - name: Pacakge code 
+      run: npm pack

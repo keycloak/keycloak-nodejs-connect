@@ -15,48 +15,92 @@
  */
 'use strict';
 
-const test = require('blue-tape');
+const t = require('tap');
 const admin = require('./utils/realm');
-
-const page = require('./utils/webdriver').newPage;
+const webDriverClass = require('./utils/webdriver');
 const NodeApp = require('./fixtures/node-console/index').NodeApp;
 
-const realmManager = admin.createRealm();
-const app = new NodeApp();
+const realmName = `UnitTesting-${__filename.slice(__dirname.length + 1, -3)}`;
+const appFileTest = new NodeApp();
 
-test('setup', t => {
-  return realmManager.then(() => {
-    return admin.createClient(app.enforcerResourceServer())
-      .then((installation) => {
-        return app.build(installation);
-      });
-  });
-});
+t.setTimeout(60000); // Change timeout from 30 sec to 360 sec
 
-test('Should be able to access resource protected by the policy enforcer', t => {
-  t.plan(3);
-
-  page.get(app.port);
-
-  return page.output().getText().then(text => {
-    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-    page.logInButton().click();
-    page.login('test-admin', 'password');
-
-    return page.events().getText().then(text => {
-      t.equal(text, 'Auth Success', 'User should be authenticated');
-      page.grantedResourceButton().click();
-      return page.events().getText().then(text => {
-        t.equal(text, 'Granted', 'User can access resource protected by the policy enforcer');
-      });
+t.test('setup', async t => {
+  t.comment(`START TESTING FILE : ${__filename}`);
+  return admin.destroy(realmName, {ignoreDestroyRealNowFound: true})
+  .finally(() => {
+    return admin.createRealm(realmName)
+    .then(() => {
+      return appFileTest.enforcerResourceServer();
+    })
+    .then((clientRep) => {
+      return admin.createClient(clientRep, realmName)
+    })
+    .then((installation) => {
+      return appFileTest.build(installation);
+    })
+    .catch((err) => {
+      console.error('Failure: ', err);
+      t.fail(err.message);
     });
   });
 });
 
-test('teardown', t => {
-  return realmManager.then((realm) => {
-    app.destroy();
-    admin.destroy('test-realm');
-    page.quit();
+t.test('Should be able to access resource protected by the policy enforcer', t => {
+  t.plan(3);
+
+  return webDriverClass.getPage(appFileTest.port)
+  .then(() => {
+    return webDriverClass.getOutputElement();
+  })
+  .then(webElement => {
+    return webElement.getText();
+  })
+  .then(text => {
+    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
+  })
+  .then(() => {
+    return webDriverClass.getLoginButtonElement();
+  })
+  .then(webElement => {
+    return webElement.click();
+  })
+  .then(() => {
+    return webDriverClass.login('test-admin', 'password');
+  })
+  .then(() => {
+    return webDriverClass.getEventsElement();
+  })
+  .then(webElement => {
+    return webElement.getText();
+  })
+  .then(text => {
+    t.equal(text, 'Auth Success', 'User should be authenticated');
+  })
+  .then(() => {
+    return webDriverClass.getgrantedResourceElement();
+  })
+  .then(webElement => {
+    return webElement.click();
+  })
+  .then(() => {
+    return webDriverClass.getEventsElement();
+  })
+  .then(webElement => {
+    return webElement.getText();
+  })
+  .then(text => {
+    t.equal(text, 'Granted', 'User can access resource protected by the policy enforcer');
+  })
+  .catch((err) => {
+    console.error('Failure: ', err);
+    t.fail(err.message);
   });
+});
+
+t.test('teardown', async t => {
+  await appFileTest.destroy();
+  await admin.destroy(realmName);
+  await webDriverClass.destroy();
+  t.end();
 });

@@ -1,30 +1,43 @@
-sudo: required
+os: linux
 dist: focal
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.29.0
+addons:
+  chrome: stable
+
 language: node_js
 cache:
   npm: false
-addons:
-  chrome: stable
 node_js:
   - "10"
-  - "11"
   - "12"
-  - "13"
+  - "14"
+  - "16"
 
 services:
   - docker
 
-after_success:
-  - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'
+before_install:
+  - docker --version
+  - docker-compose --version
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose --version
+  - make up
 
 install:
   - npm install
 
-before_install:
-  - ./scripts/start-server.sh
-
 before_script:
-  - make lint
+  - npm run lint
 
-script: 
-  - ./run-tests.sh
+script:
+  - chmod +x ./WaitKeycloakAppRunning.sh
+  - ./WaitKeycloakAppRunning.sh
+  - npm run test
+
+after_success:
+  - npm pack

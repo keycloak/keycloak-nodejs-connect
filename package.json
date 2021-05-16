@@ -5,11 +5,10 @@
   "homepage": "http://keycloak.org",
   "main": "keycloak.js",
   "scripts": {
-    "lint": "jshint *.js stores/*.js middleware/*.js middleware/auth-utils/*.js example/*.js",
-    "format": "semistandard",
-    "test": "./run-tests.sh",
-    "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
-    "coverage": "nyc cover tape test/unit/*.js tape test/*.js"
+    "lint": "eslint *.js *.ts example/**/*.js middleware/**/*.js stores/**/*.js test/**/*.js",
+    "doc": "rimraf docs && ./node_modules/.bin/jsdoc -c .jsdoc.json",
+    "clean": "rimraf docs .nyc_output",
+    "test": "rimraf .nyc_output && nyc ./node_modules/.bin/tap --timeout=360 -j1 test/*-spec.js"
   },
   "keywords": [
     "sso",
@@ -26,7 +25,11 @@
     "index.js",
     "uuid.js",
     "keycloak.d.ts",
-    "run-tests.sh"
+    "LICENSE.txt",
+    "get-version.sh",
+    "release.sh",
+    "set-version.sh",
+    "WaitKeycloakAppRunning.sh"
   ],
   "typings": "keycloak.d.ts",
   "author": {
@@ -35,46 +38,43 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "jwk-to-pem": "^2.0.0"
+    "jwk-to-pem": "^2.0.5",
+    "keycloak-admin-client": "bucharest-gold/keycloak-admin-client"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
     "axios": "^0.21.1",
-    "blue-tape": "^1.0.0",
-    "body-parser": "^1.13.3",
-    "coveralls": "^3.0.1",
-    "express": "^4.14.0",
-    "express-session": "^1.14.2",
+    "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
+    "coveralls": "^3.1.0",
+    "defaults-deep": "^0.2.4",
+    "eslint": "^7.26.0",
+    "eslint-plugin-react": "^7.23.2",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "hogan-express": "^0.5.2",
-    "ink-docstrap": "^1.1.4",
-    "jsdoc": "^3.6.3",
-    "jshint": "^2.10.2",
-    "keycloak-admin-client": "bucharest-gold/keycloak-admin-client",
+    "ink-docstrap": "^1.3.2",
+    "jsdoc": "^3.6.7",
     "keycloak-request-token": "^0.1.0",
-    "nock": "^12.0.3",
-    "nyc": "^15.0.0",
+    "minimist": "^1.2.5",
+    "nock": "^13.0.11",
+    "nyc": "^15.1.0",
     "rsa-compat": "^2.0.8",
     "selenium-webdriver": "^3.6.0",
-    "semistandard": "^13.0.1",
     "server-destroy": "^1.0.1",
-    "tap-xunit": "^2.4.1",
-    "tape": "^4.6.3",
-    "tape-catch": "^1.0.6"
+    "tap": "^15.0.9",
+    "typescript": "^4.2.4"
   },
   "optionalDependencies": {
     "chromedriver": "latest"
   },
-  "semistandard": {
-    "ignore": [
-      "**/keycloak*/"
-    ]
-  },
   "engines": {
-    "node": ">=4.6.2"
+    "node": ">=10.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/keycloak/keycloak-nodejs-connect.git"
   },
-  "bugs": "https://github.com/keycloak/keycloak-nodejs-connect/issues"
+  "bugs": "https://issues.redhat.com/projects/KEYCLOAK/issues"
 }

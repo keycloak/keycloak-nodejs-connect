@@ -49,9 +49,15 @@ function Config (config) {
  * @param {String} configPath Path to a `keycloak.json` configuration.
  */
 Config.prototype.loadConfiguration = function loadConfiguration (configPath) {
-  const json = fs.readFileSync(configPath);
-  const config = JSON.parse(json.toString());
-  this.configure(config);
+
+  try {
+    const json = fs.readFileSync(configPath);
+    const config = JSON.parse(json.toString());
+    this.configure(config);
+  } catch (error) {
+    console.error(`ERROR: ${configPath} does not exist.`);
+    throw(error);
+  }
 };
 
 /**
@@ -67,8 +73,8 @@ Config.prototype.loadConfiguration = function loadConfiguration (configPath) {
 Config.prototype.configure = function configure (config) {
   /**
    * Tries to resolve environment variables in the given value in case it is of type "string", else the given value is returned.
-   * Environment variable references look like: '${env.MY_ENVIRONMENT_VARIABLE}', optionally one can configure a fallback
-   * if the referenced env variable is not present. E.g. '${env.NOT_SET:http://localhost:8080}' yields 'http://localhost:8080'.
+   * Environment variable references look like: '${process.env.MY_ENVIRONMENT_VARIABLE}', optionally one can configure a fallback
+   * if the referenced env variable is not present. E.g. '${process.env.NOT_SET:http://localhost:8080}' yields 'http://localhost:8080'.
    *
    * @param value
    * @returns {*}
@@ -78,8 +84,8 @@ Config.prototype.configure = function configure (config) {
       return value;
     }
 
-    // "${env.MY_ENVIRONMENT_VARIABLE:http://localhost:8080}".replace(/\$\{env\.([^:]*):?(.*)?\}/,"$1--split--$2").split("--split--")
-    let regex = /\$\{env\.([^:]*):?(.*)?\}/;
+    // "${process.env.MY_ENVIRONMENT_VARIABLE:http://localhost:8080}".replace(/\$\{env\.([^:]*):?(.*)?\}/,"$1--split--$2").split("--split--")
+    let regex = /\$\{process\.env\.([^:]*):?(.*)?\}/;
 
     // is this an environment variable reference with potential fallback?
     if (!regex.test(value)) {

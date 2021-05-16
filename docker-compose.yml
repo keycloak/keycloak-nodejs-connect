@@ -1,0 +1,107 @@
+version: "3.7"
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "2m"
+    max-file: "2"
+
+services:
+  portainer:
+    image: portainer/portainer-ce:2.1.1-alpine
+    hostname: portainer
+    container_name: portainer
+    restart: unless-stopped
+    # Admin User password: Password01
+    volumes:
+      # Linux container under linux:
+        #- /var/run/docker.sock:/var/run/docker.sock
+        #- ~/code/DataPersistent/portainer_data:/data
+      # Linux container under windows:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./DockerVolumes/portainer_data:/data
+      #- D:\Temp:/data
+      # Windows container:
+      # Windows container:
+        #- \\.\pipe\docker_engine:\\.\pipe\docker_engine
+        #-C:\ProgramData\Portainer:C:\data 
+    ports:
+      - 8000:8000
+      - 9000:9000
+    networks:
+      - docker-network
+    logging: *default-logging      
+
+  keycloak_SA:
+    image: quay.io/keycloak/keycloak:12.0.4
+    hostname: keycloak_SA
+    container_name: keycloak_SA
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_HTTPS_PORT: 8443
+      JAVA_OPTS: "-Djboss.as.management.blocking.timeout=3600"
+      #------------------------------------------------------------------------------------------------------------
+      # Export Realm, see https://hub.docker.com/r/jboss/keycloak/
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # Import Realm, see https://hub.docker.com/r/jboss/keycloak/
+      # KEYCLOAK_IMPORT: /config/nodejs-test-realm.json 
+      #------------------------------------------------------------------------------------------------------------
+    command:
+      # see https://stackoverflow.com/questions/61184888/how-to-import-multiple-realm-in-keycloak
+      - "-b 0.0.0.0"
+      - "-Dkeycloak.migration.action=import"
+      - "-Dkeycloak.migration.provider=singleFile"
+      - "-Dkeycloak.migration.file=/config/nodejs-test-realm.json"
+      - "-Dkeycloak.migration.strategy=IGNORE_EXISTING"
+    volumes:
+      - ./test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json 
+    ports:
+      - 8080:8080
+      - 8443:8443
+      - 9990:9990
+    healthcheck:
+      test: "curl -f http://localhost:8080/auth || exit 1"
+      start_period: 10s
+    networks:
+      - docker-network
+    logging: *default-logging      
+
+networks:
+  docker-network:
+    name: docker-network
+    
+    
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------
+# http://localhost:8080/auth/admin/master/console
+#
+# https://github.com/keycloak/keycloak-nodejs-connect
+# https://github.com/keycloak/keycloak-nodejs-admin-client
+#
+# Very good example app:
+# https://github.com/v-ladynev/keycloak-nodejs-example
+#
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------
+# DOCKER WINDOWS PORT BINDING ERROR
+# =====================================
+# ERROR: 
+# ------  
+#     Ports are not available: listen tcp 0.0.0.0:8022: 
+#     bind: An attempt was made to access a socket in a way forbidden by its access permissions
+#
+# SOLUTION:
+# ---------
+# from admin command prompt run the following two commands:
+# sc stop winnat
+#
+# Notes:
+# sc qc winnat
+# sc query winnat
+# "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+# DO NOT "sc config WinNat start=demand" as docker will crash on startup!!!
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------

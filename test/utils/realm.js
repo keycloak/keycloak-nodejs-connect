@@ -15,11 +15,12 @@
  */
 'use strict';
 /**
- * A wrapper to keycloak-admin-client with an initial setup
- */
+* A wrapper to keycloak-admin-client with an initial setup
+*/
 const keycloakAdminClient = require('keycloak-admin-client');
 const parse = require('./helper').parse;
 const settings = require('./config');
+const defaults = require('defaults-deep');
 const realmTemplate = 'test/fixtures/testrealm.json';
 
 var kca = keycloakAdminClient(settings);
@@ -32,9 +33,14 @@ var kca = keycloakAdminClient(settings);
  * @returns {Promise} A promise that will resolve with the realm object.
  */
 function createRealm (realmName) {
-  var name = realmName || 'test-realm';
+  var name = realmName || 'UnitTesting-test-realm';
+  var fixture = parse(realmTemplate, name);
+  
   return kca.then((client) => {
-    return client.realms.create(parse(realmTemplate, name));
+    return client.realms.create(fixture)
+      .catch((err) => {
+        console.error('Failure: ', err);
+      });  
   }).catch((err) => {
     console.error('Failure: ', err);
   });
@@ -47,24 +53,40 @@ function createRealm (realmName) {
  * @returns {Promise} A promise that will resolve with the realm object.
  */
 function createClient (clientRep, realmName) {
-  var realm = realmName || 'test-realm';
-  return kca.then((client) => {
-    return client.clients.create(realm, clientRep).then((rep) => {
+  var realm = realmName || 'UnitTesting-test-realm';
+  return kca
+  .then((client) => {
+    return client.clients.create(realm, clientRep)
+    .then((rep) => {
       return client.clients.installation(realm, rep.id);
+    })
+    .catch(err => {
+      console.error(`ERROR: a) createClient - ${err}`);
     });
-  }).catch(err => {
-    console.error(err);
+  })
+  .catch(err => {
+    console.error(`ERROR: b) createClient - ${err}`);
   });
 }
 /**
  * Remove the realm based on the name provided
  * @param {object} realm - Realm name
  */
-function destroy (realm) {
-  kca.then((client) => {
+function destroy (realm, config) {
+
+  const configSettings = defaults(
+    config,
+    {
+      ignoreDestroyRealNowFound: false
+    }
+  );
+
+  return kca.then((client) => {
     return client.realms.remove(realm);
   }).catch((err) => {
-    console.error('Realm was not found to remove:', err);
+    if (!configSettings.ignoreDestroyRealNowFound) {
+      console.error('Realm was not found to remove:', err);
+    }
   });
 }
 

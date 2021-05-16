@@ -35,7 +35,7 @@ function Signature (config) {
  * @TODO in the future provide more alternatives like HS256 support
  * @param {Token} the Token object
  */
-Signature.prototype.verify = function verify (token, callback) {
+Signature.prototype.verify = function verify (token) {
   return new Promise((resolve, reject) => {
     const verify = crypto.createVerify('RSA-SHA256');
 
