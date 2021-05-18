@@ -1,0 +1,60 @@
+version: "3.7"
+
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:12.0.4
+    hostname: keycloak
+    container_name: keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_HTTPS_PORT: 8443
+      JAVA_OPTS: "-Djboss.as.management.blocking.timeout=3600"
+      #------------------------------------------------------------------------------------------------------------
+      # Export Realm, see https://hub.docker.com/r/jboss/keycloak/
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # Import Realm, see https://hub.docker.com/r/jboss/keycloak/
+      # KEYCLOAK_IMPORT: /config/nodejs-test-realm.json 
+      #------------------------------------------------------------------------------------------------------------
+    command:
+      # see https://stackoverflow.com/questions/61184888/how-to-import-multiple-realm-in-keycloak
+      - "-b 0.0.0.0"
+      - "-Dkeycloak.migration.action=import"
+      - "-Dkeycloak.migration.provider=singleFile"
+      - "-Dkeycloak.migration.file=/config/nodejs-test-realm.json"
+      - "-Dkeycloak.migration.strategy=IGNORE_EXISTING"
+    volumes:
+      - ./test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json 
+    ports:
+      - 8080:8080
+      - 8443:8443
+      - 9990:9990
+    healthcheck:
+      test: "curl -f http://localhost:8080/auth || exit 1"
+      start_period: 10s
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------
+# http://localhost:8080/auth/admin/master/console
+# ------------------------------------------------------------------------------------------------------------------------------------
+# DOCKER WINDOWS PORT BINDING ERROR
+# =====================================
+# ERROR: 
+# ------  
+#     Ports are not available: listen tcp 0.0.0.0:8022: 
+#     bind: An attempt was made to access a socket in a way forbidden by its access permissions
+#
+# SOLUTION:
+# ---------
+# from admin command prompt run the following two commands:
+# sc stop winnat
+#
+# Notes:
+# sc qc winnat
+# sc query winnat
+# "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+# DO NOT "sc config WinNat start=demand" as docker will crash on startup!!!
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------
