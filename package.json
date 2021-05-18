@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/experimental-utils": "^4.24.0",
     "@typescript-eslint/parser": "^4.23.0",
     "axios": "^0.21.1",
     "blue-tape": "^1.0.0",
@@ -46,6 +47,7 @@
     "cookie-parser": "^1.4.5",
     "coveralls": "^3.0.1",
     "eslint": "^7.26.0",
+    "eslint-config-semistandard": "^15.0.1",
     "eslint-plugin-react": "^7.23.2",
     "express": "^4.14.0",
     "express-session": "^1.14.2",

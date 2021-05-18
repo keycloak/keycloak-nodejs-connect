@@ -17,6 +17,7 @@
   },
   "extends": [
     "eslint:recommended",
+    "semistandard",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -27,10 +28,28 @@
   "rules": {
     "strict": "off",
     "no-debugger": "off",
+    "semi": [2, "always"],
+    "indent": ["warn", 2],
+    "no-multi-spaces": [1],
+    "keyword-spacing": 1,
+    "prefer-const": "off",
+    "quote-props": "off",
+
+    "no-trailing-spaces" : "warn",
+    "no-var": "warn",
+    "computed-property-spacing": "warn",
+    "array-bracket-spacing": "warn",
+    "no-multiple-empty-lines": "warn",
+    "camelcase": "warn",
+    "no-use-before-define": "warn",
+    "node/no-deprecated-api": "warn",
+    "dot-notation": "warn",
+
     "@typescript-eslint/no-var-requires": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-this-alias": "off"
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-this-alias": "warn"
+
   }
 }
