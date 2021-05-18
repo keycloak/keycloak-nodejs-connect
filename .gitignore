@@ -13,3 +13,5 @@ pid.txt
 .idea/
 tmp/
 .vscode/
+package-lock.json
+yarn.lock
