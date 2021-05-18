@@ -1,0 +1,25 @@
+{
+    "plugins": [],
+    "recurseDepth": 10,
+    "source": {
+        "include": ["README.md", "."],
+        "includePattern": "\\.js$",        
+        "exclude": ["node_modules","docs","example","product","scripts","test"]
+    },
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "opts": {
+        "template": "node_modules/ink-docstrap/template",
+        "encoding": "utf8",
+        "destination": "docs-js",
+        "recurse": true,
+        "verbose": true
+    }    
+}
