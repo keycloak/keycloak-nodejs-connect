@@ -11,6 +11,8 @@ Running all the tests:
 
     make tests
 
+    or on windows run "npm run testonWindows"
+
 Running specific tests:
     tape test/grant-manager-spec.js
 
