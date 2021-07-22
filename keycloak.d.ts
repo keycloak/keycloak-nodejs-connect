@@ -41,10 +41,15 @@ declare namespace KeycloakConnect {
   }
 
   interface Token {
-    isExpired(): boolean
-    hasRole(roleName: string): boolean
-    hasApplicationRole(appName: string, roleName: string): boolean
-    hasRealmRole(roleName: string): boolean
+    isExpired(): boolean;
+    hasRole(roleName: string): boolean;
+    hasApplicationRole(appName: string, roleName: string): boolean;
+    hasRealmRole(roleName: string): boolean;
+  }
+
+  interface Permission {
+    resource: string;
+    scope?: string;
   }
 
   interface GrantManager {
@@ -344,7 +349,10 @@ declare namespace KeycloakConnect {
      *
      * @param {string[]} permissions A single string representing a permission or an arrat of strings representing the permissions. For instance, 'item:read' or ['item:read', 'item:write'].
      */
-    enforcer(permissions: string[]|string, config?: EnforcerOptions): express.RequestHandler
+    enforcer(
+      permissions: Permission[] | string | string[] | string[][],
+      config?: EnforcerOptions
+    ): express.RequestHandler;
 
     /**
      * Apply check SSO middleware to an application or specific URL.
