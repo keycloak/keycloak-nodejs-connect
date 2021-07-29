@@ -131,6 +131,12 @@ Config.prototype.configure = function configure (config) {
   this.realmUrl = this.authServerUrl + '/realms/' + this.realm;
 
   /**
+   * Token Issuer Override.
+   * @type {String}
+   */
+  this.iss = (resolveValue(config['iss'] || config.iss || this.realmUrl));
+
+  /**
    * Root realm admin URL.
    * @type {String} */
   this.realmAdminUrl = this.authServerUrl + '/admin/realms/' + this.realm;

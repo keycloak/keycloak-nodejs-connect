@@ -533,6 +533,19 @@ test('GrantManager should be able to validate invalid ISS', (t) => {
     .then(t.end);
 });
 
+test('GrantManager should be able to validate overridden ISS', (t) => {
+  const frontendManager = getManager('./test/fixtures/auth-utils/keycloak-frontend-url.json');
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.content.iss = 'http://10.0.2.2:8080/auth/realms/nodejs-test';
+      return frontendManager.validateGrant(grant);
+    })
+    .then((grant) => {
+      t.notEqual(grant, undefined);
+    })
+    .then(t.end);
+});
+
 test('GrantManager should be able to validate invalid iat', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
