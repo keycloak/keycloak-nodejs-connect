@@ -192,7 +192,7 @@ declare namespace KeycloakConnect {
     isExpired(): boolean
   }
 
-  type GaurdFn = (accessToken: Token, req: express.Request, res: express.Response) => boolean
+  type GuardFn = (accessToken: Token, req: express.Request, res: express.Response) => boolean
 
   interface EnforcerOptions {
     response_mode?: string,
@@ -294,7 +294,7 @@ declare namespace KeycloakConnect {
      *
      * @param {String} spec The protection spec (optional)
      */
-    protect(spec?: GaurdFn|string): express.RequestHandler
+    protect(spec?: GuardFn|string): express.RequestHandler
 
     /**
      * Enforce access based on the given permissions. This method operates in two modes, depending on the `response_mode`
