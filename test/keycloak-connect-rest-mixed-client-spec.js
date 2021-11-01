@@ -34,6 +34,10 @@ const auth = {
 
 const getSessionCookie = response => response.headers['set-cookie'][0].split(';')[0];
 
+const assertAlternativeMessages = (assert, message, ...messages) => {
+  assert.true(messages.includes(message), `Message "${message}" is not included in provided messages`);
+};
+
 test('setup', t => {
   return realmManager.then(() => {
     return admin.createClient(app.confidential(), realmName)
@@ -169,8 +173,12 @@ test('Should test admin logout endpoint with incomplete payload', t => {
     };
     return axios(opt).catch(err => {
       t.equal(err.response.status, 401);
-      /* eslint no-useless-escape: "error" */
-      t.equal(err.response.data, 'Cannot read property \'kid\' of undefined');
+
+      assertAlternativeMessages(t, err.response.data,
+        "Cannot read property 'kid' of undefined",
+        "Cannot read properties of undefined (reading 'kid')"
+      );
+
       app.destroy();
     });
   }).then(() => {
@@ -241,8 +249,12 @@ test('Should test admin push_not_before endpoint with incomplete payload', t => 
     };
     return axios(opt).catch(err => {
       t.equal(err.response.status, 401);
-      /* eslint no-useless-escape: "error" */
-      t.equal(err.response.data, 'Cannot read property \'kid\' of undefined');
+
+      assertAlternativeMessages(t, err.response.data,
+        "Cannot read property 'kid' of undefined",
+        "Cannot read properties of undefined (reading 'kid')"
+      );
+
       app.destroy();
     });
   }).then(() => {
