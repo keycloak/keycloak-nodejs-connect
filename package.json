@@ -49,7 +49,7 @@
     "ink-docstrap": "^1.1.4",
     "jsdoc": "^3.6.3",
     "jshint": "^2.10.2",
-    "keycloak-admin-client": "bucharest-gold/keycloak-admin-client",
+    "keycloak-admin-client": "@keycloak/keycloak-admin-client",
     "keycloak-request-token": "^0.1.0",
     "nock": "^12.0.3",
     "nyc": "^15.0.0",
