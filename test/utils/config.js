@@ -8,10 +8,11 @@
 
 const settings = {
   baseUrl: 'http://127.0.0.1:8080/auth',
+  realmName: 'master',
   username: 'admin',
   password: 'admin',
-  grant_type: 'password',
-  client_id: 'admin-cli'
+  grantType: 'password',
+  clientId: 'admin-cli'
 };
 
 module.exports = settings;
