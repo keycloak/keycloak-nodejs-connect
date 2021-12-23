@@ -17,12 +17,13 @@
 /**
  * A wrapper to keycloak-admin-client with an initial setup
  */
-const keycloakAdminClient = require('keycloak-admin-client');
+/* eslint new-cap: ["error", { "newIsCap": false }] */
+const keycloakAdminClient = require('@keycloak/keycloak-admin-client');
 const parse = require('./helper').parse;
 const settings = require('./config');
 const realmTemplate = 'test/fixtures/testrealm.json';
 
-var kca = keycloakAdminClient(settings);
+var kca = new keycloakAdminClient.default(settings);
 
 /**
  * Create realms based on port and name specified
@@ -33,8 +34,10 @@ var kca = keycloakAdminClient(settings);
  */
 function createRealm (realmName) {
   var name = realmName || 'test-realm';
-  return kca.then((client) => {
-    return client.realms.create(parse(realmTemplate, name));
+  return kca.auth(settings).then(() => {
+    return kca.realms.create(parse(realmTemplate, name)).then(() => {
+      return kca.realms.findOne({ realm: realmName });
+    });
   }).catch((err) => {
     console.error('Failure: ', err);
   });
@@ -48,9 +51,11 @@ function createRealm (realmName) {
  */
 function createClient (clientRep, realmName) {
   var realm = realmName || 'test-realm';
-  return kca.then((client) => {
-    return client.clients.create(realm, clientRep).then((rep) => {
-      return client.clients.installation(realm, rep.id);
+  kca.setConfig({ realmName: 'master' });
+  return kca.auth(settings).then(() => {
+    kca.setConfig({ realmName: realm });
+    return kca.clients.create(clientRep).then((rep) => {
+      return kca.clients.getInstallationProviders({ id: rep.id, providerId: 'keycloak-oidc-keycloak-json' });
     });
   }).catch(err => {
     console.error(err);
@@ -61,8 +66,9 @@ function createClient (clientRep, realmName) {
  * @param {object} realm - Realm name
  */
 function destroy (realm) {
-  kca.then((client) => {
-    return client.realms.remove(realm);
+  kca.setConfig({ realmName: 'master' });
+  kca.auth(settings).then(() => {
+    return kca.realms.del({ realm });
   }).catch((err) => {
     console.error('Realm was not found to remove:', err);
   });
