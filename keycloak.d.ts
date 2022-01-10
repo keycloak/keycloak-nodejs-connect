@@ -30,6 +30,7 @@ declare namespace KeycloakConnect {
     scope?: string
     store?: any
     cookies?: boolean
+    cookieOptions?: express.CookieOptions
   }
 
   interface GrantProperties {
