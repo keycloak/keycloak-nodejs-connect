@@ -2,7 +2,7 @@
 
 ![Build Status](https://github.com/keycloak/keycloak-nodejs-connect/workflows/CI/badge.svg)
 [![Dependency Status](https://img.shields.io/david/keycloak/keycloak-nodejs-connect.svg?style=flat-square)](https://david-dm.org/keycloak/keycloak-nodejs-connect)
-[![Coverage Status](https://coveralls.io/repos/github/keycloak/keycloak-nodejs-connect/badge.svg?branch=master)](https://coveralls.io/github/keycloak/keycloak-nodejs-connect?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/keycloak/keycloak-nodejs-connect/badge.svg?branch=main)](https://coveralls.io/github/keycloak/keycloak-nodejs-connect?branch=main)
 
 Keycloak is an Open Source Identity and Access Management solution for modern Applications and Services.
 
