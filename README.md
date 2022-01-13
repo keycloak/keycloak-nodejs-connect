@@ -12,8 +12,8 @@ application that uses Keycloak for its authentication and authorization needs.
 ## Help and Documentation
 
 * [Documentation](https://www.keycloak.org/documentation.html)
-* [User Mailing List](https://groups.google.com/d/forum/keycloak-user) - Mailing list for help and general questions about Keycloak
-* [JIRA](https://issues.jboss.org/projects/KEYCLOAK) - Issue tracker for bugs and feature requests
+* [User Mailing List](https://groups.google.com/g/keycloak-user) - Mailing list for help and general questions about Keycloak
+* [Issue Tracker](https://github.com/keycloak/keycloak-nodejs-connect/issues) - Issue tracker for bugs and feature requests
 
 ## Reporting Security Vulnerabilities
 
@@ -21,12 +21,12 @@ If you've found a security vulnerability, please look at the [instructions on ho
 
 ## Reporting an issue
 
-If you believe you have discovered a defect in the Node.js adapter please open an issue in our [Issue Tracker](https://issues.jboss.org/projects/KEYCLOAK).
+If you believe you have discovered a defect in the Node.js adapter please open an issue in our [Issue Tracker](https://github.com/keycloak/keycloak-nodejs-connect/issues).
 Please remember to provide a good summary, description as well as steps to reproduce the issue.
 
 ## Getting started
 
-To run Node.js adapter examples please try one of our [quickstarts](https://github.com/keycloak/keycloak-quickstarts.git).
+To run Node.js adapter examples please try one of our [quickstarts](https://github.com/keycloak/keycloak-quickstarts).
 
 For more details refer to the [Keycloak Documentation](https://www.keycloak.org/documentation.html).
 
@@ -43,7 +43,7 @@ Before contributing to Node.js adapter please read our [contributing guidelines]
 * [Keycloak](https://github.com/keycloak/keycloak) - Keycloak Server and Java adapters
 * [Keycloak Documentation](https://github.com/keycloak/keycloak-documentation) - Documentation for Keycloak
 * [Keycloak QuickStarts](https://github.com/keycloak/keycloak-quickstarts) - QuickStarts for getting started with Keycloak
-* [Keycloak Docker](https://github.com/jboss-dockerfiles/keycloak) - Docker images for Keycloak
+* [Keycloak Docker](https://github.com/keycloak/keycloak-containers) - Docker images for Keycloak
 * [Keycloak Node.js Admin Client](https://github.com/keycloak/keycloak-nodejs-admin-client) - Node.js library for Keycloak Admin REST API
 
 ## License
