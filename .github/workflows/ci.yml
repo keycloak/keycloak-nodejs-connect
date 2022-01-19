@@ -12,8 +12,9 @@ jobs:
     - name: Start Docker image
       run: ./scripts/start-server.sh
     - name: Run Node.js ${{ matrix.node }} tests
-      uses: actions/setup-node@v2-beta
+      uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node }}
-    - run: make lint
+    - run: npm ci
+    - run: npm run lint
     - run: ./run-tests.sh

@@ -20,7 +20,7 @@ This will install the adapter, and any packages that it depends on.
 
 We don't currently enforce a code style in Node.js adapter, because Node.js already have tools to ensure that code is properly formatted. Before submitting any pull request, please run:
 
-    make lint
+    npm run lint
 
 If your changes require introducing new dependencies or updating dependency versions please discuss this first on the
 dev mailing list. We do not accept new dependencies to be added lightly, so try to use what is available.
