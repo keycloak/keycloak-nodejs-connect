@@ -9,7 +9,7 @@ The main tests are provided in `test` folder. Before executing them, first make 
 
 Running all the tests:
 
-    make tests
+    npm test
 
 Running specific tests:
     tape test/grant-manager-spec.js
