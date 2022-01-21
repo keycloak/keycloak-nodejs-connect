@@ -15,7 +15,9 @@
  */
 'use strict';
 
-let CookieStore = {};
+function CookieStore(cookieOptions) {
+  this.cookieOptions = cookieOptions;
+}
 
 CookieStore.TOKEN_KEY = 'keycloak-token';
 
@@ -31,8 +33,9 @@ CookieStore.get = (request) => {
 };
 
 let store = (grant) => {
+  const self = this;
   return (request, response) => {
-    response.cookie(CookieStore.TOKEN_KEY, grant.__raw);
+    response.cookie(CookieStore.TOKEN_KEY, grant.__raw, self.cookieOptions);
   };
 };
 

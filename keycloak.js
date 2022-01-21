@@ -80,7 +80,7 @@ function Keycloak (config, keycloakConfig) {
   if (config && config.store) {
     this.stores.push(new SessionStore(config.store));
   } else if (config && config.cookies) {
-    this.stores.push(CookieStore);
+    this.stores.push(CookieStore(config.cookieOptions));
   }
 
   this.config.idpHint = config.idpHint;
