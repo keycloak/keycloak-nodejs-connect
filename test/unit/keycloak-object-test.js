@@ -25,22 +25,22 @@ let kc = null;
 
 test('Should raise an error when no configuration is provided.', t => {
   t.throws(function () {
-    var k = new Keycloak();
+    const k = new Keycloak();
     t.notOk(k, 'Variable should be empty');
   }, Error, 'Adapter configuration must be provided.');
   t.end();
 });
 
 test('setup', t => {
-  let kcConfig = {
-    'realm': 'test-realm',
+  const kcConfig = {
+    realm: 'test-realm',
     'auth-server-url': 'http://localhost:8080/auth',
     'ssl-required': 'external',
-    'resource': 'nodejs-connect',
+    resource: 'nodejs-connect',
     'public-client': true
   };
 
-  let memoryStore = new session.MemoryStore();
+  const memoryStore = new session.MemoryStore();
   kc = new Keycloak({ store: memoryStore, scope: 'offline_support' }, kcConfig);
   t.end();
 });

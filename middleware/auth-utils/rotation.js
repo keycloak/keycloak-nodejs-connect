@@ -35,7 +35,7 @@ function Rotation (config) {
 
 Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
   const url = this.realmUrl + '/protocol/openid-connect/certs';
-  const options = URL.parse(url);
+  const options = URL.parse(url); // eslint-disable-line
   options.method = 'GET';
   const promise = new Promise((resolve, reject) => {
     const req = getProtocol(options).request(options, (response) => {
@@ -57,22 +57,22 @@ Rotation.prototype.retrieveJWKs = function retrieveJWKs (callback) {
 };
 
 Rotation.prototype.getJWK = function getJWK (kid) {
-  let key = this.jwks.find((key) => { return key.kid === kid; });
+  const key = this.jwks.find((key) => { return key.kid === kid; });
   if (key) {
     return new Promise((resolve, reject) => {
       resolve(jwkToPem(key));
     });
   }
-  var self = this;
+  const self = this;
 
   // check if we are allowed to send request
-  var currentTime = new Date().getTime() / 1000;
+  const currentTime = new Date().getTime() / 1000;
   if (currentTime > this.lastTimeRequesTime + this.minTimeBetweenJwksRequests) {
     return this.retrieveJWKs()
       .then(publicKeys => {
         self.lastTimeRequesTime = currentTime;
         self.jwks = publicKeys.keys;
-        var convertedKey = jwkToPem(self.jwks.find((key) => { return key.kid === kid; }));
+        const convertedKey = jwkToPem(self.jwks.find((key) => { return key.kid === kid; }));
         return convertedKey;
       });
   } else {

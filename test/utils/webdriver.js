@@ -27,19 +27,19 @@ const driver = createDriver();
 function createDriver () {
   chrome.setDefaultService(new chrome.ServiceBuilder(determineChromedriverPath()).build());
 
-  let o = new chrome.Options();
+  const o = new chrome.Options();
   o.addArguments('disable-infobars');
   o.addArguments('headless');
 
   if (args.chromeArguments) {
-    let chromeArgs = args.chromeArguments.split(' ');
+    const chromeArgs = args.chromeArguments.split(' ');
     console.log('Using additional chrome arguments [' + chromeArgs + ']');
     o.addArguments(chromeArgs);
   }
 
   o.setUserPreferences({ credential_enable_service: false });
 
-  let driver = new webdriver.Builder()
+  const driver = new webdriver.Builder()
     .setChromeOptions(o)
     .forBrowser('chrome')
     .build();
@@ -66,14 +66,14 @@ function determineChromedriverPath () {
 
 /* eslint-disable no-unused-vars */
 function waitForElement (locator, t) {
-  var timeout = t || 3000;
+  const timeout = t || 3000;
   return driver.wait(until.elementLocated(locator), timeout);
 }
 
 /* eslint-disable no-unused-vars */
 function waitForVisibleElement (locator, t) {
-  var timeout = t || 3000;
-  var element = driver.wait(until.elementLocated(locator), timeout);
+  const timeout = t || 3000;
+  const element = driver.wait(until.elementLocated(locator), timeout);
   return driver.wait(new webdriver.WebElementCondition('for element to be visible ' + locator, function () {
     return element.isDisplayed().then(x => x ? element : null);
   }), timeout);
@@ -119,11 +119,11 @@ ConsolePage.prototype.grantedResourceButton = function () {
 
 ConsolePage.prototype.login = function (user, pass) {
   waitForVisibleElement(By.id('username'), 100000);
-  var username = driver.findElement(By.id('username'));
+  const username = driver.findElement(By.id('username'));
   username.clear();
   username.sendKeys(user);
 
-  var password = driver.findElement(By.id('password'));
+  const password = driver.findElement(By.id('password'));
   password.clear();
   password.sendKeys(pass);
 
@@ -153,7 +153,7 @@ ConsolePage.prototype.h1 = () => {
   return driver.findElement(By.tagName('h1'));
 };
 
-var newPage = new ConsolePage();
+const newPage = new ConsolePage();
 
 function RealmAccountPage () {}
 
@@ -172,7 +172,7 @@ RealmAccountPage.prototype.logout = function () {
   return driver.findElement(By.linkText('Sign Out')).then(webElement => webElement.click());
 };
 
-var realmAccountPage = new RealmAccountPage();
+const realmAccountPage = new RealmAccountPage();
 
 module.exports = {
   driver: driver,

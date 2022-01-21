@@ -18,20 +18,20 @@
 const UUID = require('./../uuid');
 
 function forceLogin (keycloak, request, response) {
-  let host = request.hostname;
-  let headerHost = request.headers.host.split(':');
-  let port = headerHost[1] || '';
-  let protocol = request.protocol;
-  let hasQuery = ~(request.originalUrl || request.url).indexOf('?');
+  const host = request.hostname;
+  const headerHost = request.headers.host.split(':');
+  const port = headerHost[1] || '';
+  const protocol = request.protocol;
+  const hasQuery = ~(request.originalUrl || request.url).indexOf('?');
 
-  let redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
+  const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
 
   if (request.session) {
     request.session.auth_redirect_uri = redirectUrl;
   }
 
-  let uuid = UUID();
-  let loginURL = keycloak.loginUrl(uuid, redirectUrl);
+  const uuid = UUID();
+  const loginURL = keycloak.loginUrl(uuid, redirectUrl);
   response.redirect(loginURL);
 }
 

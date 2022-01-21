@@ -5,8 +5,7 @@
   "homepage": "http://keycloak.org",
   "main": "keycloak.js",
   "scripts": {
-    "lint": "jshint *.js stores/*.js middleware/*.js middleware/auth-utils/*.js example/*.js",
-    "format": "semistandard",
+    "lint": "jshint *.js stores/*.js middleware/*.js middleware/auth-utils/*.js example/*.js && semistandard",
     "test": "./run-tests.sh",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
     "coverage": "nyc cover tape test/unit/*.js tape test/*.js"
@@ -55,7 +54,7 @@
     "nyc": "^15.0.0",
     "rsa-compat": "^2.0.8",
     "selenium-webdriver": "^3.6.0",
-    "semistandard": "^13.0.1",
+    "semistandard": "^16.0.1",
     "server-destroy": "^1.0.1",
     "tap-xunit": "^2.4.1",
     "tape": "^4.6.3",

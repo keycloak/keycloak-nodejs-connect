@@ -22,7 +22,7 @@ const crypto = require('crypto');
 const querystring = require('querystring');
 const Grant = require('./grant');
 const Token = require('./token');
-var Rotation = require('./rotation');
+const Rotation = require('./rotation');
 
 /**
  * Construct a grant manager.
@@ -131,7 +131,7 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
       options.headers.Authorization = 'Bearer ' + request.kauth.grant.access_token.token;
     }
   } else {
-    let header = request.headers.authorization;
+    const header = request.headers.authorization;
     let bearerToken;
 
     if (header && (header.indexOf('bearer ') === 0 || header.indexOf('Bearer ') === 0)) {
@@ -156,14 +156,14 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
   }
 
   for (let i = 0; i < permissions.length; i++) {
-    var resource = permissions[i];
-    var permission = resource.id;
+    const resource = permissions[i];
+    let permission = resource.id;
 
     if (resource.scopes && resource.scopes.length > 0) {
       permission += '#';
 
       for (let j = 0; j < resource.scopes.length; j++) {
-        var scope = resource.scopes[j];
+        const scope = resource.scopes[j];
         if (permission.indexOf('#') !== permission.length - 1) {
           permission += ',';
         }
@@ -178,9 +178,9 @@ GrantManager.prototype.checkPermissions = function obtainPermissions (authzReque
     params.permission.push(permission);
   }
 
-  let manager = this;
+  const manager = this;
 
-  var handler = (resolve, reject, json) => {
+  const handler = (resolve, reject, json) => {
     try {
       if (authzRequest.response_mode === 'decision' || authzRequest.response_mode === 'permissions') {
         callback(JSON.parse(json));
@@ -282,15 +282,15 @@ GrantManager.prototype.validateAccessToken = function validateAccessToken (token
 
 GrantManager.prototype.userInfo = function userInfo (token, callback) {
   const url = this.realmUrl + '/protocol/openid-connect/userinfo';
-  const options = URL.parse(url);
+  const options = URL.parse(url); // eslint-disable-line
   options.method = 'GET';
 
   let t = token;
   if (typeof token === 'object') t = token.token;
 
   options.headers = {
-    'Authorization': 'Bearer ' + t,
-    'Accept': 'application/json',
+    Authorization: 'Bearer ' + t,
+    Accept: 'application/json',
     'X-Client': 'keycloak-nodejs-connect'
   };
 
@@ -373,7 +373,7 @@ GrantManager.prototype.createGrant = function createGrant (rawData) {
  * rejects with an error if any of the tokens are invalid.
  */
 GrantManager.prototype.validateGrant = function validateGrant (grant) {
-  var self = this;
+  const self = this;
   const validateGrantToken = (grant, tokenName, expectedType) => {
     return new Promise((resolve, reject) => {
     // check the access token
@@ -386,7 +386,7 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
     });
   };
   return new Promise((resolve, reject) => {
-    var promises = [];
+    const promises = [];
     promises.push(validateGrantToken(grant, 'access_token', 'Bearer'));
     if (!self.bearerOnly) {
       if (grant.id_token) {
@@ -427,7 +427,7 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
     } else if (token.content.iss !== this.realmUrl) {
       reject(new Error('invalid token (wrong ISS)'));
     } else {
-      var audienceData = Array.isArray(token.content.aud) ? token.content.aud : [token.content.aud];
+      const audienceData = Array.isArray(token.content.aud) ? token.content.aud : [token.content.aud];
       if (expectedType === 'ID') {
         if (!audienceData.includes(this.clientId)) {
           reject(new Error('invalid token (wrong audience)'));
@@ -501,7 +501,7 @@ const validationHandler = (manager, token) => (resolve, reject, json) => {
 
 const postOptions = (manager, path) => {
   const realPath = path || '/protocol/openid-connect/token';
-  const opts = URL.parse(manager.realmUrl + realPath);
+  const opts = URL.parse(manager.realmUrl + realPath); // eslint-disable-line
   opts.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'X-Client': 'keycloak-nodejs-connect'
@@ -520,7 +520,7 @@ const fetch = (manager, handler, options, params) => {
 
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode > 299) {
-        return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[ response.statusCode ]));
+        return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[response.statusCode]));
       }
       let json = '';
       response.on('data', (d) => (json += d.toString()));

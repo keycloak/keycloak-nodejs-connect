@@ -160,13 +160,13 @@ test('Should not store grant on bearer request', t => {
 test('Should test admin logout endpoint with incomplete payload', t => {
   t.plan(2);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.confidential('adminapp'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.confidential('adminapp'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
 
-    let opt = {
+    const opt = {
       method: 'post',
       url: `${app.address}/k_logout`,
       data: TestVector.logoutIncompletePayload
@@ -189,13 +189,13 @@ test('Should test admin logout endpoint with incomplete payload', t => {
 test('Should test admin logout endpoint with payload signed by a different key pair', t => {
   t.plan(2);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.confidential('adminapp2'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.confidential('adminapp2'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
 
-    let opt = {
+    const opt = {
       method: 'post',
       url: `${app.address}/k_logout`,
       data: TestVector.logoutWrongKeyPairPayload
@@ -213,12 +213,12 @@ test('Should test admin logout endpoint with payload signed by a different key p
 test('Should test admin logout endpoint with valid payload', t => {
   t.plan(1);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.confidential('adminapp3'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.confidential('adminapp3'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
-    let opt = {
+    const opt = {
       method: 'post',
       url: `${app.address}/k_logout`,
       data: TestVector.logoutValidPayload
@@ -236,13 +236,13 @@ test('Should test admin logout endpoint with valid payload', t => {
 test('Should test admin push_not_before endpoint with incomplete payload', t => {
   t.plan(2);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.confidential('adminapp5'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.confidential('adminapp5'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
 
-    let opt = {
+    const opt = {
       method: 'post',
       url: `${app.address}/k_push_not_before`,
       data: TestVector.notBeforeIncompletePayload
@@ -265,13 +265,13 @@ test('Should test admin push_not_before endpoint with incomplete payload', t => 
 test('Should test admin push_not_before endpoint with payload signed by a different key pair', t => {
   t.plan(2);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.confidential('adminapp6'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.confidential('adminapp6'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
 
-    let opt = {
+    const opt = {
       method: 'post',
       url: `${app.address}/k_push_not_before`,
       data: TestVector.notBeforeWrongKeyPairPayload
@@ -289,7 +289,7 @@ test('Should test admin push_not_before endpoint with payload signed by a differ
 test('Should verify during authentication if the token contains the client name as audience.', t => {
   t.plan(3);
   const someapp = new NodeApp();
-  var client = admin.createClient(someapp.confidential('audience-app'), realmName);
+  const client = admin.createClient(someapp.confidential('audience-app'), realmName);
 
   return client.then((installation) => {
     installation.verifyTokenAudience = true;
@@ -312,12 +312,12 @@ test('Should verify during authentication if the token contains the client name 
 test('Should test admin push_not_before endpoint with valid payload', t => {
   t.plan(1);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.confidential('adminapp7'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.confidential('adminapp7'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
-    let opt = {
+    const opt = {
       method: 'post',
       url: `${app.address}/k_push_not_before`,
       data: TestVector.notBeforeValidPayload

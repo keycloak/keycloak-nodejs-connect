@@ -109,7 +109,7 @@ Token.prototype.hasApplicationRole = function hasApplicationRole (appName, roleN
     return false;
   }
 
-  var appRoles = this.content.resource_access[appName];
+  const appRoles = this.content.resource_access[appName];
 
   if (!appRoles) {
     return false;
@@ -162,14 +162,14 @@ Token.prototype.hasRealmRole = function hasRealmRole (roleName) {
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
 Token.prototype.hasPermission = function hasPermission (resource, scope) {
-  let permissions = this.content.authorization ? this.content.authorization.permissions : undefined;
+  const permissions = this.content.authorization ? this.content.authorization.permissions : undefined;
 
   if (!permissions) {
     return false;
   }
 
   for (let i = 0; i < permissions.length; i++) {
-    let permission = permissions[i];
+    const permission = permissions[i];
 
     if (permission.rsid === resource || permission.rsname === resource) {
       if (scope) {
