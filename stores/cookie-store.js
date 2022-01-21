@@ -15,12 +15,12 @@
  */
 'use strict';
 
-let CookieStore = {};
+const CookieStore = {};
 
 CookieStore.TOKEN_KEY = 'keycloak-token';
 
 CookieStore.get = (request) => {
-  let value = request.cookies[CookieStore.TOKEN_KEY];
+  const value = request.cookies[CookieStore.TOKEN_KEY];
   if (value) {
     try {
       return JSON.parse(value);
@@ -30,13 +30,13 @@ CookieStore.get = (request) => {
   }
 };
 
-let store = (grant) => {
+const store = (grant) => {
   return (request, response) => {
     response.cookie(CookieStore.TOKEN_KEY, grant.__raw);
   };
 };
 
-let unstore = (request, response) => {
+const unstore = (request, response) => {
   response.clearCookie(CookieStore.TOKEN_KEY);
 };
 

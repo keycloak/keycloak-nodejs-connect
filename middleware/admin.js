@@ -15,12 +15,12 @@
  */
 'use strict';
 
-var Token = require('./auth-utils/token');
-var Signature = require('./auth-utils/signature');
+const Token = require('./auth-utils/token');
+const Signature = require('./auth-utils/signature');
 
 function Admin (keycloak, url) {
   this._keycloak = keycloak;
-  if (url[ url.length - 1 ] !== '/') {
+  if (url[url.length - 1] !== '/') {
     url += '/;';
   }
   this._url = url + 'k_logout';
@@ -38,13 +38,13 @@ function adminLogout (request, response, keycloak) {
   });
 
   request.on('end', function () {
-    let token = new Token(data);
+    const token = new Token(data);
     let signature;
     try {
       signature = new Signature(keycloak.config);
       signature.verify(token).then(token => {
         if (token.content.action === 'LOGOUT') {
-          let sessionIDs = token.content.adapterSessionIds;
+          const sessionIDs = token.content.adapterSessionIds;
           if (!sessionIDs) {
             keycloak.grantManager.notBefore = token.content.notBefore;
             response.send('ok');
@@ -81,7 +81,7 @@ function adminNotBefore (request, response, keycloak) {
   });
 
   request.on('end', function () {
-    let token = new Token(data);
+    const token = new Token(data);
     let signature;
     try {
       signature = new Signature(keycloak.config);
@@ -101,11 +101,11 @@ function adminNotBefore (request, response, keycloak) {
 
 module.exports = function (keycloak, adminUrl) {
   let url = adminUrl;
-  if (url[ url.length - 1 ] !== '/') {
+  if (url[url.length - 1] !== '/') {
     url = url + '/';
   }
-  let urlLogout = url + 'k_logout';
-  let urlNotBefore = url + 'k_push_not_before';
+  const urlLogout = url + 'k_logout';
+  const urlNotBefore = url + 'k_push_not_before';
 
   return function adminRequest (request, response, next) {
     switch (request.url) {

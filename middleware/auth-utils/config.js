@@ -79,17 +79,17 @@ Config.prototype.configure = function configure (config) {
     }
 
     // "${env.MY_ENVIRONMENT_VARIABLE:http://localhost:8080}".replace(/\$\{env\.([^:]*):?(.*)?\}/,"$1--split--$2").split("--split--")
-    let regex = /\$\{env\.([^:]*):?(.*)?\}/;
+    const regex = /\$\{env\.([^:]*):?(.*)?\}/;
 
     // is this an environment variable reference with potential fallback?
     if (!regex.test(value)) {
       return value;
     }
 
-    let tokens = value.replace(regex, '$1--split--$2').split('--split--');
-    let envVar = tokens[0];
-    let envVal = process.env[envVar];
-    let fallbackVal = tokens[1];
+    const tokens = value.replace(regex, '$1--split--$2').split('--split--');
+    const envVar = tokens[0];
+    const envVal = process.env[envVar];
+    const fallbackVal = tokens[1];
 
     return envVal || fallbackVal;
   }

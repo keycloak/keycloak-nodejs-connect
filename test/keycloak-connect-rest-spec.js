@@ -104,8 +104,8 @@ test('Should test protected route with invalid access token.', t => {
 test('Access should be denied for bearer client with invalid public key.', t => {
   t.plan(1);
 
-  var someApp = new NodeApp();
-  var client = admin.createClient(app.bearerOnly('wrongkey-app'), realmName);
+  const someApp = new NodeApp();
+  const client = admin.createClient(app.bearerOnly('wrongkey-app'), realmName);
 
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -134,14 +134,14 @@ test('Access should be denied for bearer client with invalid public key.', t => 
 test('Should test protected route after push revocation.', t => {
   t.plan(2);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.bearerOnly('revokeapp'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.bearerOnly('revokeapp'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
 
     return getToken().then((token) => {
-      let opt = {
+      const opt = {
         method: 'get',
         url: `${app.address}/service/admin`,
         headers: {
@@ -179,14 +179,14 @@ test('Should test protected route after push revocation.', t => {
 test('Should invoke admin logout.', t => {
   t.plan(2);
 
-  var app = new NodeApp();
-  var client = admin.createClient(app.bearerOnly('anotherapp'), realmName);
+  const app = new NodeApp();
+  const client = admin.createClient(app.bearerOnly('anotherapp'), realmName);
 
   return client.then((installation) => {
     app.build(installation);
 
     return getToken().then((token) => {
-      let opt = {
+      const opt = {
         method: 'get',
         url: `${app.address}/service/admin`,
         headers: {

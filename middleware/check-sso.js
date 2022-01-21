@@ -23,7 +23,7 @@ function forceCheckSSO (keycloak, request, response) {
   const headerHost = request.headers.host.split(':');
   const port = headerHost[1] || '';
   const protocol = request.protocol;
-  let hasQuery = ~(request.originalUrl || request.url).indexOf('?');
+  const hasQuery = ~(request.originalUrl || request.url).indexOf('?');
 
   const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
 
@@ -52,7 +52,7 @@ module.exports = function (keycloak) {
 
     //  Keycloak server has just answered that user is not logged in
     if (request.query.error === 'login_required') {
-      let urlParts = {
+      const urlParts = {
         pathname: request.path,
         query: request.query
       };
@@ -61,7 +61,7 @@ module.exports = function (keycloak) {
       delete urlParts.query.auth_callback;
       delete urlParts.query.state;
 
-      let cleanUrl = URL.format(urlParts);
+      const cleanUrl = URL.format(urlParts);
 
       //  Check SSO process is completed
       request.session.auth_is_check_sso_complete = true;

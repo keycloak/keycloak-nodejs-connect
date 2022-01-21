@@ -34,7 +34,7 @@ module.exports = function (keycloak) {
 
     keycloak.getGrantFromCode(request.query.code, request, response)
       .then(grant => {
-        let urlParts = {
+        const urlParts = {
           pathname: request.path,
           query: request.query
         };
@@ -44,7 +44,7 @@ module.exports = function (keycloak) {
         delete urlParts.query.state;
         delete urlParts.query.session_state;
 
-        let cleanUrl = URL.format(urlParts);
+        const cleanUrl = URL.format(urlParts);
 
         request.kauth.grant = grant;
         try {

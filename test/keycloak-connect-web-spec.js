@@ -134,8 +134,8 @@ test('SSO should work for nodejs app and testRealmAccountPage', t => {
 
 test('Public client should be redirected to GitHub when idpHint is provided', t => {
   t.plan(1);
-  var app = new NodeApp();
-  var client = admin.createClient(app.publicClient('appIdP'));
+  const app = new NodeApp();
+  const client = admin.createClient(app.publicClient('appIdP'));
 
   return client.then((installation) => {
     app.build(installation, { store: new session.MemoryStore(), idpHint: 'github' });
@@ -166,8 +166,8 @@ test('User should be forbidden to access restricted page', t => {
 
 test('Public client should be forbidden for invalid public key', t => {
   t.plan(2);
-  var app = new NodeApp();
-  var client = admin.createClient(app.publicClient('app2'));
+  const app = new NodeApp();
+  const client = admin.createClient(app.publicClient('app2'));
 
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -194,8 +194,8 @@ test('Public client should be forbidden for invalid public key', t => {
 
 test('Confidential client should be forbidden for invalid public key', t => {
   t.plan(3);
-  var app = new NodeApp();
-  var client = admin.createClient(app.confidential('app3'));
+  const app = new NodeApp();
+  const client = admin.createClient(app.confidential('app3'));
 
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey;
@@ -251,8 +251,8 @@ test('Should test check SSO after logging in and logging out', t => {
 
 test('Public client should work with slash in the end of auth-server-url', t => {
   t.plan(3);
-  var app = new NodeApp();
-  var client = admin.createClient(app.publicClient('authServerSlashes'));
+  const app = new NodeApp();
+  const client = admin.createClient(app.publicClient('authServerSlashes'));
 
   return client.then((installation) => {
     installation['auth-server-url'] = 'http://localhost:8080/auth/';
@@ -287,8 +287,8 @@ test('Public client should work with slash in the end of auth-server-url', t => 
 
 test('App should be able to use cookie-store', t => {
   t.plan(1);
-  var app = new NodeApp();
-  var client = admin.createClient(app.publicClient('appCookies'));
+  const app = new NodeApp();
+  const client = admin.createClient(app.publicClient('appCookies'));
 
   return client.then((installation) => {
     app.build(installation, { cookies: true });

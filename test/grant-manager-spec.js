@@ -385,7 +385,7 @@ test('GrantManager should not be able to refresh a grant when bearer only', (t) 
   manager.bearerOnly = true;
 
   try {
-    t.false(manager.isGrantRefreshable({ 'refresh_token': 'a_refresh_token' }));
+    t.false(manager.isGrantRefreshable({ refresh_token: 'a_refresh_token' }));
   } finally {
     manager.bearerOnly = originalBearerOnly;
     t.end();
@@ -560,8 +560,8 @@ test('GrantManager should be ensure that a grant is fresh', (t) => {
 test('GrantManager should raise an error when access token and refresh token do not exist', (t) => {
   manager.obtainDirectly('test-user', 'tiger')
     .then((grant) => {
-      grant['access_token'] = undefined;
-      grant['refresh_token'] = undefined;
+      grant.access_token = undefined;
+      grant.refresh_token = undefined;
       return manager.ensureFreshness(grant);
     })
     .catch(e => {
@@ -678,14 +678,14 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
 
 test('GrantManager#ensureFreshness should fetch new access token with client id ', (t) => {
   const refreshedToken = {
-    'access_token': 'some.access.token',
-    'expires_in': 30,
-    'refresh_expires_in': 1800,
-    'refresh_token': 'i-Am-The-Refresh-Token',
-    'token_type': 'bearer',
-    'id_token': 'some-id-token',
+    access_token: 'some.access.token',
+    expires_in: 30,
+    refresh_expires_in: 1800,
+    refresh_token: 'i-Am-The-Refresh-Token',
+    token_type: 'bearer',
+    id_token: 'some-id-token',
     'not-before-policy': 1462208947,
-    'session_state': 'ess-sion-tat-se'
+    session_state: 'ess-sion-tat-se'
   };
   nock('http://localhost:8180')
     .post('/auth/realms/nodejs-test-mock/protocol/openid-connect/token', {

@@ -14,20 +14,20 @@
  * the License.
  */
 
-var BearerStore = require('./stores/bearer-store');
-var CookieStore = require('./stores/cookie-store');
-var SessionStore = require('./stores/session-store');
+const BearerStore = require('./stores/bearer-store');
+const CookieStore = require('./stores/cookie-store');
+const SessionStore = require('./stores/session-store');
 
-var Config = require('./middleware/auth-utils/config');
-var GrantManager = require('./middleware/auth-utils/grant-manager');
-var Setup = require('./middleware/setup');
-var Admin = require('./middleware/admin');
-var Logout = require('./middleware/logout');
-var PostAuth = require('./middleware/post-auth');
-var GrantAttacher = require('./middleware/grant-attacher');
-var Protect = require('./middleware/protect');
-var Enforcer = require('./middleware/enforcer');
-var CheckSso = require('./middleware/check-sso');
+const Config = require('./middleware/auth-utils/config');
+const GrantManager = require('./middleware/auth-utils/grant-manager');
+const Setup = require('./middleware/setup');
+const Admin = require('./middleware/admin');
+const Logout = require('./middleware/logout');
+const PostAuth = require('./middleware/post-auth');
+const GrantAttacher = require('./middleware/grant-attacher');
+const Protect = require('./middleware/protect');
+const Enforcer = require('./middleware/enforcer');
+const CheckSso = require('./middleware/check-sso');
 
 /**
  * Instantiate a Keycloak.
@@ -64,7 +64,7 @@ function Keycloak (config, keycloakConfig) {
 
   this.grantManager = new GrantManager(this.config);
 
-  this.stores = [ BearerStore ];
+  this.stores = [BearerStore];
 
   if (!config) {
     throw new Error('Adapter configuration must be provided.');
@@ -115,7 +115,7 @@ Keycloak.prototype.middleware = function (options) {
   options.logout = options.logout || '/logout';
   options.admin = options.admin || '/';
 
-  var middlewares = [];
+  const middlewares = [];
 
   middlewares.push(Setup);
   middlewares.push(PostAuth(this));
@@ -305,9 +305,9 @@ Keycloak.prototype.accessDenied = function (request, response) {
 
 /*! ignore */
 Keycloak.prototype.getGrant = function (request, response) {
-  var rawData;
+  let rawData;
 
-  for (var i = 0; i < this.stores.length; ++i) {
+  for (let i = 0; i < this.stores.length; ++i) {
     rawData = this.stores[i].get(request);
     if (rawData) {
       // store = this.stores[i];
@@ -315,13 +315,13 @@ Keycloak.prototype.getGrant = function (request, response) {
     }
   }
 
-  var grantData = rawData;
+  let grantData = rawData;
   if (typeof (grantData) === 'string') {
     grantData = JSON.parse(grantData);
   }
 
   if (grantData && !grantData.error) {
-    var self = this;
+    const self = this;
     return this.grantManager.createGrant(JSON.stringify(grantData))
       .then(grant => {
         self.storeGrant(grant, request, response);
@@ -364,9 +364,9 @@ Keycloak.prototype.getGrantFromCode = function (code, request, response) {
     throw new Error('Cannot exchange code for grant in bearer-only mode');
   }
 
-  var sessionId = request.session.id;
+  const sessionId = request.session.id;
 
-  var self = this;
+  const self = this;
   return this.grantManager.obtainFromCode(request, code, sessionId)
     .then(function (grant) {
       self.storeGrant(grant, request, response);
@@ -375,7 +375,7 @@ Keycloak.prototype.getGrantFromCode = function (code, request, response) {
 };
 
 Keycloak.prototype.checkPermissions = function (authzRequest, request, callback) {
-  var self = this;
+  const self = this;
   return this.grantManager.checkPermissions(authzRequest, request, callback)
     .then(function (grant) {
       if (!authzRequest.response_mode) {
@@ -386,7 +386,7 @@ Keycloak.prototype.checkPermissions = function (authzRequest, request, callback)
 };
 
 Keycloak.prototype.loginUrl = function (uuid, redirectUrl) {
-  var url = this.config.realmUrl +
+  let url = this.config.realmUrl +
   '/protocol/openid-connect/auth' +
   '?client_id=' + encodeURIComponent(this.config.clientId) +
   '&state=' + encodeURIComponent(uuid) +

@@ -25,7 +25,7 @@ function handlePermissions (permissions, callback) {
       scope = expected[1];
     }
 
-    let r = callback(resource, scope);
+    const r = callback(resource, scope);
 
     if (r === false) {
       return r;
@@ -68,7 +68,7 @@ Enforcer.prototype.enforce = function enforce (expectedPermissions) {
       return next();
     }
 
-    let authzRequest = {
+    const authzRequest = {
       audience: config.resource_server_id,
       response_mode: config.response_mode
     };
@@ -78,7 +78,7 @@ Enforcer.prototype.enforce = function enforce (expectedPermissions) {
         authzRequest.permissions = [];
       }
 
-      let permission = { id: resource };
+      const permission = { id: resource };
 
       if (scope) {
         permission.scopes = [scope];
@@ -114,7 +114,7 @@ Enforcer.prototype.enforce = function enforce (expectedPermissions) {
           }
 
           for (let j = 0; j < permissions.length; j++) {
-            let permission = permissions[j];
+            const permission = permissions[j];
 
             if (permission.rsid === resource || permission.rsname === resource) {
               if (scope) {
