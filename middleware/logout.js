@@ -19,7 +19,7 @@ const URL = require('url');
 
 module.exports = function (keycloak, logoutUrl) {
   return function logout (request, response, next) {
-    const parsedRequest = URL.parse(request.url, true);
+    const parsedRequest = URL.parse(request.url, true); // eslint-disable-line
     if (parsedRequest.pathname !== logoutUrl) {
       return next();
     }
