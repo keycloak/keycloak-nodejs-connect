@@ -57,7 +57,7 @@
     "semistandard": "^16.0.1",
     "server-destroy": "^1.0.1",
     "tap-xunit": "^2.4.1",
-    "tape": "^4.6.3",
+    "tape": "^5.4.1",
     "tape-catch": "^1.0.6"
   },
   "optionalDependencies": {
