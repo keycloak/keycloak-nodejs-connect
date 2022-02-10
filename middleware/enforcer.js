@@ -17,12 +17,24 @@
 
 function handlePermissions (permissions, callback) {
   for (let i = 0; i < permissions.length; i++) {
-    const expected = permissions[i].split(':');
-    const resource = expected[0];
+    const permission = permissions[i];
+    
+    let resource;
     let scope;
-
-    if (expected.length > 1) {
-      scope = expected[1];
+    if (typeof permission === 'string') {
+      const parts = permission.split(':');
+      resource = parts[0];
+      if (parts.length > 1) {
+        scope = parts[1];
+      } 
+    } else if (Array.isArray(permission)) {
+      resource = permission[0];
+      if (permission.length > 1) {
+        scope = permission[1];
+      } 
+    } else if (typeof permission === 'object') {
+      resource = permission.resource;
+      scope = permission.scope || undefined;
     }
 
     const r = callback(resource, scope);
