@@ -192,7 +192,7 @@ declare namespace KeycloakConnect {
     isExpired(): boolean
   }
 
-  type GuardFn = (accessToken: Token, req: express.Request, res: express.Response) => boolean
+  type GuardFn = (accessToken: Token, req: express.Request, res: express.Response) => boolean|Promise<boolean>
 
   interface EnforcerOptions {
     response_mode?: string,
