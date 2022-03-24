@@ -145,6 +145,14 @@ ConsolePage.prototype.logout = function (port) {
   });
 };
 
+/**
+ * Confirmation of the logout screen
+ */
+ConsolePage.prototype.logoutConfirm = function () {
+  waitForVisibleElement(By.id('kc-logout'), 100000);
+  return driver.findElement(By.id('kc-logout')).then(webElement => webElement.click());
+};
+
 ConsolePage.prototype.body = () => {
   return driver.findElement(By.tagName('pre'));
 };

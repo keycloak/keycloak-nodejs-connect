@@ -413,7 +413,7 @@ declare namespace KeycloakConnect {
 
     loginUrl(uuid: string, redirectUrl: string): string
 
-    logoutUrl(redirectUrl: string): string
+    logoutUrl(redirectUrl: string, idTokenHint?: string): string
 
     accountUrl(): string
 
