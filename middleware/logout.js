@@ -24,7 +24,9 @@ module.exports = function (keycloak, logoutUrl) {
       return next();
     }
 
+    let idTokenHint = null;
     if (request.kauth.grant) {
+      idTokenHint = request.kauth.grant.id_token.token;
       keycloak.deauthenticated(request);
       request.kauth.grant.unstore(request, response);
       delete request.kauth.grant;
@@ -38,7 +40,7 @@ module.exports = function (keycloak, logoutUrl) {
       const port = headerHost[1] || '';
       redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/';
     }
-    const keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
+    const keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl, idTokenHint);
 
     response.redirect(keycloakLogoutUrl);
   };

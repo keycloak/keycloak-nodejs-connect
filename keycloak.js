@@ -400,10 +400,15 @@ Keycloak.prototype.loginUrl = function (uuid, redirectUrl) {
   return url;
 };
 
-Keycloak.prototype.logoutUrl = function (redirectUrl) {
-  return this.config.realmUrl +
-  '/protocol/openid-connect/logout' +
-  '?redirect_uri=' + encodeURIComponent(redirectUrl);
+Keycloak.prototype.logoutUrl = function (redirectUrl, idTokenHint) {
+  const url = new URL(this.config.realmUrl + '/protocol/openid-connect/logout');
+
+  if (redirectUrl && idTokenHint) {
+    url.searchParams.set('id_token_hint', idTokenHint);
+    url.searchParams.set('post_logout_redirect_uri', redirectUrl);
+  }
+
+  return url.toString();
 };
 
 Keycloak.prototype.accountUrl = function () {
