@@ -208,6 +208,7 @@ test('Confidential client should be forbidden for invalid public key', t => {
             t.equal(text, 'Access denied', 'Message should be access denied');
           })
             .then(() => page.logout(app.port))
+            .then(() => page.logoutConfirm())
             .then(() => page.get(app.port, '/check-sso'))
             .then(() => page.output().getText().then(text => t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated')))
         );
