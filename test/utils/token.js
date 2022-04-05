@@ -1,7 +1,7 @@
 'use strict';
 
 const requester = require('keycloak-request-token');
-const baseUrl = 'http://127.0.0.1:8080/auth';
+const baseUrl = 'http://127.0.0.1:8080';
 
 const defaultSettings = {
   username: 'test-admin',

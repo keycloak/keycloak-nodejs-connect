@@ -153,7 +153,7 @@ test('Should test protected route after push revocation.', t => {
         .then(response => {
           t.equal(response.data.message, 'admin');
 
-          opt.url = `${app.address}/auth/admin/realms/${realmName}/push-revocation`;
+          opt.url = `${app.address}/admin/realms/${realmName}/push-revocation`;
           opt.method = 'post';
           axios(opt);
           opt.url = `${app.address}/service/admin`;
@@ -198,7 +198,7 @@ test('Should invoke admin logout.', t => {
         .then(response => {
           t.equal(response.data.message, 'admin');
 
-          opt.url = `${app.address}/auth/admin/realms/${realmName}/logout-all`;
+          opt.url = `${app.address}/admin/realms/${realmName}/logout-all`;
           opt.method = 'post';
           axios(opt);
           opt.url = `${app.address}/service/admin`;

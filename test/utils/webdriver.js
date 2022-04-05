@@ -165,7 +165,7 @@ RealmAccountPage.prototype.getUrl = function (port, realm) {
   port = port || '8080';
   realm = realm || 'test-realm';
 
-  return `http://127.0.0.1:${port}/auth/realms/${realm}/account`;
+  return `http://127.0.0.1:${port}/realms/${realm}/account`;
 };
 
 RealmAccountPage.prototype.logout = function () {

@@ -1,5 +1,5 @@
 {
-  "server-url" : "https://localhost:8080/auth",
+  "server-url" : "https://localhost:8080",
   "realm" : "nodejs-test",
   "min-time-between-jwks-requests" : 0,
   "ssl-required" : "external",

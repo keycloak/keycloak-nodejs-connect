@@ -660,7 +660,7 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
 
 test('GrantManager#obtainDirectly should work with https', (t) => {
   nock('https://localhost:8080')
-    .post('/auth/realms/nodejs-test/protocol/openid-connect/token', {
+    .post('/realms/nodejs-test/protocol/openid-connect/token', {
       client_id: 'public-client',
       username: 'test-user',
       password: 'tiger',
@@ -692,7 +692,7 @@ test('GrantManager#ensureFreshness should fetch new access token with client id 
     session_state: 'ess-sion-tat-se'
   };
   nock('http://localhost:8180')
-    .post('/auth/realms/nodejs-test-mock/protocol/openid-connect/token', {
+    .post('/realms/nodejs-test-mock/protocol/openid-connect/token', {
       grant_type: 'refresh_token',
       client_id: 'public-client',
       refresh_token: 'i-Am-The-Refresh-Token'

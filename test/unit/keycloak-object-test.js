@@ -34,7 +34,7 @@ test('Should raise an error when no configuration is provided.', t => {
 test('setup', t => {
   const kcConfig = {
     realm: 'test-realm',
-    'auth-server-url': 'http://localhost:8080/auth',
+    'auth-server-url': 'http://localhost:8080',
     'ssl-required': 'external',
     resource: 'nodejs-connect',
     'public-client': true
@@ -77,6 +77,6 @@ test('Should generate a correct UUID.', t => {
 });
 
 test('Should produce correct account url.', t => {
-  t.equal(kc.accountUrl(), 'http://localhost:8080/auth/realms/test-realm/account');
+  t.equal(kc.accountUrl(), 'http://localhost:8080/realms/test-realm/account');
   t.end();
 });

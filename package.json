@@ -8,7 +8,9 @@
     "lint": "jshint *.js stores/*.js middleware/*.js middleware/auth-utils/*.js example/*.js && semistandard",
     "test": "./run-tests.sh",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
-    "coverage": "nyc cover tape test/unit/*.js tape test/*.js"
+    "coverage": "nyc cover tape test/unit/*.js tape test/*.js",
+    "server:import-test-realm": "./scripts/start-server.mjs -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=test/fixtures/auth-utils/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+    "server:start": "./scripts/start-server.mjs -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.profile.feature.account2=disabled"
   },
   "keywords": [
     "sso",
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "@keycloak/keycloak-admin-client": "^17.0.1",
+    "@octokit/rest": "^18.12.0",
     "axios": "^0.26.1",
     "blue-tape": "^1.0.0",
     "body-parser": "^1.13.3",
@@ -45,12 +48,14 @@
     "coveralls": "^3.0.1",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
+    "gunzip-maybe": "^1.4.2",
     "hogan-express": "^0.5.2",
     "ink-docstrap": "^1.1.4",
     "jsdoc": "^3.6.3",
     "jshint": "^2.10.2",
     "keycloak-request-token": "^0.1.0",
     "nock": "^13.2.2",
+    "node-fetch": "^3.2.3",
     "nyc": "^15.0.0",
     "rsa-compat": "^2.0.8",
     "selenium-webdriver": "^3.6.0",
@@ -58,7 +63,8 @@
     "server-destroy": "^1.0.1",
     "tap-xunit": "^2.4.1",
     "tape": "^5.4.1",
-    "tape-catch": "^1.0.6"
+    "tape-catch": "^1.0.6",
+    "tar-fs": "^2.1.1"
   },
   "optionalDependencies": {
     "chromedriver": "latest"
