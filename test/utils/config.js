@@ -7,7 +7,7 @@
 'use strict';
 
 const settings = {
-  baseUrl: 'http://127.0.0.1:8080/auth',
+  baseUrl: 'http://127.0.0.1:8080',
   realmName: 'master',
   username: 'admin',
   password: 'admin',

@@ -117,10 +117,10 @@ test('SSO should work for nodejs app and testRealmAccountPage', t => {
 
               return realmAccountPage.logout().then(() =>
                 driver.getCurrentUrl().then(currentUrl => {
-                  t.true(currentUrl.startsWith('http://127.0.0.1:8080/auth/realms/test-realm/protocol/openid-connect/auth'), 'Should be on login page after AccountPage logout, current url: ' + currentUrl);
+                  t.true(currentUrl.startsWith('http://127.0.0.1:8080/realms/test-realm/protocol/openid-connect/auth'), 'Should be on login page after AccountPage logout, current url: ' + currentUrl);
 
                   return page.get(app.port, '/login').then(() =>
-                    t.true(currentUrl.startsWith('http://127.0.0.1:8080/auth/realms/test-realm/protocol/openid-connect/auth'), 'Should be on login page, current url: ' + currentUrl)
+                    t.true(currentUrl.startsWith('http://127.0.0.1:8080/realms/test-realm/protocol/openid-connect/auth'), 'Should be on login page, current url: ' + currentUrl)
                   );
                 })
               );
@@ -255,7 +255,7 @@ test('Public client should work with slash in the end of auth-server-url', t => 
   const client = admin.createClient(app.publicClient('authServerSlashes'));
 
   return client.then((installation) => {
-    installation['auth-server-url'] = 'http://localhost:8080/auth/';
+    installation['auth-server-url'] = 'http://localhost:8080/';
     app.build(installation);
     return page.get(app.port)
       .then(() => page.output().getText()
