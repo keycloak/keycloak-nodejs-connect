@@ -177,7 +177,7 @@ RealmAccountPage.prototype.getUrl = function (port, realm) {
 };
 
 RealmAccountPage.prototype.logout = function () {
-  return driver.findElement(By.linkText('Sign Out')).then(webElement => webElement.click());
+  return driver.findElement(By.linkText('Sign out')).then(webElement => webElement.click());
 };
 
 const realmAccountPage = new RealmAccountPage();
