@@ -36,6 +36,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "jwa": "^2.0.0",
     "jwk-to-pem": "^2.0.0"
   },
   "devDependencies": {

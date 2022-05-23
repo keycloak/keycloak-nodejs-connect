@@ -18,7 +18,7 @@
 const URL = require('url');
 const http = require('http');
 const https = require('https');
-const crypto = require('crypto');
+const jwa = require('jwa');
 const querystring = require('querystring');
 const Grant = require('./grant');
 const Token = require('./token');
@@ -440,12 +440,11 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
           reject(new Error('invalid token (wrong audience)'));
         }
       }
-      const verify = crypto.createVerify('RSA-SHA256');
+      const verify = jwa('RS256');
       // if public key has been supplied use it to validate token
       if (this.publicKey) {
         try {
-          verify.update(token.signed);
-          if (!verify.verify(this.publicKey, token.signature, 'base64')) {
+          if (!verify.verify(token.signed, token.signature, this.publicKey)) {
             reject(new Error('invalid token (signature)'));
           } else {
             resolve(token);
@@ -456,8 +455,7 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
       } else {
         // retrieve public KEY and use it to validate token
         this.rotation.getJWK(token.header.kid).then(key => {
-          verify.update(token.signed);
-          if (!verify.verify(key, token.signature)) {
+          if (!verify.verify(token.signed, token.signature, key)) {
             reject(new Error('invalid token (public key signature)'));
           } else {
             resolve(token);
