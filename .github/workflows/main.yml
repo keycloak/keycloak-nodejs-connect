@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.node-version }}
           check-latest: true
           cache: npm
 
@@ -28,7 +28,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -37,7 +37,7 @@ jobs:
       # TODO: Split the linting into a separate job.
       - name: Run lint task
         # Only run this step for the default Node version.
-        if: matrix.node == env.DEFAULT_NODE_VERSION
+        if: matrix.node-version == env.DEFAULT_NODE_VERSION
         run: npm run lint
 
       - name: Set up Java
