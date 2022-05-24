@@ -13,14 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
 module.exports = function (keycloak) {
   return function grantAttacher (request, response, next) {
     keycloak.getGrant(request, response)
       .then(grant => {
-        request.kauth.grant = grant;
+        request.kauth.grant = grant
       })
-      .then(next).catch(() => next());
-  };
-};
+      .then(next).catch(() => next())
+  }
+}

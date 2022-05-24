@@ -13,36 +13,36 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const CookieStore = {};
+const CookieStore = {}
 
-CookieStore.TOKEN_KEY = 'keycloak-token';
+CookieStore.TOKEN_KEY = 'keycloak-token'
 
 CookieStore.get = (request) => {
-  const value = request.cookies[CookieStore.TOKEN_KEY];
+  const value = request.cookies[CookieStore.TOKEN_KEY]
   if (value) {
     try {
-      return JSON.parse(value);
+      return JSON.parse(value)
     } catch (err) {
       // ignore
     }
   }
-};
+}
 
 const store = (grant) => {
   return (request, response) => {
-    response.cookie(CookieStore.TOKEN_KEY, grant.__raw);
-  };
-};
+    response.cookie(CookieStore.TOKEN_KEY, grant.__raw)
+  }
+}
 
 const unstore = (request, response) => {
-  response.clearCookie(CookieStore.TOKEN_KEY);
-};
+  response.clearCookie(CookieStore.TOKEN_KEY)
+}
 
 CookieStore.wrap = (grant) => {
-  grant.store = store(grant);
-  grant.unstore = unstore;
-};
+  grant.store = store(grant)
+  grant.unstore = unstore
+}
 
-module.exports = CookieStore;
+module.exports = CookieStore

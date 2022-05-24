@@ -13,54 +13,54 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const UUID = require('./../uuid');
+const UUID = require('./../uuid')
 
 function forceLogin (keycloak, request, response) {
-  const host = request.hostname;
-  const headerHost = request.headers.host.split(':');
-  const port = headerHost[1] || '';
-  const protocol = request.protocol;
-  const hasQuery = ~(request.originalUrl || request.url).indexOf('?');
+  const host = request.hostname
+  const headerHost = request.headers.host.split(':')
+  const port = headerHost[1] || ''
+  const protocol = request.protocol
+  const hasQuery = ~(request.originalUrl || request.url).indexOf('?')
 
-  const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
+  const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1'
 
   if (request.session) {
-    request.session.auth_redirect_uri = redirectUrl;
+    request.session.auth_redirect_uri = redirectUrl
   }
 
-  const uuid = UUID();
-  const loginURL = keycloak.loginUrl(uuid, redirectUrl);
-  response.redirect(loginURL);
+  const uuid = UUID()
+  const loginURL = keycloak.loginUrl(uuid, redirectUrl)
+  response.redirect(loginURL)
 }
 
 function simpleGuard (role, token) {
-  return token.hasRole(role);
+  return token.hasRole(role)
 }
 
 module.exports = function (keycloak, spec) {
-  let guard;
+  let guard
 
   if (typeof spec === 'function') {
-    guard = spec;
+    guard = spec
   } else if (typeof spec === 'string') {
-    guard = simpleGuard.bind(undefined, spec);
+    guard = simpleGuard.bind(undefined, spec)
   }
 
   return function protect (request, response, next) {
     if (request.kauth && request.kauth.grant) {
       if (!guard || guard(request.kauth.grant.access_token, request, response)) {
-        return next();
+        return next()
       }
 
-      return keycloak.accessDenied(request, response, next);
+      return keycloak.accessDenied(request, response, next)
     }
 
     if (keycloak.redirectToLogin(request)) {
-      forceLogin(keycloak, request, response);
+      forceLogin(keycloak, request, response)
     } else {
-      return keycloak.accessDenied(request, response, next);
+      return keycloak.accessDenied(request, response, next)
     }
-  };
-};
+  }
+}

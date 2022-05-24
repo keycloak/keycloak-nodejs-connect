@@ -13,44 +13,44 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
 function SessionStore (store) {
-  this.store = store;
+  this.store = store
 }
 
-SessionStore.TOKEN_KEY = 'keycloak-token';
+SessionStore.TOKEN_KEY = 'keycloak-token'
 
-SessionStore.prototype.get = (request) => request.session[SessionStore.TOKEN_KEY];
+SessionStore.prototype.get = (request) => request.session[SessionStore.TOKEN_KEY]
 
 SessionStore.prototype.clear = function (sessionId) {
-  const self = this;
+  const self = this
   this.store.get(sessionId, (err, session) => {
     if (err) {
-      console.log(err);
+      console.log(err)
     }
     if (session) {
-      delete session[SessionStore.TOKEN_KEY];
-      self.store.set(sessionId, session);
+      delete session[SessionStore.TOKEN_KEY]
+      self.store.set(sessionId, session)
     }
-  });
-};
+  })
+}
 
 const store = (grant) => {
   return (request, response) => {
-    request.session[SessionStore.TOKEN_KEY] = grant.__raw;
-  };
-};
+    request.session[SessionStore.TOKEN_KEY] = grant.__raw
+  }
+}
 
 const unstore = (request, response) => {
-  delete request.session[SessionStore.TOKEN_KEY];
-};
+  delete request.session[SessionStore.TOKEN_KEY]
+}
 
 SessionStore.prototype.wrap = (grant) => {
   if (grant) {
-    grant.store = store(grant);
-    grant.unstore = unstore;
+    grant.store = store(grant)
+    grant.unstore = unstore
   }
-};
+}
 
-module.exports = SessionStore;
+module.exports = SessionStore

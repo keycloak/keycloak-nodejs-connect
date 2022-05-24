@@ -4,7 +4,7 @@
  * @param {object} username - Username to any user with credentials to create realms
  * @param {object} password - password
  */
-'use strict';
+'use strict'
 
 const settings = {
   baseUrl: 'http://127.0.0.1:8080',
@@ -13,6 +13,6 @@ const settings = {
   password: 'admin',
   grantType: 'password',
   clientId: 'admin-cli'
-};
+}
 
-module.exports = settings;
+module.exports = settings

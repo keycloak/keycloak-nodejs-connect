@@ -13,17 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 /**
  * A wrapper to keycloak-admin-client with an initial setup
  */
 /* eslint new-cap: ["error", { "newIsCap": false }] */
-const keycloakAdminClient = require('@keycloak/keycloak-admin-client');
-const parse = require('./helper').parse;
-const settings = require('./config');
-const realmTemplate = 'test/fixtures/testrealm.json';
+const keycloakAdminClient = require('@keycloak/keycloak-admin-client')
+const parse = require('./helper').parse
+const settings = require('./config')
+const realmTemplate = 'test/fixtures/testrealm.json'
 
-const kca = new keycloakAdminClient.default(settings);
+const kca = new keycloakAdminClient.default(settings)
 
 /**
  * Create realms based on port and name specified
@@ -33,14 +33,14 @@ const kca = new keycloakAdminClient.default(settings);
  * @returns {Promise} A promise that will resolve with the realm object.
  */
 function createRealm (realmName) {
-  const name = realmName || 'test-realm';
+  const name = realmName || 'test-realm'
   return kca.auth(settings).then(() => {
     return kca.realms.create(parse(realmTemplate, name)).then(() => {
-      return kca.realms.findOne({ realm: realmName });
-    });
+      return kca.realms.findOne({ realm: realmName })
+    })
   }).catch((err) => {
-    console.error('Failure: ', err);
-  });
+    console.error('Failure: ', err)
+  })
 }
 
 /**
@@ -50,32 +50,32 @@ function createRealm (realmName) {
  * @returns {Promise} A promise that will resolve with the realm object.
  */
 function createClient (clientRep, realmName) {
-  const realm = realmName || 'test-realm';
-  kca.setConfig({ realmName: 'master' });
+  const realm = realmName || 'test-realm'
+  kca.setConfig({ realmName: 'master' })
   return kca.auth(settings).then(() => {
-    kca.setConfig({ realmName: realm });
+    kca.setConfig({ realmName: realm })
     return kca.clients.create(clientRep).then((rep) => {
-      return kca.clients.getInstallationProviders({ id: rep.id, providerId: 'keycloak-oidc-keycloak-json' });
-    });
+      return kca.clients.getInstallationProviders({ id: rep.id, providerId: 'keycloak-oidc-keycloak-json' })
+    })
   }).catch(err => {
-    console.error(err);
-  });
+    console.error(err)
+  })
 }
 /**
  * Remove the realm based on the name provided
  * @param {object} realm - Realm name
  */
 function destroy (realm) {
-  kca.setConfig({ realmName: 'master' });
+  kca.setConfig({ realmName: 'master' })
   kca.auth(settings).then(() => {
-    return kca.realms.del({ realm });
+    return kca.realms.del({ realm })
   }).catch((err) => {
-    console.error('Realm was not found to remove:', err);
-  });
+    console.error('Realm was not found to remove:', err)
+  })
 }
 
 module.exports = {
-  createRealm: createRealm,
-  createClient: createClient,
-  destroy: destroy
-};
+  createRealm,
+  createClient,
+  destroy
+}

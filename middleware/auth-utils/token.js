@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+'use strict'
 
 /**
  * Construct a token.
@@ -28,20 +28,20 @@
  * @param {String} clientId Optional clientId if this is an `access_token`.
  */
 function Token (token, clientId) {
-  this.token = token;
-  this.clientId = clientId;
+  this.token = token
+  this.clientId = clientId
 
   if (token) {
     try {
-      const parts = token.split('.');
-      this.header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
-      this.content = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-      this.signature = Buffer.from(parts[2], 'base64');
-      this.signed = parts[0] + '.' + parts[1];
+      const parts = token.split('.')
+      this.header = JSON.parse(Buffer.from(parts[0], 'base64').toString())
+      this.content = JSON.parse(Buffer.from(parts[1], 'base64').toString())
+      this.signature = Buffer.from(parts[2], 'base64')
+      this.signed = parts[0] + '.' + parts[1]
     } catch (err) {
       this.content = {
         exp: 0
-      };
+      }
     }
   }
 }
@@ -52,8 +52,8 @@ function Token (token, clientId) {
  * @return {boolean} `true` if it is expired, otherwise `false`.
  */
 Token.prototype.isExpired = function isExpired () {
-  return ((this.content.exp * 1000) < Date.now());
-};
+  return ((this.content.exp * 1000) < Date.now())
+}
 
 /**
  * Determine if this token has an associated role.
@@ -78,20 +78,20 @@ Token.prototype.isExpired = function isExpired () {
  */
 Token.prototype.hasRole = function hasRole (name) {
   if (!this.clientId) {
-    return false;
+    return false
   }
 
-  const parts = name.split(':');
+  const parts = name.split(':')
   if (parts.length === 1) {
-    return this.hasApplicationRole(this.clientId, parts[0]);
+    return this.hasApplicationRole(this.clientId, parts[0])
   }
 
   if (parts[0] === 'realm') {
-    return this.hasRealmRole(parts[1]);
+    return this.hasRealmRole(parts[1])
   }
 
-  return this.hasApplicationRole(parts[0], parts[1]);
-};
+  return this.hasApplicationRole(parts[0], parts[1])
+}
 
 /**
  * Determine if this token has an associated specific application role.
@@ -106,17 +106,17 @@ Token.prototype.hasRole = function hasRole (name) {
  */
 Token.prototype.hasApplicationRole = function hasApplicationRole (appName, roleName) {
   if (!this.content.resource_access) {
-    return false;
+    return false
   }
 
-  const appRoles = this.content.resource_access[appName];
+  const appRoles = this.content.resource_access[appName]
 
   if (!appRoles) {
-    return false;
+    return false
   }
 
-  return (appRoles.roles.indexOf(roleName) >= 0);
-};
+  return (appRoles.roles.indexOf(roleName) >= 0)
+}
 
 /**
  * Determine if this token has an associated specific realm-level role.
@@ -134,11 +134,11 @@ Token.prototype.hasRealmRole = function hasRealmRole (roleName) {
   // Without this we attempt to access an undefined property on token
   // for a user with no realm level roles.
   if (!this.content.realm_access || !this.content.realm_access.roles) {
-    return false;
+    return false
   }
 
-  return (this.content.realm_access.roles.indexOf(roleName) >= 0);
-};
+  return (this.content.realm_access.roles.indexOf(roleName) >= 0)
+}
 
 /**
  * Determine if this token has an associated role.
@@ -162,28 +162,28 @@ Token.prototype.hasRealmRole = function hasRealmRole (roleName) {
  * @return {boolean} `true` if this token has the specified role, otherwise `false`.
  */
 Token.prototype.hasPermission = function hasPermission (resource, scope) {
-  const permissions = this.content.authorization ? this.content.authorization.permissions : undefined;
+  const permissions = this.content.authorization ? this.content.authorization.permissions : undefined
 
   if (!permissions) {
-    return false;
+    return false
   }
 
   for (let i = 0; i < permissions.length; i++) {
-    const permission = permissions[i];
+    const permission = permissions[i]
 
     if (permission.rsid === resource || permission.rsname === resource) {
       if (scope) {
         if (permission.scopes && permission.scopes.length > 0) {
           if (!permission.scopes.includes(scope)) {
-            return false;
+            return false
           }
         }
       }
-      return true;
+      return true
     }
   }
 
-  return false;
-};
+  return false
+}
 
-module.exports = Token;
+module.exports = Token

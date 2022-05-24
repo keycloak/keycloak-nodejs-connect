@@ -13,23 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const URL = require('url');
+const URL = require('url')
 
 module.exports = function (keycloak) {
   return function postAuth (request, response, next) {
     if (!request.query.auth_callback) {
-      return next();
+      return next()
     }
 
     //  During the check SSO process the Keycloak server answered the user is not logged in
     if (request.query.error === 'login_required') {
-      return next();
+      return next()
     }
 
     if (request.query.error) {
-      return keycloak.accessDenied(request, response, next);
+      return keycloak.accessDenied(request, response, next)
     }
 
     keycloak.getGrantFromCode(request.query.code, request, response)
@@ -37,25 +37,25 @@ module.exports = function (keycloak) {
         const urlParts = {
           pathname: request.path,
           query: request.query
-        };
-
-        delete urlParts.query.code;
-        delete urlParts.query.auth_callback;
-        delete urlParts.query.state;
-        delete urlParts.query.session_state;
-
-        const cleanUrl = URL.format(urlParts);
-
-        request.kauth.grant = grant;
-        try {
-          keycloak.authenticated(request);
-        } catch (err) {
-          console.log(err);
         }
-        response.redirect(cleanUrl);
+
+        delete urlParts.query.code
+        delete urlParts.query.auth_callback
+        delete urlParts.query.state
+        delete urlParts.query.session_state
+
+        const cleanUrl = URL.format(urlParts)
+
+        request.kauth.grant = grant
+        try {
+          keycloak.authenticated(request)
+        } catch (err) {
+          console.log(err)
+        }
+        response.redirect(cleanUrl)
       }).catch((err) => {
-        keycloak.accessDenied(request, response, next);
-        console.error('Could not obtain grant code: ' + err);
-      });
-  };
-};
+        keycloak.accessDenied(request, response, next)
+        console.error('Could not obtain grant code: ' + err)
+      })
+  }
+}

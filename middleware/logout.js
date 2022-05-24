@@ -13,35 +13,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const URL = require('url');
+const URL = require('url')
 
 module.exports = function (keycloak, logoutUrl) {
   return function logout (request, response, next) {
     const parsedRequest = URL.parse(request.url, true); // eslint-disable-line
     if (parsedRequest.pathname !== logoutUrl) {
-      return next();
+      return next()
     }
 
-    let idTokenHint = null;
+    let idTokenHint = null
     if (request.kauth.grant) {
-      idTokenHint = request.kauth.grant.id_token.token;
-      keycloak.deauthenticated(request);
-      request.kauth.grant.unstore(request, response);
-      delete request.kauth.grant;
+      idTokenHint = request.kauth.grant.id_token.token
+      keycloak.deauthenticated(request)
+      request.kauth.grant.unstore(request, response)
+      delete request.kauth.grant
     }
 
-    const queryParams = parsedRequest.query;
-    let redirectUrl = queryParams && queryParams.redirect_url;
+    const queryParams = parsedRequest.query
+    let redirectUrl = queryParams && queryParams.redirect_url
     if (!redirectUrl) {
-      const host = request.hostname;
-      const headerHost = request.headers.host.split(':');
-      const port = headerHost[1] || '';
-      redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/';
+      const host = request.hostname
+      const headerHost = request.headers.host.split(':')
+      const port = headerHost[1] || ''
+      redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/'
     }
-    const keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl, idTokenHint);
+    const keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl, idTokenHint)
 
-    response.redirect(keycloakLogoutUrl);
-  };
-};
+    response.redirect(keycloakLogoutUrl)
+  }
+}

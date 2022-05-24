@@ -13,110 +13,110 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const Token = require('./auth-utils/token');
-const Signature = require('./auth-utils/signature');
+const Token = require('./auth-utils/token')
+const Signature = require('./auth-utils/signature')
 
 function Admin (keycloak, url) {
-  this._keycloak = keycloak;
+  this._keycloak = keycloak
   if (url[url.length - 1] !== '/') {
-    url += '/;';
+    url += '/;'
   }
-  this._url = url + 'k_logout';
+  this._url = url + 'k_logout'
 }
 
 Admin.prototype.getFunction = function () {
-  return this._adminRequest.bind(this);
-};
+  return this._adminRequest.bind(this)
+}
 
 function adminLogout (request, response, keycloak) {
-  let data = '';
+  let data = ''
 
   request.on('data', d => {
-    data += d.toString();
-  });
+    data += d.toString()
+  })
 
   request.on('end', function () {
-    const token = new Token(data);
-    let signature;
+    const token = new Token(data)
+    let signature
     try {
-      signature = new Signature(keycloak.config);
+      signature = new Signature(keycloak.config)
       signature.verify(token).then(token => {
         if (token.content.action === 'LOGOUT') {
-          const sessionIDs = token.content.adapterSessionIds;
+          const sessionIDs = token.content.adapterSessionIds
           if (!sessionIDs) {
-            keycloak.grantManager.notBefore = token.content.notBefore;
-            response.send('ok');
-            return;
+            keycloak.grantManager.notBefore = token.content.notBefore
+            response.send('ok')
+            return
           }
           if (sessionIDs && sessionIDs.length > 0) {
-            let seen = 0;
+            let seen = 0
             sessionIDs.forEach(id => {
-              keycloak.unstoreGrant(id);
-              ++seen;
+              keycloak.unstoreGrant(id)
+              ++seen
               if (seen === sessionIDs.length) {
-                response.send('ok');
+                response.send('ok')
               }
-            });
+            })
           } else {
-            response.send('ok');
+            response.send('ok')
           }
         } else {
-          response.status(400).end();
+          response.status(400).end()
         }
       }).catch((err) => {
-        response.status(401).end(err.message);
-      });
+        response.status(401).end(err.message)
+      })
     } catch (err) {
-      response.status(400).end(err.message);
+      response.status(400).end(err.message)
     }
-  });
+  })
 }
 
 function adminNotBefore (request, response, keycloak) {
-  let data = '';
+  let data = ''
   request.on('data', d => {
-    data += d.toString();
-  });
+    data += d.toString()
+  })
 
   request.on('end', function () {
-    const token = new Token(data);
-    let signature;
+    const token = new Token(data)
+    let signature
     try {
-      signature = new Signature(keycloak.config);
+      signature = new Signature(keycloak.config)
       signature.verify(token).then(token => {
         if (token.content.action === 'PUSH_NOT_BEFORE') {
-          keycloak.grantManager.notBefore = token.content.notBefore;
-          response.send('ok');
+          keycloak.grantManager.notBefore = token.content.notBefore
+          response.send('ok')
         }
       }).catch((err) => {
-        response.status(401).end(err.message);
-      });
+        response.status(401).end(err.message)
+      })
     } catch (err) {
-      response.status(400).end(err.message);
+      response.status(400).end(err.message)
     }
-  });
+  })
 }
 
 module.exports = function (keycloak, adminUrl) {
-  let url = adminUrl;
+  let url = adminUrl
   if (url[url.length - 1] !== '/') {
-    url = url + '/';
+    url = url + '/'
   }
-  const urlLogout = url + 'k_logout';
-  const urlNotBefore = url + 'k_push_not_before';
+  const urlLogout = url + 'k_logout'
+  const urlNotBefore = url + 'k_push_not_before'
 
   return function adminRequest (request, response, next) {
     switch (request.url) {
       case urlLogout:
-        adminLogout(request, response, keycloak);
-        break;
+        adminLogout(request, response, keycloak)
+        break
       case urlNotBefore:
-        adminNotBefore(request, response, keycloak);
-        break;
+        adminNotBefore(request, response, keycloak)
+        break
       default:
-        return next();
+        return next()
     }
-  };
-};
+  }
+}
