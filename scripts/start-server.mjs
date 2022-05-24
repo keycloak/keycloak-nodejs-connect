@@ -6,13 +6,18 @@ import fetch from 'node-fetch'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
-import { pipeline } from 'node:stream/promises'
+import { pipeline } from 'node:stream'
 import { fileURLToPath } from 'node:url'
+import { promisify } from 'node:util'
 import tar from 'tar-fs'
 
 const DIR_NAME = path.dirname(fileURLToPath(import.meta.url))
 const SERVER_DIR = path.resolve(DIR_NAME, '../server')
 const SCRIPT_EXTENSION = process.platform === 'win32' ? '.bat' : '.sh'
+
+// TODO: Once support for Node.js 14 has been dropped this can be replaced with an import from 'node:stream/promises'.
+// More information: https://nodejs.org/api/stream.html#streams-promises-api
+const pipelineAsync = promisify(pipeline)
 
 await startServer()
 
@@ -78,5 +83,5 @@ async function getAssetAsStream (asset) {
 }
 
 function extractTarball (stream, path, options) {
-  return pipeline(stream, gunzip(), tar.extract(path, options))
+  return pipelineAsync(stream, gunzip(), tar.extract(path, options))
 }
