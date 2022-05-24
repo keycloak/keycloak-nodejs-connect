@@ -13,50 +13,50 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const test = require('blue-tape');
-const admin = require('./utils/realm');
+const test = require('blue-tape')
+const admin = require('./utils/realm')
 
-const page = require('./utils/webdriver').newPage;
-const NodeApp = require('./fixtures/node-console/index').NodeApp;
+const page = require('./utils/webdriver').newPage
+const NodeApp = require('./fixtures/node-console/index').NodeApp
 
-const realmManager = admin.createRealm();
-const app = new NodeApp();
+const realmManager = admin.createRealm()
+const app = new NodeApp()
 
 test('setup', t => {
   return realmManager.then(() => {
     return admin.createClient(app.enforcerResourceServer())
       .then((installation) => {
-        return app.build(installation);
-      });
-  });
-});
+        return app.build(installation)
+      })
+  })
+})
 
 test('Should be able to access resource protected by the policy enforcer', t => {
-  t.plan(3);
+  t.plan(3)
 
-  page.get(app.port);
+  page.get(app.port)
 
   return page.output().getText().then(text => {
-    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated');
-    page.logInButton().click();
-    page.login('test-admin', 'password');
+    t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated')
+    page.logInButton().click()
+    page.login('test-admin', 'password')
 
     return page.events().getText().then(text => {
-      t.equal(text, 'Auth Success', 'User should be authenticated');
-      page.grantedResourceButton().click();
+      t.equal(text, 'Auth Success', 'User should be authenticated')
+      page.grantedResourceButton().click()
       return page.events().getText().then(text => {
-        t.equal(text, 'Granted', 'User can access resource protected by the policy enforcer');
-      });
-    });
-  });
-});
+        t.equal(text, 'Granted', 'User can access resource protected by the policy enforcer')
+      })
+    })
+  })
+})
 
 test('teardown', t => {
   return realmManager.then((realm) => {
-    app.destroy();
-    admin.destroy('test-realm');
-    page.quit();
-  });
-});
+    app.destroy()
+    admin.destroy('test-realm')
+    page.quit()
+  })
+})

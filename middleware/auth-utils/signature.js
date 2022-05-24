@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+'use strict'
 
-const Rotation = require('./rotation');
-const crypto = require('crypto');
+const Rotation = require('./rotation')
+const crypto = require('crypto')
 
 /**
  * Construct a signature.
@@ -26,8 +26,8 @@ const crypto = require('crypto');
  * @constructor
  */
 function Signature (config) {
-  this.publicKey = config.publicKey;
-  this.rotation = new Rotation(config);
+  this.publicKey = config.publicKey
+  this.rotation = new Rotation(config)
 }
 
 /**
@@ -37,19 +37,19 @@ function Signature (config) {
  */
 Signature.prototype.verify = function verify (token, callback) {
   return new Promise((resolve, reject) => {
-    const verify = crypto.createVerify('RSA-SHA256');
+    const verify = crypto.createVerify('RSA-SHA256')
 
     this.rotation.getJWK(token.header.kid).then(key => {
-      verify.update(token.signed);
+      verify.update(token.signed)
       if (!verify.verify(key, token.signature, 'base64')) {
-        reject(new Error('admin request failed: invalid token (signature)'));
+        reject(new Error('admin request failed: invalid token (signature)'))
       } else {
-        resolve(token);
+        resolve(token)
       }
     }).catch((err) => {
-      reject(new Error('failed to load public key to verify token. Reason: ' + err.message));
-    });
-  });
-};
+      reject(new Error('failed to load public key to verify token. Reason: ' + err.message))
+    })
+  })
+}
 
-module.exports = Signature;
+module.exports = Signature

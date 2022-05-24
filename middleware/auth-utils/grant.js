@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+'use strict'
 
 /**
  * Construct a new grant.
@@ -31,7 +31,7 @@
  * @constructor
  */
 function Grant (grant) {
-  this.update(grant);
+  this.update(grant)
 }
 
 /**
@@ -45,14 +45,14 @@ Grant.prototype.update = function update (grant) {
   // CamelCase to match both Keycloak's grant JSON
   // and to allow new Grant(new Grant(kc)) copy-ctor
 
-  this.access_token = grant.access_token;
-  this.refresh_token = grant.refresh_token;
-  this.id_token = grant.id_token;
+  this.access_token = grant.access_token
+  this.refresh_token = grant.refresh_token
+  this.id_token = grant.id_token
 
-  this.token_type = grant.token_type;
-  this.expires_in = grant.expires_in;
-  this.__raw = grant.__raw;
-};
+  this.token_type = grant.token_type
+  this.expires_in = grant.expires_in
+  this.__raw = grant.__raw
+}
 
 /**
  * Returns the raw String of the grant, if available.
@@ -61,8 +61,8 @@ Grant.prototype.update = function update (grant) {
  * then `undefined` is returned.
  */
 Grant.prototype.toString = function toString () {
-  return this.__raw;
-};
+  return this.__raw
+}
 
 /**
  * Determine if this grant is expired/out-of-date.
@@ -76,9 +76,9 @@ Grant.prototype.toString = function toString () {
  */
 Grant.prototype.isExpired = function isExpired () {
   if (!this.access_token) {
-    return true;
+    return true
   }
-  return this.access_token.isExpired();
-};
+  return this.access_token.isExpired()
+}
 
-module.exports = Grant;
+module.exports = Grant

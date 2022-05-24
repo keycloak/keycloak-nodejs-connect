@@ -14,22 +14,22 @@
  * the License.
  */
 
-'use strict';
+'use strict'
 
-const test = require('tape');
-const Keycloak = require('../../');
-const UUID = require('../../uuid');
-const session = require('express-session');
+const test = require('tape')
+const Keycloak = require('../../')
+const UUID = require('../../uuid')
+const session = require('express-session')
 
-let kc = null;
+let kc = null
 
 test('Should raise an error when no configuration is provided.', t => {
   t.throws(function () {
-    const k = new Keycloak();
-    t.notOk(k, 'Variable should be empty');
-  }, Error, 'Adapter configuration must be provided.');
-  t.end();
-});
+    const k = new Keycloak()
+    t.notOk(k, 'Variable should be empty')
+  }, Error, 'Adapter configuration must be provided.')
+  t.end()
+})
 
 test('setup', t => {
   const kcConfig = {
@@ -38,45 +38,45 @@ test('setup', t => {
     'ssl-required': 'external',
     resource: 'nodejs-connect',
     'public-client': true
-  };
+  }
 
-  const memoryStore = new session.MemoryStore();
-  kc = new Keycloak({ store: memoryStore, scope: 'offline_support' }, kcConfig);
-  t.end();
-});
+  const memoryStore = new session.MemoryStore()
+  kc = new Keycloak({ store: memoryStore, scope: 'offline_support' }, kcConfig)
+  t.end()
+})
 
 test('Should verify the realm name of the config object.', t => {
-  t.equal(kc.config.realm, 'test-realm');
-  t.end();
-});
+  t.equal(kc.config.realm, 'test-realm')
+  t.end()
+})
 
 test('Should verify if login URL has the configured realm.', t => {
-  t.equal(kc.loginUrl().indexOf(kc.config.realm) > 0, true);
-  t.end();
-});
+  t.equal(kc.loginUrl().indexOf(kc.config.realm) > 0, true)
+  t.end()
+})
 
 test('Should verify if login URL has the custom scope value.', t => {
-  t.equal(kc.loginUrl().indexOf(kc.config.scope) > 0, true);
-  t.end();
-});
+  t.equal(kc.loginUrl().indexOf(kc.config.scope) > 0, true)
+  t.end()
+})
 
 test('Should verify if login URL has the default scope value.', t => {
-  t.equal(kc.loginUrl().indexOf('openid') > 0, true);
-  t.end();
-});
+  t.equal(kc.loginUrl().indexOf('openid') > 0, true)
+  t.end()
+})
 
 test('Should verify if logout URL has the configured realm.', t => {
-  t.equal(kc.logoutUrl().indexOf(kc.config.realm) > 0, true);
-  t.end();
-});
+  t.equal(kc.logoutUrl().indexOf(kc.config.realm) > 0, true)
+  t.end()
+})
 
 test('Should generate a correct UUID.', t => {
-  const rgx = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-  t.equal(rgx.test(UUID()), true);
-  t.end();
-});
+  const rgx = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+  t.equal(rgx.test(UUID()), true)
+  t.end()
+})
 
 test('Should produce correct account url.', t => {
-  t.equal(kc.accountUrl(), 'http://localhost:8080/realms/test-realm/account');
-  t.end();
-});
+  t.equal(kc.accountUrl(), 'http://localhost:8080/realms/test-realm/account')
+  t.end()
+})

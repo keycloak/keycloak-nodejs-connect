@@ -13,21 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const BearerStore = {};
+const BearerStore = {}
 
 BearerStore.get = (request) => {
-  const header = request.headers.authorization;
+  const header = request.headers.authorization
 
   if (header) {
     if (header.indexOf('bearer ') === 0 || header.indexOf('Bearer ') === 0) {
-      const accessToken = header.substring(7);
+      const accessToken = header.substring(7)
       return {
         access_token: accessToken
-      };
+      }
     }
   }
-};
+}
 
-module.exports = BearerStore;
+module.exports = BearerStore

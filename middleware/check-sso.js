@@ -13,41 +13,41 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict';
+'use strict'
 
-const UUID = require('./../uuid');
-const URL = require('url');
+const UUID = require('./../uuid')
+const URL = require('url')
 
 function forceCheckSSO (keycloak, request, response) {
-  const host = request.hostname;
-  const headerHost = request.headers.host.split(':');
-  const port = headerHost[1] || '';
-  const protocol = request.protocol;
-  const hasQuery = ~(request.originalUrl || request.url).indexOf('?');
+  const host = request.hostname
+  const headerHost = request.headers.host.split(':')
+  const port = headerHost[1] || ''
+  const protocol = request.protocol
+  const hasQuery = ~(request.originalUrl || request.url).indexOf('?')
 
-  const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
+  const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (request.originalUrl || request.url) + (hasQuery ? '&' : '?') + 'auth_callback=1'
 
   if (request.session) {
-    request.session.auth_redirect_uri = redirectUrl;
+    request.session.auth_redirect_uri = redirectUrl
   }
 
-  const uuid = UUID();
-  const loginURL = keycloak.loginUrl(uuid, redirectUrl);
-  const checkSsoUrl = loginURL + '&response_mode=query&prompt=none';
+  const uuid = UUID()
+  const loginURL = keycloak.loginUrl(uuid, redirectUrl)
+  const checkSsoUrl = loginURL + '&response_mode=query&prompt=none'
 
-  response.redirect(checkSsoUrl);
+  response.redirect(checkSsoUrl)
 }
 
 module.exports = function (keycloak) {
   return function checkSso (request, response, next) {
     if (request.kauth && request.kauth.grant) {
-      return next();
+      return next()
     }
 
     //  Check SSO process is completed and user is not logged in
     if (request.session.auth_is_check_sso_complete) {
-      request.session.auth_is_check_sso_complete = false;
-      return next();
+      request.session.auth_is_check_sso_complete = false
+      return next()
     }
 
     //  Keycloak server has just answered that user is not logged in
@@ -55,25 +55,25 @@ module.exports = function (keycloak) {
       const urlParts = {
         pathname: request.path,
         query: request.query
-      };
+      }
 
-      delete urlParts.query.error;
-      delete urlParts.query.auth_callback;
-      delete urlParts.query.state;
+      delete urlParts.query.error
+      delete urlParts.query.auth_callback
+      delete urlParts.query.state
 
-      const cleanUrl = URL.format(urlParts);
+      const cleanUrl = URL.format(urlParts)
 
       //  Check SSO process is completed
-      request.session.auth_is_check_sso_complete = true;
+      request.session.auth_is_check_sso_complete = true
 
       //  Redirect back to the original URL
-      return response.redirect(cleanUrl);
+      return response.redirect(cleanUrl)
     }
 
     if (keycloak.redirectToLogin(request)) {
-      forceCheckSSO(keycloak, request, response);
+      forceCheckSSO(keycloak, request, response)
     } else {
-      return keycloak.accessDenied(request, response, next);
+      return keycloak.accessDenied(request, response, next)
     }
-  };
-};
+  }
+}
