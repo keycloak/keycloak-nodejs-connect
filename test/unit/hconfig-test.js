@@ -47,6 +47,21 @@ test('Config#configure with env variable reference set with fallback', (t) => {
   t.end();
 });
 
+test('Config#configure with iss variable set iss', (t) => {
+  let iss = 'http://10.0.2.2:8080/auth/realms/realm';
+  let cfg = new Config({ 'iss': iss });
+
+  t.equal(cfg.iss, iss);
+  t.end();
+});
+
+test('Config#configure without iss variable fallback to realmUrl', (t) => {
+  let cfg = new Config({ 'authServerUrl': 'http://localhost:8080/auth', 'realm': '${env.USER}' });
+
+  t.equal(cfg.iss, cfg.realmUrl);
+  t.end();
+});
+
 test('Config#configure with realm-public-key', (t) => {
   t.plan(2);
   RSA.generateKeypair(2048, 65537, { public: true, pem: true }, (err, keyz) => {
