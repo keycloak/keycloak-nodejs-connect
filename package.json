@@ -58,7 +58,7 @@
     "node-fetch": "^3.2.3",
     "nyc": "^15.0.0",
     "rsa-compat": "^2.0.8",
-    "selenium-webdriver": "^3.6.0",
+    "selenium-webdriver": "^4.2.0",
     "server-destroy": "^1.0.1",
     "standard": "^17.0.0",
     "tap-xunit": "^2.4.1",
