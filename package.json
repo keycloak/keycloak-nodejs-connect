@@ -9,8 +9,7 @@
     "test": "./run-tests.sh",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
     "coverage": "nyc cover tape test/unit/*.js tape test/*.js",
-    "server:import-test-realm": "./scripts/start-server.mjs -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=test/fixtures/auth-utils/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
-    "server:start": "./scripts/start-server.mjs -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.profile.feature.account2=disabled"
+    "server:start": "./scripts/start-server.mjs -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.profile.feature.account2=disabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=test/fixtures/auth-utils/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
   },
   "keywords": [
     "sso",

@@ -46,9 +46,6 @@ jobs:
           distribution: temurin
           java-version: 11
 
-      - name: Import test realm
-        run: npm run server:import-test-realm
-
       - name: Start Keycloak server
         run: npm run server:start &
 
