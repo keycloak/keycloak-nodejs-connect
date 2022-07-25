@@ -6,7 +6,6 @@ test software and we have chosen ours, so please appreciate that.
 The main tests are provided in `test` folder. Before executing them, first make sure that the Keycloak server was started to run all the integration tests:
 
 ```bash
-npm run server:import-test-realm
 npm run server:start
 ```
 
