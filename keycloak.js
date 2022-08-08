@@ -27,7 +27,6 @@ const PostAuth = require('./middleware/post-auth')
 const GrantAttacher = require('./middleware/grant-attacher')
 const Protect = require('./middleware/protect')
 const Enforcer = require('./middleware/enforcer')
-const CheckSso = require('./middleware/check-sso')
 
 /**
  * Instantiate a Keycloak.
@@ -239,18 +238,6 @@ Keycloak.prototype.protect = function (spec) {
  */
 Keycloak.prototype.enforcer = function (permissions, config) {
   return new Enforcer(this, config).enforce(permissions)
-}
-
-/**
- * Apply check SSO middleware to an application or specific URL.
- *
- * Check SSO will only authenticate the client if the user is already logged-in,
- * if the user is not logged-in the browser will be redirected back
- * to the originally-requested URL and remain unauthenticated.
- *
- */
-Keycloak.prototype.checkSso = function () {
-  return CheckSso(this)
 }
 
 /**

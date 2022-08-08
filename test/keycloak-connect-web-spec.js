@@ -192,64 +192,6 @@ test('Public client should be forbidden for invalid public key', t => {
   })
 })
 
-test('Confidential client should be forbidden for invalid public key', t => {
-  t.plan(3)
-  const app = new NodeApp()
-  const client = admin.createClient(app.confidential('app3'))
-
-  return client.then((installation) => {
-    installation['realm-public-key'] = TestVector.wrongRealmPublicKey
-    app.build(installation)
-    return page.get(app.port).then(() =>
-      page.output().getText().then(text => {
-        t.equal(text, 'Init Success (Not Authenticated)', 'User should not be authenticated')
-        return page.logInButton().click().then(() =>
-          page.body().getText().then(text => {
-            t.equal(text, 'Access denied', 'Message should be access denied')
-          })
-            .then(() => page.logout(app.port))
-            .then(() => page.logoutConfirm())
-            .then(() => page.get(app.port, '/check-sso'))
-            .then(() => page.output().getText().then(text => t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated')))
-        )
-      })
-    ).then(() => {
-      app.destroy()
-    }).catch(err => {
-      app.destroy()
-      throw err
-    })
-  })
-})
-
-test('Should test check SSO after logging in and logging out', t => {
-  t.plan(3)
-
-  // make sure user is logged out
-  page.get(app.port, '/check-sso').then(() =>
-    page.output().getText().then(text => {
-      t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated')
-
-      page.logInButton().click().then(() =>
-        page.login('alice', 'password').then(() =>
-          page.get(app.port, '/check-sso').then(() =>
-            page.output().getText().then(text => {
-              t.equal(text, 'Check SSO Success (Authenticated)', 'User should be authenticated')
-              return page.logout(app.port)
-            }).then(() => {
-              page.get(app.port, '/check-sso').then(() =>
-                page.output().getText().then(text => {
-                  t.equal(text, 'Check SSO Success (Not Authenticated)', 'User should not be authenticated')
-                })
-              )
-            })
-          )
-        )
-      )
-    })
-  )
-})
-
 test('Public client should work with slash in the end of auth-server-url', t => {
   t.plan(3)
   const app = new NodeApp()
