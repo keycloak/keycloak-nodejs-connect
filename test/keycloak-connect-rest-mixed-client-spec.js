@@ -332,7 +332,7 @@ test('Should test admin push_not_before endpoint with valid payload', t => {
   })
 })
 
-test('Should logout with redirect url', t => {
+test.skip('Should logout with redirect url', t => {
   t.plan(1)
   const serviceEndpoint = `${app.address}/service/grant`
   const logoutEndpoint = `${app.address}/logout?redirect_url=http%3A%2F%2Flocalhost%3A${app.port}%2Fbye`
