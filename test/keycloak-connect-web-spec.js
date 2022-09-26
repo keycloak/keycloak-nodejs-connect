@@ -54,7 +54,7 @@ test('Should be able to access public page', t => {
     )
 })
 
-test('Should login with admin credentials', t => {
+test.skip('Should login with admin credentials', t => {
   t.plan(3)
 
   return page.get(app.port)
@@ -79,7 +79,7 @@ test('Should login with admin credentials', t => {
     )
 })
 
-test('Login should not change tokens when they are valid', t => {
+test.skip('Login should not change tokens when they are valid', t => {
   t.plan(3)
 
   return page.get(app.port).then(() =>
@@ -104,7 +104,7 @@ test('Login should not change tokens when they are valid', t => {
   )
 })
 
-test('SSO should work for nodejs app and testRealmAccountPage', t => {
+test.skip('SSO should work for nodejs app and testRealmAccountPage', t => {
   return page.get(app.port).then(() =>
     page.logInButton().click().then(() =>
       page.login('test-admin', 'password').then(() =>
@@ -132,7 +132,7 @@ test('SSO should work for nodejs app and testRealmAccountPage', t => {
   )
 })
 
-test('Public client should be redirected to GitHub when idpHint is provided', t => {
+test.skip('Public client should be redirected to GitHub when idpHint is provided', t => {
   t.plan(1)
   const app = new NodeApp()
   const client = admin.createClient(app.publicClient('appIdP'))
@@ -153,7 +153,7 @@ test('Public client should be redirected to GitHub when idpHint is provided', t 
   })
 })
 
-test('User should be forbidden to access restricted page', t => {
+test.skip('User should be forbidden to access restricted page', t => {
   return page.get(app.port, '/restricted').then(() =>
     page.login('alice', 'password').then(() =>
       page.body().getText().then(text => {
@@ -164,7 +164,7 @@ test('User should be forbidden to access restricted page', t => {
   )
 })
 
-test('Public client should be forbidden for invalid public key', t => {
+test.skip('Public client should be forbidden for invalid public key', t => {
   t.plan(2)
   const app = new NodeApp()
   const client = admin.createClient(app.publicClient('app2'))
@@ -192,7 +192,7 @@ test('Public client should be forbidden for invalid public key', t => {
   })
 })
 
-test('Confidential client should be forbidden for invalid public key', t => {
+test.skip('Confidential client should be forbidden for invalid public key', t => {
   t.plan(3)
   const app = new NodeApp()
   const client = admin.createClient(app.confidential('app3'))
@@ -222,7 +222,7 @@ test('Confidential client should be forbidden for invalid public key', t => {
   })
 })
 
-test('Should test check SSO after logging in and logging out', t => {
+test.skip('Should test check SSO after logging in and logging out', t => {
   t.plan(3)
 
   // make sure user is logged out
@@ -250,7 +250,7 @@ test('Should test check SSO after logging in and logging out', t => {
   )
 })
 
-test('Public client should work with slash in the end of auth-server-url', t => {
+test.skip('Public client should work with slash in the end of auth-server-url', t => {
   t.plan(3)
   const app = new NodeApp()
   const client = admin.createClient(app.publicClient('authServerSlashes'))
@@ -286,7 +286,7 @@ test('Public client should work with slash in the end of auth-server-url', t => 
   })
 })
 
-test('App should be able to use cookie-store', t => {
+test.skip('App should be able to use cookie-store', t => {
   t.plan(1)
   const app = new NodeApp()
   const client = admin.createClient(app.publicClient('appCookies'))
