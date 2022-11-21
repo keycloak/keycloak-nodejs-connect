@@ -2,6 +2,9 @@
 
 ![Build Status](https://github.com/keycloak/keycloak-nodejs-connect/workflows/CI/badge.svg)
 
+> **Warning**
+> This package is deprecated and will be removed in the future. We will shortly provide more details on removal date, and recommended alternatives.
+
 Keycloak is an Open Source Identity and Access Management solution for modern Applications and Services.
 
 This repository contains the source code for the Keycloak Node.js adapter. This module makes it simple to implement a Node.js Connect-friendly
