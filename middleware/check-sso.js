@@ -61,7 +61,8 @@ module.exports = function (keycloak) {
       delete urlParts.query.auth_callback
       delete urlParts.query.state
 
-      const cleanUrl = URL.format(urlParts)
+      // Collapse leading slashes to a single slash to prevent open redirects
+      const cleanUrl = URL.format(urlParts).replace(/^\/+/, '/')
 
       //  Check SSO process is completed
       request.session.auth_is_check_sso_complete = true
