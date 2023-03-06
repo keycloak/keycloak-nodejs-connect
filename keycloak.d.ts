@@ -19,11 +19,49 @@ declare namespace KeycloakConnect {
 
   interface KeycloakConfig {
     'confidential-port': string|number
-    'auth-server-url': string
-    'resource': string
-    'ssl-required': string
+    /**
+     * any of these is for keycloak server endpoint
+     */
+    'auth-server-url'?: string
+    'server-url'?: string
+    serverUrl?: string
+    authServerUrl?: string
+
+    /**
+     * any of these is for client id
+     */
+    'client-id'?: string
+    clientId?: string;
+    'resource'?: string
+    
+    /**
+     * use these in case of confidential client
+     */
+    credentials?: {
+      secret: string
+    },
+    secret?: string
+    
+    /**
+     * set to true in case client is public
+     */
+    'public-client'?: boolean
+    public?: boolean
+    
+    /**
+     * set to true in case client is bearer only
+     */
     'bearer-only'?: boolean
+    bearerOnly?: boolean
+
+    'min-time-between-jwks-requests'?: number
+    minTimeBetweenJwksRequests?: number
+
+    'ssl-required': string
     realm: string
+
+    'realm-public-key'?: string
+    realmPublicKey?: string
   }
 
   interface KeycloakOptions {
