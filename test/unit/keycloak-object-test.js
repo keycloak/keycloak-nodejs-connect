@@ -67,6 +67,8 @@ test('Should verify if login URL has the default scope value.', t => {
 
 test('Should verify if logout URL has the configured realm.', t => {
   t.equal(kc.logoutUrl().indexOf(kc.config.realm) > 0, true)
+  t.equal(kc.logoutUrl('redirectURI').indexOf('redirectURI') >0, true)
+  t.equal(kc.logoutUrl('redirectURI', 'hint').indexOf('hint') >0, true)
   t.end()
 })
 
