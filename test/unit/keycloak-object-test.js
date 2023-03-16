@@ -70,6 +70,24 @@ test('Should verify if logout URL has the configured realm.', t => {
   t.end()
 })
 
+test('Should verify if logout URL includes passed redirect url if provided.', t => {
+  const redirectUrl = 'https://secure.foo.bar'
+  const redirectRgx = new RegExp(`post_logout_redirect_uri=${encodeURIComponent('https://secure.foo.bar')}`)
+
+  t.equal(kc.logoutUrl(redirectUrl).match(redirectRgx) !== null, true)
+  t.end()
+})
+
+test('Should verify if logout URL includes passed redirect url + id token hint if provided.', t => {
+  const idToken = 'abc123'
+  const redirectUrl = 'https://secure.foo.bar'
+  const redirectRgx = new RegExp(`post_logout_redirect_uri=${encodeURIComponent('https://secure.foo.bar')}`)
+
+  t.equal(kc.logoutUrl(redirectUrl, idToken).match(redirectRgx) !== null, true)
+  t.equal(kc.logoutUrl(redirectUrl, idToken).indexOf(idToken) > 0, true)
+  t.end()
+})
+
 test('Should generate a correct UUID.', t => {
   const rgx = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
   t.equal(rgx.test(UUID()), true)
