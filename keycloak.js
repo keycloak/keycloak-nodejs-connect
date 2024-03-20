@@ -235,7 +235,7 @@ Keycloak.prototype.protect = function (spec) {
           // access granted
         });
  *
- * @param {String[]} expectedPermissions A single string representing a permission or an arrat of strings representing the permissions. For instance, 'item:read' or ['item:read', 'item:write'].
+ * @param {String[]} expectedPermissions A single string representing a permission or an array of strings representing the permissions. For instance, 'item:read' or ['item:read', 'item:write'].
  */
 Keycloak.prototype.enforcer = function (permissions, config) {
   return new Enforcer(this, config).enforce(permissions)
