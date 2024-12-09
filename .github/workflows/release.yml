@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version
+        required: true
+
+jobs:
+
+  release:
+    name: Release
+    uses: ./.github/workflows/x-release.yml
+    with:
+      gh-org: keycloak
+      branch: ${{ github.ref_name }}
+      tag: ${{ inputs.version }}
+      nightly: false
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
