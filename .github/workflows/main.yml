@@ -5,13 +5,13 @@ on:
   pull_request:
     branches: [main]
 env:
-  DEFAULT_NODE_VERSION: "16"
+  DEFAULT_NODE_VERSION: "18"
 jobs:
   setup:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ["14", "16"]
+        node-version: ["14", "18"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 11
+          java-version: 21
 
       - name: Start Keycloak server
         run: npm run server:start &
