@@ -649,7 +649,6 @@ test('GrantManager#validateToken returns undefined for an invalid token', (t) =>
     notBeforeToken
   ]
 
-  /* jshint loopfunc:true */
   for (const token of tokens) {
     manager.validateToken(token, 'Bearer')
       .catch((err) => {
