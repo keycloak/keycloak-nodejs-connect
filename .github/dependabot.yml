@@ -1,18 +1,23 @@
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /
-    open-pull-requests-limit: 999
-    rebase-strategy: disabled
-    schedule:
-      interval: weekly
-    labels:
-      - area/dependencies
   - package-ecosystem: github-actions
     directory: /
     open-pull-requests-limit: 999
     rebase-strategy: disabled
     schedule:
-      interval: weekly
+      interval: daily
+      time: "00:00"
+      timezone: Etc/GMT
+    labels:
+      - area/dependencies
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+      time: "00:00"
+      timezone: Etc/GMT
+    open-pull-requests-limit: 999
+    rebase-strategy: disabled
+    versioning-strategy: increase
     labels:
       - area/dependencies
