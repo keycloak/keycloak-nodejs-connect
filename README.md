@@ -10,6 +10,10 @@ Keycloak is an Open Source Identity and Access Management solution for modern Ap
 This repository contains the source code for the Keycloak Node.js adapter. This module makes it simple to implement a Node.js Connect-friendly
 application that uses Keycloak for its authentication and authorization needs. 
 
+## Supported Node.js versions
+
+The Keycloak Node.js adapter strives to be compatible with the versions that are [actively supported](https://github.com/nodejs/release#release-schedule) by the Node.js project. Support for versions of Node.js that are [considered end-of-life](https://github.com/nodejs/release?tab=readme-ov-file#end-of-life-releases) can be dropped in future releases, and will not be considered a breaking change that requires a major version bump.
+
 ## Help and Documentation
 
 * [Documentation](https://www.keycloak.org/documentation.html)
