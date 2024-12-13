@@ -55,7 +55,7 @@
     "keycloak-request-token": "^0.1.0",
     "nock": "^13.2.2",
     "node-fetch": "^3.2.3",
-    "nyc": "^15.0.0",
+    "nyc": "^17.1.0",
     "rsa-compat": "^2.0.8",
     "selenium-webdriver": "^3.6.0",
     "server-destroy": "^1.0.1",
