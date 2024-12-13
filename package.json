@@ -75,7 +75,7 @@
     ]
   },
   "engines": {
-    "node": ">=14"
+    "node": "^18 || ^20 || ^22 || >=23"
   },
   "repository": {
     "type": "git",

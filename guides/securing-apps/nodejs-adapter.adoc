@@ -18,6 +18,10 @@ To use the Node.js adapter, first you must create a client for your application 
 
 Once the client is created, click *Action* at the top right and choose *Download adapter config*. For *Format, choose *Keycloak OIDC JSON* and click *Download*. The downloaded `keycloak.json` file is at the root folder of your project.
 
+== Supported Node.js versions
+
+The Node.js adapter strives to be compatible with the versions that are link:https://github.com/nodejs/release#release-schedule[actively supported] by the Node.js project. Support for versions of Node.js that are link:https://github.com/nodejs/release?tab=readme-ov-file#end-of-life-releases[considered end-of-life] can be dropped in future releases, and will not be considered a breaking change that requires a major version bump.
+
 == Installation
 
 Assuming you have already installed https://nodejs.org[Node.js], create a folder for your application:
