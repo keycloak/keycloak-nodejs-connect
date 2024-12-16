@@ -1,0 +1,107 @@
+name: X Release
+
+on:
+  workflow_call:
+    inputs:
+      gh-org:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+      nightly:
+        required: true
+        type: boolean
+    secrets:
+      NPM_TOKEN:
+        required: false
+
+concurrency: rel-${{ github.ref }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  release-impl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          check-latest: true
+          registry-url: https://registry.npmjs.org
+
+      - name: Create version commit
+        if: ${{ !inputs.nightly }}
+        run: |          
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          npm version ${{ inputs.tag }} -m "Set version to ${{ inputs.tag }}"          
+
+      - name: Tag commit
+        run: git tag ${{ inputs.tag }}
+
+      - name: Push changes
+        run: git push --force origin refs/tags/${{ inputs.tag }}
+
+      - name: Check if release exists
+        id: release-exists
+        run: >
+          echo "release-exists=$(
+            if ( gh release view ${{ inputs.tag }} --repo ${{ inputs.gh-org }}/keycloak-nodejs-connect &> /dev/null ); then
+              echo 'true'
+            else
+              echo 'false'
+            fi
+          )" >> "$GITHUB_OUTPUT"
+
+      - name: Create a github release
+        if: steps.release-exists.outputs.release-exists == 'false'
+        run: gh release create ${{ inputs.tag }} --repo ${{ inputs.gh-org }}/keycloak-nodejs-connect --title ${{ inputs.tag }} --draft ${{ inputs.nightly && '--prerelease' || '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create package tarball
+        run: |
+          npm pack
+          mv -T *.tgz keycloak-nodejs-connect.tgz
+
+      - name: Upload to GitHub Releases
+        run: |
+          for i in `gh release view ${{ inputs.tag }} --json assets --jq '.assets[].name'`; do 
+            test -f $i || gh release delete-asset ${{ inputs.tag }} $i -y
+          done
+          gh release upload ${{ inputs.tag }} keycloak-nodejs-connect.tgz --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish release
+        run: gh release edit ${{ inputs.tag }} --repo ${{ inputs.gh-org }}/keycloak-nodejs-connect --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show Output Github
+        run: |
+          echo "https://github.com/${{ inputs.gh-org }}/keycloak-nodejs-connect/tree/${{ inputs.tag }}  " >> $GITHUB_STEP_SUMMARY
+          echo "https://github.com/${{ inputs.gh-org }}/keycloak-nodejs-connect/releases/tag/${{ inputs.tag }}  " >> $GITHUB_STEP_SUMMARY
+
+      - name: Publish to NPM
+        if: ${{ !inputs.nightly }}
+        run: npm publish keycloak-nodejs-connect.tgz --access public --ignore-scripts ${{ inputs.gh-org != 'keycloak' && ' --dry-run' || '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Show Output NPM
+        if: ${{ !inputs.nightly && inputs.gh-org == 'keycloak' }}
+        run: echo "https://www.npmjs.com/package/keycloak-connect/v/${{ inputs.tag }}  " >> $GITHUB_STEP_SUMMARY
