@@ -1,6 +1,6 @@
 {
   "name": "keycloak-connect",
-  "version": "17.0.0-dev",
+  "version": "999.0.0-SNAPSHOT",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
   "main": "keycloak.js",
@@ -9,7 +9,8 @@
     "test": "./run-tests.sh",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
     "coverage": "nyc cover tape test/unit/*.js tape test/*.js",
-    "server:start": "./scripts/start-server.mjs -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=test/fixtures/auth-utils/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+    "server:start": "./scripts/start-server.mjs -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=test/fixtures/auth-utils/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+    "guides": "node guides/guides.mjs $npm_package_version"
   },
   "keywords": [
     "sso",
@@ -51,6 +52,7 @@
     "hogan-express": "^0.5.2",
     "ink-docstrap": "^1.1.4",
     "jsdoc": "^4.0.4",
+    "jszip": "^3.10.1",
     "keycloak-request-token": "^0.1.0",
     "nock": "^13.2.2",
     "node-fetch": "^3.2.3",
