@@ -1,0 +1,1 @@
+<#macro securingapps id anchor="">link:{links_securing-apps_${id}_url}<#if anchor != "">#${anchor}</#if>[{links_securing-apps_${id}_name}]</#macro>
