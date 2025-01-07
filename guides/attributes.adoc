@@ -1,0 +1,9 @@
+:project_name: Keycloak
+:project_doc_base_url: https://www.keycloak.org/docs/latest
+:authorizationguide_name: Authorization Services Guide
+:authorizationguide_name_short: Authorization Services
+:authorizationguide_link: {project_doc_base_url}/authorization_services/
+:project_product: false
+:project_community: true
+:section: guide
+:quickstartRepo_link: https://github.com/keycloak/keycloak-quickstarts
