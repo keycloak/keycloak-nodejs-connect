@@ -77,12 +77,17 @@ jobs:
           npm pack
           mv -T *.tgz keycloak-nodejs-connect.tgz
 
+      - name: Create guides zip
+        run: |
+          npm install
+          npm run guides
+
       - name: Upload to GitHub Releases
         run: |
           for i in `gh release view ${{ inputs.tag }} --json assets --jq '.assets[].name'`; do 
             test -f $i || gh release delete-asset ${{ inputs.tag }} $i -y
           done
-          gh release upload ${{ inputs.tag }} keycloak-nodejs-connect.tgz --clobber
+          gh release upload ${{ inputs.tag }} keycloak-nodejs-connect.tgz "guides/target/keycloak-nodejs-connect-guides.zip" --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
