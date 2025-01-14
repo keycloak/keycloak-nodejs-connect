@@ -133,7 +133,7 @@ const main = async (version) => {
   fs.cpSync(path.join(dir, 'images'), path.join(outputDir, 'images'), { recursive: true })
   fs.cpSync(path.join(dir, 'attributes.adoc'), path.join(outputDir, 'attributes.adoc'))
 
-  const zipFile = path.join(targetDir, 'keycloak-nodejs-connect-guides-' + version + '.zip')
+  const zipFile = path.join(targetDir, 'keycloak-nodejs-connect-guides.zip')
   generateZip(new JSZip(), zipFile, outputDir, targetDir)
 }
 
