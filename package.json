@@ -64,7 +64,7 @@
     "tap-xunit": "^2.4.1",
     "tape": "^5.4.1",
     "tape-catch": "^1.0.6",
-    "tar-fs": "^3.0.7"
+    "tar-fs": "^3.0.8"
   },
   "optionalDependencies": {
     "chromedriver": "latest"
