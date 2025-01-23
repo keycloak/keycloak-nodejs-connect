@@ -55,20 +55,14 @@ jobs:
       - name: Push changes
         run: git push --force origin refs/tags/${{ inputs.tag }}
 
-      - name: Check if release exists
-        id: release-exists
-        run: >
-          echo "release-exists=$(
-            if ( gh release view ${{ inputs.tag }} --repo ${{ inputs.gh-org }}/keycloak-nodejs-connect &> /dev/null ); then
-              echo 'true'
-            else
-              echo 'false'
-            fi
-          )" >> "$GITHUB_OUTPUT"
-
-      - name: Create a github release
-        if: steps.release-exists.outputs.release-exists == 'false'
-        run: gh release create ${{ inputs.tag }} --repo ${{ inputs.gh-org }}/keycloak-nodejs-connect --title ${{ inputs.tag }} --draft ${{ inputs.nightly && '--prerelease' || '' }}
+      - name: Create a github release if does not exists
+        id: create-release-if-not-exists
+        run: |
+          if ( gh release view ${{ inputs.tag }} --repo ${{ inputs.gh-org }}/keycloak-nodejs-connect &> /dev/null ); then
+            echo "Release ${{ inputs.tag }} already exists"
+          else
+            gh release create ${{ inputs.tag }} --repo ${{ inputs.gh-org }}/keycloak-nodejs-connect --title ${{ inputs.tag }} --draft ${{ inputs.nightly && '--prerelease' || '' }}
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
