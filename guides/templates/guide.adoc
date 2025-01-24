@@ -7,6 +7,7 @@
 :guide-priority: ${priority}
 :guide-tile-visible: ${tileVisible}
 :version: ${version}
+:version_nodejs_adapter: ${version}
 
 include::../attributes.adoc[]
 

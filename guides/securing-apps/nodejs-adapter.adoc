@@ -31,7 +31,7 @@ ifeval::[{project_community}==true]
 [source,json,subs="attributes"]
 ----
     "dependencies": {
-        "keycloak-connect": "{project_versionNpm}"
+        "keycloak-connect": "{version_nodejs_adapter}"
     }
 ----
 
@@ -42,7 +42,7 @@ ifeval::[{project_product}==true]
 [source,json,subs="attributes"]
 ----
     "dependencies": {
-        "keycloak-connect": "file:keycloak-connect-{project_versionNpm}.tgz"
+        "keycloak-connect": "file:keycloak-connect-{version_nodejs_adapter}.tgz"
     }
 ----
 
