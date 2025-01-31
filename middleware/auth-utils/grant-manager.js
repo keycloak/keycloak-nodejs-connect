@@ -297,6 +297,7 @@ GrantManager.prototype.userInfo = function userInfo (token, callback) {
   const promise = new Promise((resolve, reject) => {
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode >= 300) {
+        response.destroy()
         return reject(new Error('Error fetching account'))
       }
       let json = ''
@@ -520,6 +521,7 @@ const fetch = (manager, handler, options, params) => {
 
     const req = getProtocol(options).request(options, (response) => {
       if (response.statusCode < 200 || response.statusCode > 299) {
+        response.destroy()
         return reject(new Error(response.statusCode + ':' + http.STATUS_CODES[response.statusCode]))
       }
       let json = ''
