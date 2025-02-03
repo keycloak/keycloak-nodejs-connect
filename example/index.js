@@ -13,12 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+import express from 'express'
+import session from 'express-session'
+import hogan from 'hogan-express'
+import Keycloak from 'keycloak-connect'
+import path from 'node:path'
+import url from 'node:url'
 
-const Keycloak = require('keycloak-connect')
-const hogan = require('hogan-express')
-const express = require('express')
-const session = require('express-session')
-
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const app = express()
 
 const server = app.listen(3000, function () {
@@ -29,7 +31,7 @@ const server = app.listen(3000, function () {
 
 // Register '.mustache' extension with The Mustache Express
 app.set('view engine', 'html')
-app.set('views', require('path').join(__dirname, '/view'))
+app.set('views', path.join(__dirname, '/view'))
 app.engine('html', hogan)
 
 // A normal un-protected public URL.

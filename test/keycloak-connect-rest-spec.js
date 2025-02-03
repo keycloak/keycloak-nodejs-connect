@@ -13,23 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-const admin = require('./utils/realm')
-const TestVector = require('./utils/helper').TestVector
-const NodeApp = require('./fixtures/node-console/index').NodeApp
-
-const test = require('blue-tape')
-const axios = require('axios')
-const getToken = require('./utils/token')
+import axios from 'axios'
+import test from 'blue-tape'
+import { NodeApp } from './fixtures/node-console/index.js'
+import { TestVector } from './utils/helper.js'
+import { createClient, createRealm, deleteRealm } from './utils/realm.js'
+import getToken from './utils/token.js'
 
 const realmName = 'service-node-realm'
-const realmManager = admin.createRealm(realmName)
+const realmManager = createRealm(realmName)
 const app = new NodeApp()
 
 test('setup', t => {
   return realmManager.then(() => {
-    return admin.createClient(app.bearerOnly(), realmName)
+    return createClient(app.bearerOnly(), realmName)
       .then((installation) => {
         return app.build(installation)
       })
@@ -105,7 +102,7 @@ test('Access should be denied for bearer client with invalid public key.', t => 
   t.plan(1)
 
   const someApp = new NodeApp()
-  const client = admin.createClient(app.bearerOnly('wrongkey-app'), realmName)
+  const client = createClient(app.bearerOnly('wrongkey-app'), realmName)
 
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey
@@ -135,7 +132,7 @@ test('Should test protected route after push revocation.', t => {
   t.plan(2)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.bearerOnly('revokeapp'), realmName)
+  const client = createClient(app.bearerOnly('revokeapp'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -180,7 +177,7 @@ test('Should invoke admin logout.', t => {
   t.plan(2)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.bearerOnly('anotherapp'), realmName)
+  const client = createClient(app.bearerOnly('anotherapp'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -224,6 +221,6 @@ test('Should invoke admin logout.', t => {
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy()
-    admin.destroy(realmName)
+    deleteRealm(realmName)
   })
 })

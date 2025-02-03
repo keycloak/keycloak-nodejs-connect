@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict'
 
 /**
  * Construct a new grant.
@@ -30,7 +29,7 @@
  *
  * @constructor
  */
-function Grant (grant) {
+export default function Grant (grant) {
   this.update(grant)
 }
 
@@ -80,5 +79,3 @@ Grant.prototype.isExpired = function isExpired () {
   }
   return this.access_token.isExpired()
 }
-
-module.exports = Grant

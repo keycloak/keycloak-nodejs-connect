@@ -13,18 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-const admin = require('./utils/realm')
-const NodeApp = require('./fixtures/node-console/index').NodeApp
-const TestVector = require('./utils/helper').TestVector
-
-const test = require('blue-tape')
-const axios = require('axios')
-const getToken = require('./utils/token')
+import axios from 'axios'
+import test from 'blue-tape'
+import { NodeApp } from './fixtures/node-console/index.js'
+import { TestVector } from './utils/helper.js'
+import { createClient, createRealm, deleteRealm } from './utils/realm.js'
+import getToken from './utils/token.js'
 
 const realmName = 'mixed-mode-realm'
-const realmManager = admin.createRealm(realmName)
+const realmManager = createRealm(realmName)
 const app = new NodeApp()
 
 const auth = {
@@ -40,7 +37,7 @@ const assertAlternativeMessages = (assert, message, ...messages) => {
 
 test('setup', t => {
   return realmManager.then(() => {
-    return admin.createClient(app.confidential(), realmName)
+    return createClient(app.confidential(), realmName)
       .then((installation) => {
         return app.build(installation)
       })
@@ -161,7 +158,7 @@ test('Should test admin logout endpoint with incomplete payload', t => {
   t.plan(2)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.confidential('adminapp'), realmName)
+  const client = createClient(app.confidential('adminapp'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -190,7 +187,7 @@ test('Should test admin logout endpoint with payload signed by a different key p
   t.plan(2)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.confidential('adminapp2'), realmName)
+  const client = createClient(app.confidential('adminapp2'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -214,7 +211,7 @@ test('Should test admin logout endpoint with valid payload', t => {
   t.plan(1)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.confidential('adminapp3'), realmName)
+  const client = createClient(app.confidential('adminapp3'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -237,7 +234,7 @@ test('Should test admin push_not_before endpoint with incomplete payload', t => 
   t.plan(2)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.confidential('adminapp5'), realmName)
+  const client = createClient(app.confidential('adminapp5'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -266,7 +263,7 @@ test('Should test admin push_not_before endpoint with payload signed by a differ
   t.plan(2)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.confidential('adminapp6'), realmName)
+  const client = createClient(app.confidential('adminapp6'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -289,7 +286,7 @@ test('Should test admin push_not_before endpoint with payload signed by a differ
 test('Should verify during authentication if the token contains the client name as audience.', t => {
   t.plan(3)
   const someapp = new NodeApp()
-  const client = admin.createClient(someapp.confidential('audience-app'), realmName)
+  const client = createClient(someapp.confidential('audience-app'), realmName)
 
   return client.then((installation) => {
     installation.verifyTokenAudience = true
@@ -313,7 +310,7 @@ test('Should test admin push_not_before endpoint with valid payload', t => {
   t.plan(1)
 
   const app = new NodeApp()
-  const client = admin.createClient(app.confidential('adminapp7'), realmName)
+  const client = createClient(app.confidential('adminapp7'), realmName)
 
   return client.then((installation) => {
     app.build(installation)
@@ -349,6 +346,6 @@ test.skip('Should logout with redirect url', t => {
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy()
-    admin.destroy(realmName)
+    deleteRealm(realmName)
   })
 })

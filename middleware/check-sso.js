@@ -13,10 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-const UUID = require('./../uuid')
-const URL = require('url')
+import URL from 'node:url'
+import UUID from './../uuid.js'
 
 function forceCheckSSO (keycloak, request, response) {
   const host = request.hostname
@@ -38,7 +36,7 @@ function forceCheckSSO (keycloak, request, response) {
   response.redirect(checkSsoUrl)
 }
 
-module.exports = function (keycloak) {
+export default function checkSsoMiddleware (keycloak) {
   return function checkSso (request, response, next) {
     if (request.kauth && request.kauth.grant) {
       return next()

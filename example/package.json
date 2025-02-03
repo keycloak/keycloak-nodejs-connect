@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Example page that demonstrates available keycloak functionality",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },

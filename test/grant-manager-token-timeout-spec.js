@@ -1,8 +1,7 @@
-'use strict'
+import test from 'tape'
+import Config from '../middleware/auth-utils/config.js'
+import GrantManager from '../middleware/auth-utils/grant-manager.js'
 
-const GrantManager = require('../middleware/auth-utils/grant-manager')
-const Config = require('../middleware/auth-utils/config')
-const test = require('tape')
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms))
 const getManager = (fixture) => new GrantManager(new Config(fixture))
 

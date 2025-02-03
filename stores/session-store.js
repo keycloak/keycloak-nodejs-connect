@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-function SessionStore (store) {
+export default function SessionStore (store) {
   this.store = store
 }
 
@@ -52,5 +50,3 @@ SessionStore.prototype.wrap = (grant) => {
     grant.unstore = unstore
   }
 }
-
-module.exports = SessionStore

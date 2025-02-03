@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict'
-
-const URL = require('url')
-const http = require('http')
-const https = require('https')
-const crypto = require('crypto')
-const querystring = require('querystring')
-const Grant = require('./grant')
-const Token = require('./token')
-const Rotation = require('./rotation')
+import URL from 'node:url'
+import http from 'node:http'
+import https from 'node:https'
+import crypto from 'node:crypto'
+import querystring from 'node:querystring'
+import Grant from './grant.js'
+import Token from './token.js'
+import Rotation from './rotation.js'
 
 /**
  * Construct a grant manager.
@@ -31,7 +29,7 @@ const Rotation = require('./rotation')
  *
  * @constructor
  */
-function GrantManager (config) {
+export default function GrantManager (config) {
   this.realmUrl = config.realmUrl
   this.clientId = config.clientId
   this.secret = config.secret
@@ -536,5 +534,3 @@ const fetch = (manager, handler, options, params) => {
     req.end()
   })
 }
-
-module.exports = GrantManager

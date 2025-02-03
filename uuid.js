@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-module.exports = function () {
+export default function uuid () {
   const s = []
   const hexDigits = '0123456789abcdef'
   for (let i = 0; i < 36; i++) {

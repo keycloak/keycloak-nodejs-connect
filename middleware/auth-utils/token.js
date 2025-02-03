@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict'
 
 /**
  * Construct a token.
@@ -27,7 +26,7 @@
  * @param {String} token The JSON Web Token formatted token string.
  * @param {String} clientId Optional clientId if this is an `access_token`.
  */
-function Token (token, clientId) {
+export default function Token (token, clientId) {
   this.token = token
   this.clientId = clientId
 
@@ -185,5 +184,3 @@ Token.prototype.hasPermission = function hasPermission (resource, scope) {
 
   return false
 }
-
-module.exports = Token

@@ -14,20 +14,19 @@
  * the License.
  */
 
-const BearerStore = require('./stores/bearer-store')
-const CookieStore = require('./stores/cookie-store')
-const SessionStore = require('./stores/session-store')
-
-const Config = require('./middleware/auth-utils/config')
-const GrantManager = require('./middleware/auth-utils/grant-manager')
-const Setup = require('./middleware/setup')
-const Admin = require('./middleware/admin')
-const Logout = require('./middleware/logout')
-const PostAuth = require('./middleware/post-auth')
-const GrantAttacher = require('./middleware/grant-attacher')
-const Protect = require('./middleware/protect')
-const Enforcer = require('./middleware/enforcer')
-const CheckSso = require('./middleware/check-sso')
+import Admin from './middleware/admin.js'
+import Config from './middleware/auth-utils/config.js'
+import GrantManager from './middleware/auth-utils/grant-manager.js'
+import CheckSso from './middleware/check-sso.js'
+import Enforcer from './middleware/enforcer.js'
+import GrantAttacher from './middleware/grant-attacher.js'
+import Logout from './middleware/logout.js'
+import PostAuth from './middleware/post-auth.js'
+import Protect from './middleware/protect.js'
+import Setup from './middleware/setup.js'
+import BearerStore from './stores/bearer-store.js'
+import CookieStore from './stores/cookie-store.js'
+import SessionStore from './stores/session-store.js'
 
 /**
  * Instantiate a Keycloak.
@@ -58,7 +57,7 @@ const CheckSso = require('./middleware/check-sso')
  * @return     {Keycloak}  A constructed Keycloak object.
  *
  */
-function Keycloak (config, keycloakConfig) {
+export default function Keycloak (config, keycloakConfig) {
   // If keycloakConfig is null, Config() will search for `keycloak.json`.
   this.config = new Config(keycloakConfig)
 
@@ -426,5 +425,3 @@ Keycloak.prototype.redirectToLogin = function (request) {
 Keycloak.prototype.getConfig = function () {
   return this.config
 }
-
-module.exports = Keycloak

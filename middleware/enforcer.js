@@ -13,8 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
 function handlePermissions (permissions, callback) {
   for (let i = 0; i < permissions.length; i++) {
     const expected = permissions[i].split(':')
@@ -42,7 +40,7 @@ function handlePermissions (permissions, callback) {
  *
  * @constructor
  */
-function Enforcer (keycloak, config) {
+export default function Enforcer (keycloak, config) {
   this.keycloak = keycloak
   this.config = config || {}
 
@@ -155,5 +153,3 @@ Enforcer.prototype.enforce = function enforce (expectedPermissions) {
     }
   }
 }
-
-module.exports = Enforcer
