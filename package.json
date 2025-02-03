@@ -39,7 +39,7 @@
     "jwk-to-pem": "^2.0.0"
   },
   "devDependencies": {
-    "@keycloak/keycloak-admin-client": "^18.0.0",
+    "@keycloak/keycloak-admin-client": "^26.1.0",
     "@octokit/rest": "^19.0.3",
     "axios": "^0.29.0",
     "blue-tape": "^1.0.0",
