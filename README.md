@@ -1,6 +1,6 @@
 # Keycloak Node.js Adapter
 
-![Build Status](https://github.com/keycloak/keycloak-nodejs-connect/workflows/CI/badge.svg)
+[![CI](https://github.com/keycloak/keycloak-nodejs-connect/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/keycloak/keycloak-nodejs-connect/actions/workflows/main.yml)
 
 > **Warning**
 > This package is deprecated and will be removed in the future. We will shortly provide more details on removal date, and recommended alternatives.
