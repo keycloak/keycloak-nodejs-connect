@@ -13,17 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
 /**
  * A wrapper to keycloak-admin-client with an initial setup
  */
 /* eslint new-cap: ["error", { "newIsCap": false }] */
-const keycloakAdminClient = require('@keycloak/keycloak-admin-client')
-const parse = require('./helper').parse
-const settings = require('./config')
-const realmTemplate = 'test/fixtures/testrealm.json'
+import KeycloakAdminClient from '@keycloak/keycloak-admin-client'
+import settings from './config.js'
+import { parse } from './helper.js'
 
-const kca = new keycloakAdminClient.default(settings)
+const realmTemplate = 'test/fixtures/testrealm.json'
+const kca = new KeycloakAdminClient.default(settings)
 
 /**
  * Create realms based on port and name specified
@@ -32,7 +31,7 @@ const kca = new keycloakAdminClient.default(settings)
  * @param {object} name - Realm name
  * @returns {Promise} A promise that will resolve with the realm object.
  */
-function createRealm (realmName) {
+export function createRealm (realmName) {
   const name = realmName || 'test-realm'
   return kca.auth(settings).then(() => {
     return kca.realms.create(parse(realmTemplate, name)).then(() => {
@@ -49,7 +48,7 @@ function createRealm (realmName) {
  * @param {object} name - client name
  * @returns {Promise} A promise that will resolve with the realm object.
  */
-function createClient (clientRep, realmName) {
+export function createClient (clientRep, realmName) {
   const realm = realmName || 'test-realm'
   kca.setConfig({ realmName: 'master' })
   return kca.auth(settings).then(() => {
@@ -65,17 +64,11 @@ function createClient (clientRep, realmName) {
  * Remove the realm based on the name provided
  * @param {object} realm - Realm name
  */
-function destroy (realm) {
+export function deleteRealm (realm) {
   kca.setConfig({ realmName: 'master' })
   kca.auth(settings).then(() => {
     return kca.realms.del({ realm })
   }).catch((err) => {
     console.error('Realm was not found to remove:', err)
   })
-}
-
-module.exports = {
-  createRealm,
-  createClient,
-  destroy
 }

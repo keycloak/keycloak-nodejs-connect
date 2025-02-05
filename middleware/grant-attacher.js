@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-module.exports = function (keycloak) {
+export default function grantAttacherMiddleware (keycloak) {
   return function grantAttacher (request, response, next) {
     keycloak.getGrant(request, response)
       .then(grant => {

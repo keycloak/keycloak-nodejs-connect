@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict'
-const URL = require('url')
-const http = require('http')
-const https = require('https')
-const jwkToPem = require('jwk-to-pem')
+import URL from 'node:url'
+import http from 'node:http'
+import https from 'node:https'
+import jwkToPem from 'jwk-to-pem'
 
 /**
  * Construct a Rotation instance
@@ -26,7 +25,7 @@ const jwkToPem = require('jwk-to-pem')
  *
  * @constructor
  */
-function Rotation (config) {
+export default function Rotation (config) {
   this.realmUrl = config.realmUrl
   this.minTimeBetweenJwksRequests = config.minTimeBetweenJwksRequests
   this.jwks = []
@@ -93,5 +92,3 @@ const nodeify = (promise, cb) => {
   if (typeof cb !== 'function') return promise
   return promise.then((res) => cb(null, res)).catch((err) => cb(err))
 }
-
-module.exports = Rotation

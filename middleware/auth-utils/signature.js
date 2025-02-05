@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict'
-
-const Rotation = require('./rotation')
-const crypto = require('crypto')
+import crypto from 'node:crypto'
+import Rotation from './rotation.js'
 
 /**
  * Construct a signature.
@@ -25,7 +23,7 @@ const crypto = require('crypto')
  *
  * @constructor
  */
-function Signature (config) {
+export default function Signature (config) {
   this.publicKey = config.publicKey
   this.rotation = new Rotation(config)
 }
@@ -51,5 +49,3 @@ Signature.prototype.verify = function verify (token, callback) {
     })
   })
 }
-
-module.exports = Signature

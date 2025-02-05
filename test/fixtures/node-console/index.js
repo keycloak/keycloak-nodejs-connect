@@ -13,16 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import express from 'express'
+import session from 'express-session'
+import hogan from 'hogan-express'
+import path from 'node:path'
+import url from 'node:url'
+import enableDestroy from 'server-destroy'
+import Keycloak from '../../../keycloak.js'
+import { parseClient } from '../../utils/helper.js'
 
-const Keycloak = require('../../../')
-const bodyParser = require('body-parser')
-const hogan = require('hogan-express')
-const express = require('express')
-const session = require('express-session')
-const cookieParser = require('cookie-parser')
-const enableDestroy = require('server-destroy')
-const parseClient = require('../../utils/helper').parseClient
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 Keycloak.prototype.redirectToLogin = function (req) {
   const apiMatcher = /^\/service\/.*/i
@@ -33,7 +35,7 @@ Keycloak.prototype.obtainDirectly = function (user, pass) {
   return this.grantManager.obtainDirectly(user, pass)
 }
 
-function NodeApp () {
+export function NodeApp () {
   const app = express()
   app.use(cookieParser())
   const server = app.listen(0)
@@ -71,7 +73,7 @@ function NodeApp () {
 
   this.build = function (kcConfig, params) {
     app.set('view engine', 'html')
-    app.set('views', require('path').join(__dirname, '/views'))
+    app.set('views', path.join(__dirname, '/views'))
     app.engine('html', hogan)
 
     // Create a session-store to be used by both the express-session
@@ -212,8 +214,4 @@ function output (res, output, eventMessage, page) {
     result: output,
     event: eventMessage
   })
-}
-
-module.exports = {
-  NodeApp
 }

@@ -13,10 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-const Token = require('./auth-utils/token')
-const Signature = require('./auth-utils/signature')
+import Token from './auth-utils/token.js'
+import Signature from './auth-utils/signature.js'
 
 function Admin (keycloak, url) {
   this._keycloak = keycloak
@@ -99,7 +97,7 @@ function adminNotBefore (request, response, keycloak) {
   })
 }
 
-module.exports = function (keycloak, adminUrl) {
+export default function adminMiddleware (keycloak, adminUrl) {
   let url = adminUrl
   if (url[url.length - 1] !== '/') {
     url = url + '/'

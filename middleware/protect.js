@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-const UUID = require('./../uuid')
+import UUID from './../uuid.js'
 
 function forceLogin (keycloak, request, response) {
   const host = request.hostname
@@ -39,7 +37,7 @@ function simpleGuard (role, token) {
   return token.hasRole(role)
 }
 
-module.exports = function (keycloak, spec) {
+export default function protectMiddleware (keycloak, spec) {
   let guard
 
   if (typeof spec === 'function') {

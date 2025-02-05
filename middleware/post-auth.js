@@ -13,11 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
+import URL from 'node:url'
 
-const URL = require('url')
-
-module.exports = function (keycloak) {
+export default function postAuthMiddleware (keycloak) {
   return function postAuth (request, response, next) {
     if (!request.query.auth_callback) {
       return next()

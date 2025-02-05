@@ -13,13 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
-'use strict'
-
-const test = require('tape')
-const Keycloak = require('../../')
-const UUID = require('../../uuid')
-const session = require('express-session')
+import session from 'express-session'
+import test from 'tape'
+import Keycloak from '../../keycloak.js'
+import UUID from '../../uuid.js'
 
 let kc = null
 

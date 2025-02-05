@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-'use strict'
-
-const path = require('path')
-const fs = require('fs')
+import path from 'node:path'
+import fs from 'node:fs'
 
 /**
  * Construct a configuration object.
@@ -31,7 +28,7 @@ const fs = require('fs')
  *
  * @constructor
  */
-function Config (config) {
+export default function Config (config) {
   if (!config) {
     config = path.join(process.cwd(), 'keycloak.json')
   }
@@ -168,5 +165,3 @@ Config.prototype.configure = function configure (config) {
    */
   this.verifyTokenAudience = resolveValue(config['verify-token-audience'] || config.verifyTokenAudience || false)
 }
-
-module.exports = Config

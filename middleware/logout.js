@@ -13,11 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
+import URL from 'node:url'
 
-const URL = require('url')
-
-module.exports = function (keycloak, logoutUrl) {
+export default function logoutMiddleware (keycloak, logoutUrl) {
   return function logout (request, response, next) {
     const parsedRequest = URL.parse(request.url, true); // eslint-disable-line
     if (parsedRequest.pathname !== logoutUrl) {

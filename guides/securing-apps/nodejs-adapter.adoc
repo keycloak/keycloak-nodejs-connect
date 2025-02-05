@@ -63,8 +63,8 @@ In the root directory of your project create a file called `server.js` and add t
 
 [source,javascript]
 ----
-    const session = require('express-session');
-    const Keycloak = require('keycloak-connect');
+    import session from 'express-session';
+    import Keycloak from 'keycloak-connect';
 
     const memoryStore = new session.MemoryStore();
     const keycloak = new Keycloak({ store: memoryStore });
@@ -135,7 +135,8 @@ server-side state for authentication, you need to initialize the
 session store that `express-session` is using.
 [source,javascript]
 ----
-    const session = require('express-session');
+    import session from 'express-session';
+
     const memoryStore = new session.MemoryStore();
 
     // Configure session
@@ -169,7 +170,8 @@ then require Express in our project as outlined below:
 
 [source,javascript]
 ----
-    const express = require('express');
+    import express from 'express';
+
     const app = express();
 ----
 

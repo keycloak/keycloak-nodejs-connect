@@ -13,8 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
 const CookieStore = {}
 
 CookieStore.TOKEN_KEY = 'keycloak-token'
@@ -45,4 +43,4 @@ CookieStore.wrap = (grant) => {
   grant.unstore = unstore
 }
 
-module.exports = CookieStore
+export default CookieStore

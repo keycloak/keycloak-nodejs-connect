@@ -3,14 +3,15 @@
   "version": "999.0.0-SNAPSHOT",
   "description": "Keycloak Connect Middleware",
   "homepage": "http://keycloak.org",
+  "type": "module",
   "main": "keycloak.js",
   "scripts": {
     "lint": "standard",
     "test": "./run-tests.sh",
     "docs": "jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./middleware/*.js stores/*.js ./middleware/auth-utils/*.js",
     "coverage": "nyc cover tape test/unit/*.js tape test/*.js",
-    "server:start": "./scripts/start-server.mjs -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=test/fixtures/auth-utils/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
-    "guides": "node guides/guides.mjs $npm_package_version"
+    "server:start": "./scripts/start-server.js -Dkeycloak.profile.feature.account_api=disabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=test/fixtures/auth-utils/nodejs-test-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+    "guides": "node guides/guides.js $npm_package_version"
   },
   "keywords": [
     "sso",
