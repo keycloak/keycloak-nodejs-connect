@@ -1,8 +1,6 @@
-'use strict'
-
-const test = require('tape-catch')
-const RSA = require('rsa-compat').RSA
-const Config = require('../../middleware/auth-utils/config')
+import { RSA } from 'rsa-compat'
+import test from 'tape-catch'
+import Config from '../../middleware/auth-utils/config.js'
 
 test('Config#configure', (t) => {
   const cfg = new Config({ realm: 'test-realm' })

@@ -13,20 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
+import test from 'blue-tape'
+import { NodeApp } from './fixtures/node-console/index.mjs'
+import { createClient, createRealm, deleteRealm } from './utils/realm.mjs'
+import { newPage as page } from './utils/webdriver.mjs'
 
-const test = require('blue-tape')
-const admin = require('./utils/realm')
-
-const page = require('./utils/webdriver').newPage
-const NodeApp = require('./fixtures/node-console/index').NodeApp
-
-const realmManager = admin.createRealm()
+const realmManager = createRealm()
 const app = new NodeApp()
 
 test('setup', t => {
   return realmManager.then(() => {
-    return admin.createClient(app.enforcerResourceServer())
+    return createClient(app.enforcerResourceServer())
       .then((installation) => {
         return app.build(installation)
       })
@@ -56,7 +53,7 @@ test('Should be able to access resource protected by the policy enforcer', t => 
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy()
-    admin.destroy('test-realm')
+    deleteRealm('test-realm')
     page.quit()
   })
 })

@@ -1,12 +1,11 @@
-'use strict'
+import nock from 'nock'
+import test from 'tape'
+import Config from '../middleware/auth-utils/config.js'
+import GrantManager from '../middleware/auth-utils/grant-manager.js'
+import { dummyReply } from './utils/helper.mjs'
 
-const GrantManager = require('../middleware/auth-utils/grant-manager')
-const Config = require('../middleware/auth-utils/config')
-const test = require('tape')
-const nock = require('nock')
 const delay = (ms) => (value) => new Promise((resolve) => setTimeout(() => resolve(value), ms))
 const getManager = (fixture) => new GrantManager(new Config(fixture))
-const helper = require('./utils/helper')
 
 test('GrantManager with empty configuration', (t) => {
   t.plan(1)
@@ -666,7 +665,7 @@ test('GrantManager#obtainDirectly should work with https', (t) => {
       grant_type: 'password',
       scope: 'openid'
     })
-    .reply(204, helper.dummyReply)
+    .reply(204, dummyReply)
   const manager = getManager('./test/fixtures/auth-utils/keycloak-https.json')
   manager.validateToken = (t) => { return Promise.resolve(t) }
   manager.ensureFreshness = (t) => { return Promise.resolve(t) }

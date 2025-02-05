@@ -33,13 +33,13 @@ run_tests() {
 }
 
 if [[ "$1" == "group1" ]]; then
-  for i in `ls test/*.js | grep -v "enforcer-spec"`; do run_tests ${i}; done
+  for i in `ls test/*.mjs | grep -v "enforcer-spec"`; do run_tests ${i}; done
 fi
 
 if [[ "$1" == "group2" ]]; then
-  for i in `ls test/*.js | grep "enforcer-spec"`; do run_tests ${i}; done
+  for i in `ls test/*.mjs | grep "enforcer-spec"`; do run_tests ${i}; done
 fi
 
 if [[ -z "$1" ]]; then
-  for i in `ls test/*.js`; do run_tests ${i}; done
+  for i in `ls test/*.mjs`; do run_tests ${i}; done
 fi

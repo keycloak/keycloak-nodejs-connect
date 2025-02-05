@@ -1,8 +1,6 @@
-'use strict'
+import requester from 'keycloak-request-token'
 
-const requester = require('keycloak-request-token')
 const baseUrl = 'http://127.0.0.1:8080'
-
 const defaultSettings = {
   username: 'test-admin',
   password: 'password',
@@ -11,7 +9,7 @@ const defaultSettings = {
   realmName: 'service-node-realm'
 }
 
-module.exports = (options) => {
+export default function getToken (options) {
   const settings = Object.assign({}, defaultSettings, options)
   return requester(baseUrl, settings)
 }
