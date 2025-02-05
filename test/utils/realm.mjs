@@ -22,7 +22,7 @@ import settings from './config.mjs'
 import { parse } from './helper.mjs'
 
 const realmTemplate = 'test/fixtures/testrealm.json'
-const kca = new KeycloakAdminClient.default(settings)
+const kca = new KeycloakAdminClient(settings)
 
 /**
  * Create realms based on port and name specified
