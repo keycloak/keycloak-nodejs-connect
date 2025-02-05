@@ -13,16 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
 /**
  * An utility with the specifics for selenium
  */
-const chrome = require('selenium-webdriver/chrome')
-const webdriver = require('selenium-webdriver')
-const args = require('minimist')(process.argv.slice(2))
-const By = webdriver.By
-const until = webdriver.until
-const driver = createDriver()
+import chromedriver from 'chromedriver'
+import minimist from 'minimist'
+import webdriver from 'selenium-webdriver'
+import chrome from 'selenium-webdriver/chrome.js'
+
+const args = minimist(process.argv.slice(2))
+const { By, until } = webdriver
+
+export { webdriver }
+export const driver = createDriver()
 
 function createDriver () {
   chrome.setDefaultService(new chrome.ServiceBuilder(determineChromedriverPath()).build())
@@ -56,7 +59,6 @@ function determineChromedriverPath () {
   let path = args.chromedriverPath || process.env.CHROMEDRIVER_PATH
 
   if (!path) {
-    const chromedriver = require('chromedriver')
     path = chromedriver.path
   }
 
@@ -161,7 +163,7 @@ ConsolePage.prototype.h1 = () => {
   return driver.findElement(By.tagName('h1'))
 }
 
-const newPage = new ConsolePage()
+export const newPage = new ConsolePage()
 
 function RealmAccountPage () {}
 
@@ -180,11 +182,4 @@ RealmAccountPage.prototype.logout = function () {
   return driver.findElement(By.linkText('Sign out')).then(webElement => webElement.click())
 }
 
-const realmAccountPage = new RealmAccountPage()
-
-module.exports = {
-  driver,
-  webdriver,
-  newPage,
-  realmAccountPage
-}
+export const realmAccountPage = new RealmAccountPage()

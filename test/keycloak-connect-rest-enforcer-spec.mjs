@@ -13,22 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
-
-const admin = require('./utils/realm')
-const NodeApp = require('./fixtures/node-console/index').NodeApp
-
-const test = require('blue-tape')
-const axios = require('axios')
-const getToken = require('./utils/token')
+import axios from 'axios'
+import test from 'blue-tape'
+import { NodeApp } from './fixtures/node-console/index.mjs'
+import { createClient, createRealm, deleteRealm } from './utils/realm.mjs'
+import getToken from './utils/token.mjs'
 
 const realmName = 'policy-enforcer-realm'
-const realmManager = admin.createRealm(realmName)
+const realmManager = createRealm(realmName)
 const app = new NodeApp()
 
 test('setup', t => {
   return realmManager.then(() => {
-    return admin.createClient(app.enforcerResourceServer(), realmName)
+    return createClient(app.enforcerResourceServer(), realmName)
       .then((installation) => {
         return app.build(installation)
       })
@@ -184,6 +181,6 @@ test('Should test access to resources without any permission defined.', t => {
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy()
-    admin.destroy(realmName)
+    deleteRealm(realmName)
   })
 })

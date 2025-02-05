@@ -13,24 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-'use strict'
+import test from 'blue-tape'
+import session from 'express-session'
+import { NodeApp } from './fixtures/node-console/index.mjs'
+import { TestVector } from './utils/helper.mjs'
+import { createClient, createRealm, deleteRealm } from './utils/realm.mjs'
+import { driver, newPage as page, realmAccountPage } from './utils/webdriver.mjs'
 
-const test = require('blue-tape')
-const admin = require('./utils/realm')
-const TestVector = require('./utils/helper').TestVector
-
-const page = require('./utils/webdriver').newPage
-const realmAccountPage = require('./utils/webdriver').realmAccountPage
-const driver = require('./utils/webdriver').driver
-const NodeApp = require('./fixtures/node-console/index').NodeApp
-const session = require('express-session')
-
-const realmManager = admin.createRealm()
+const realmManager = createRealm()
 const app = new NodeApp()
 
 test('setup', t => {
   return realmManager.then(() => {
-    return admin.createClient(app.publicClient())
+    return createClient(app.publicClient())
       .then((installation) => {
         return app.build(installation)
       })
@@ -39,7 +34,7 @@ test('setup', t => {
 
 // test('setup', t => {
 //   return client = realmManager.then((realm) => {
-//     return admin.createClient(app.publicClient());
+//     return createClient(app.publicClient());
 //   });
 // });
 
@@ -135,7 +130,7 @@ test.skip('SSO should work for nodejs app and testRealmAccountPage', t => {
 test.skip('Public client should be redirected to GitHub when idpHint is provided', t => {
   t.plan(1)
   const app = new NodeApp()
-  const client = admin.createClient(app.publicClient('appIdP'))
+  const client = createClient(app.publicClient('appIdP'))
 
   return client.then((installation) => {
     app.build(installation, { store: new session.MemoryStore(), idpHint: 'github' })
@@ -167,7 +162,7 @@ test.skip('User should be forbidden to access restricted page', t => {
 test.skip('Public client should be forbidden for invalid public key', t => {
   t.plan(2)
   const app = new NodeApp()
-  const client = admin.createClient(app.publicClient('app2'))
+  const client = createClient(app.publicClient('app2'))
 
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey
@@ -195,7 +190,7 @@ test.skip('Public client should be forbidden for invalid public key', t => {
 test.skip('Confidential client should be forbidden for invalid public key', t => {
   t.plan(3)
   const app = new NodeApp()
-  const client = admin.createClient(app.confidential('app3'))
+  const client = createClient(app.confidential('app3'))
 
   return client.then((installation) => {
     installation['realm-public-key'] = TestVector.wrongRealmPublicKey
@@ -253,7 +248,7 @@ test.skip('Should test check SSO after logging in and logging out', t => {
 test.skip('Public client should work with slash in the end of auth-server-url', t => {
   t.plan(3)
   const app = new NodeApp()
-  const client = admin.createClient(app.publicClient('authServerSlashes'))
+  const client = createClient(app.publicClient('authServerSlashes'))
 
   return client.then((installation) => {
     installation['auth-server-url'] = 'http://localhost:8080/'
@@ -289,7 +284,7 @@ test.skip('Public client should work with slash in the end of auth-server-url', 
 test.skip('App should be able to use cookie-store', t => {
   t.plan(1)
   const app = new NodeApp()
-  const client = admin.createClient(app.publicClient('appCookies'))
+  const client = createClient(app.publicClient('appCookies'))
 
   return client.then((installation) => {
     app.build(installation, { cookies: true })
@@ -313,7 +308,7 @@ test.skip('App should be able to use cookie-store', t => {
 test('teardown', t => {
   return realmManager.then((realm) => {
     app.destroy()
-    admin.destroy('test-realm')
+    deleteRealm('test-realm')
     page.quit()
   })
 })
