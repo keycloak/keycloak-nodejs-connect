@@ -43,7 +43,7 @@
     "@octokit/rest": "^21.1.1",
     "axios": "^0.29.0",
     "blue-tape": "^1.0.0",
-    "body-parser": "^1.13.3",
+    "body-parser": "^2.2.0",
     "cookie-parser": "^1.4.5",
     "coveralls": "^3.0.1",
     "express": "^4.14.0",
