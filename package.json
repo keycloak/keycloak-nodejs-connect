@@ -54,7 +54,7 @@
     "jsdoc": "^4.0.4",
     "jszip": "^3.10.1",
     "keycloak-request-token": "^0.1.0",
-    "nock": "^13.2.2",
+    "nock": "^14.0.2",
     "node-fetch": "^3.2.3",
     "nyc": "^17.1.0",
     "rsa-compat": "^2.0.8",
