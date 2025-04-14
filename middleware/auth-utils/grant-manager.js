@@ -41,6 +41,7 @@ function GrantManager (config) {
   this.notBefore = 0
   this.rotation = new Rotation(config)
   this.verifyTokenAudience = config.verifyTokenAudience
+  this.signatureAlgorithm = config.signatureAlgorithm || 'RSA-SHA256'
 }
 
 /**
@@ -441,7 +442,7 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
           reject(new Error('invalid token (wrong audience)'))
         }
       }
-      const verify = crypto.createVerify('RSA-SHA256')
+      const verify = crypto.createVerify(this.signatureAlgorithm)
       // if public key has been supplied use it to validate token
       if (this.publicKey) {
         try {
