@@ -52,7 +52,14 @@ module.exports = function (keycloak) {
         } catch (err) {
           console.log(err)
         }
-        response.redirect(cleanUrl)
+
+        const host = request.hostname
+        const headerHost = request.headers.host.split(':')
+        const port = headerHost[1] || ''
+        const protocol = request.protocol
+        const redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + cleanUrl
+
+        response.redirect(redirectUrl)
       }).catch((err) => {
         keycloak.accessDenied(request, response, next)
         console.error('Could not obtain grant code: ' + err)
