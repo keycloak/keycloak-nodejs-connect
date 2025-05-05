@@ -69,8 +69,8 @@ const executeFMPP = async (version, exe, sourceDir, outputDir) => {
         const result = childProcess.spawnSync(exe, ['-S', sourceDir, '-O', outputDir,
           '-D', 'id:' + path.parse(adocFile).name + ',version:' + version,
           path.join(file, adocFile)])
-        if (result.error) {
-          throw result.error
+        if (result.status > 0) {
+          throw result.output.toString()
         }
       }
     }
