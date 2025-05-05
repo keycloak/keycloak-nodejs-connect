@@ -24,6 +24,7 @@ declare namespace KeycloakConnect {
     'ssl-required': string
     'bearer-only'?: boolean
     realm: string
+    issuer: string
   }
 
   interface KeycloakOptions {

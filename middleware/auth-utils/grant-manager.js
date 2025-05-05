@@ -41,6 +41,7 @@ function GrantManager (config) {
   this.notBefore = 0
   this.rotation = new Rotation(config)
   this.verifyTokenAudience = config.verifyTokenAudience
+  this.issuer = config.issuer
 }
 
 /**
@@ -425,7 +426,7 @@ GrantManager.prototype.validateToken = function validateToken (token, expectedTy
       reject(new Error('invalid token (wrong type)'))
     } else if (token.content.iat < this.notBefore) {
       reject(new Error('invalid token (stale token)'))
-    } else if (token.content.iss !== this.realmUrl) {
+    } else if (token.content.iss !== this.issuer) {
       reject(new Error('invalid token (wrong ISS)'))
     } else {
       const audienceData = Array.isArray(token.content.aud) ? token.content.aud : [token.content.aud]
