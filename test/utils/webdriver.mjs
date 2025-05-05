@@ -106,6 +106,7 @@ ConsolePage.prototype.logOutButton = () => {
 }
 
 ConsolePage.prototype.events = function () {
+  waitForVisibleElement(By.id('events'), 100000)
   return driver.findElement(By.id('events'))
 }
 
