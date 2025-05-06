@@ -383,7 +383,13 @@ to the `middleware()` call:
 
 == Complete example
 
-A complete example using the Node.js adapter usage can be found in {quickstartRepo_link}/tree/main/nodejs/resource-server[Keycloak quickstarts for Node.js]
+ifeval::[{project_community}==true]
+For a complete example of using the Node.js adapter, see {quickstartRepo_link}/tree/main/nodejs/resource-server[Keycloak quickstarts for Node.js].
+endif::[]
+
+ifeval::[{project_product}==true]
+For a complete example of using the Node.js adapter, see the https://github.com/redhat-developer/rhbk-quickstarts[{project_name} quickstarts] repository.
+endif::[]
 
 [[_upgrade_nodejs_adapter]]
 == Upgrading the `Node.js` adapter
