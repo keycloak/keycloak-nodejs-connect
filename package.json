@@ -46,7 +46,7 @@
     "body-parser": "^1.13.3",
     "cookie-parser": "^1.4.5",
     "coveralls": "^3.0.1",
-    "express": "^4.14.0",
+    "express": "^5.1.0",
     "express-session": "^1.14.2",
     "gunzip-maybe": "^1.4.2",
     "hogan-express": "^0.5.2",
