@@ -532,6 +532,16 @@ test('GrantManager should be able to validate invalid ISS', (t) => {
     })
 })
 
+test('GrantManager should be able to accept issuer different from the realm URL', (t) => {
+  t.plan(1)
+  manager.obtainDirectly('test-user', 'tiger')
+    .then((grant) => {
+      grant.access_token.content.iss = 'http://testissuer.com'
+      return manager.validateGrant(grant)
+    })
+    .then((grant) => t.notEqual(grant.access_token, undefined))
+})
+
 test('GrantManager should be able to validate invalid iat', (t) => {
   t.plan(1)
   manager.obtainDirectly('test-user', 'tiger')
