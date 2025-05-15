@@ -44,6 +44,7 @@
     "axios": "^0.29.0",
     "blue-tape": "^1.0.0",
     "body-parser": "^1.13.3",
+    "chromedriver": "latest",
     "cookie-parser": "^1.4.5",
     "coveralls": "^3.0.1",
     "express": "^4.14.0",
@@ -65,9 +66,6 @@
     "tape": "^5.4.1",
     "tape-catch": "^1.0.6",
     "tar-fs": "^3.0.8"
-  },
-  "optionalDependencies": {
-    "chromedriver": "latest"
   },
   "standard": {
     "ignore": [
