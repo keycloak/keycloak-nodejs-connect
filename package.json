@@ -52,7 +52,7 @@
     "gunzip-maybe": "^1.4.2",
     "hogan-express": "^0.5.2",
     "ink-docstrap": "^1.1.4",
-    "jsdoc": "^4.0.4",
+    "jsdoc": "^4.0.5",
     "jszip": "^3.10.1",
     "keycloak-request-token": "^0.1.0",
     "nock": "^13.2.2",
