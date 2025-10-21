@@ -36,36 +36,36 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "jwk-to-pem": "^2.0.0"
+    "jwk-to-pem": "^2.0.7"
   },
   "devDependencies": {
-    "@keycloak/keycloak-admin-client": "^26.2.4",
+    "@keycloak/keycloak-admin-client": "^26.4.1",
     "@octokit/rest": "^21.1.1",
-    "axios": "^0.29.0",
+    "axios": "^1.12.2",
     "blue-tape": "^1.0.0",
-    "body-parser": "^1.13.3",
-    "chromedriver": "latest",
-    "cookie-parser": "^1.4.5",
-    "coveralls": "^3.0.1",
-    "express": "^4.14.0",
-    "express-session": "^1.14.2",
+    "body-parser": "^1.20.3",
+    "chromedriver": "^141.0.3",
+    "cookie-parser": "^1.4.7",
+    "coveralls": "^3.1.1",
+    "express": "^4.21.2",
+    "express-session": "^1.18.2",
     "gunzip-maybe": "^1.4.2",
     "hogan-express": "^0.5.2",
-    "ink-docstrap": "^1.1.4",
-    "jsdoc": "^4.0.4",
+    "ink-docstrap": "^1.3.2",
+    "jsdoc": "^4.0.5",
     "jszip": "^3.10.1",
     "keycloak-request-token": "^0.1.0",
-    "nock": "^13.2.2",
-    "node-fetch": "^3.2.3",
+    "nock": "^13.5.6",
+    "node-fetch": "^3.3.2",
     "nyc": "^17.1.0",
     "rsa-compat": "^2.0.8",
-    "selenium-webdriver": "^3.6.0",
+    "selenium-webdriver": "^4.37.0",
     "server-destroy": "^1.0.1",
-    "standard": "^17.0.0",
+    "standard": "^17.1.2",
     "tap-xunit": "^2.4.1",
-    "tape": "^5.4.1",
+    "tape": "^5.9.0",
     "tape-catch": "^1.0.6",
-    "tar-fs": "^3.0.8"
+    "tar-fs": "^3.1.1"
   },
   "standard": {
     "ignore": [
@@ -79,5 +79,6 @@
     "type": "git",
     "url": "https://github.com/keycloak/keycloak-nodejs-connect.git"
   },
-  "bugs": "https://github.com/keycloak/keycloak-nodejs-connect/issues"
+  "bugs": "https://github.com/keycloak/keycloak-nodejs-connect/issues",
+  "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
 }
