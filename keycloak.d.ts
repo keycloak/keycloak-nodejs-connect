@@ -23,6 +23,7 @@ declare namespace KeycloakConnect {
     'resource': string
     'ssl-required': string
     'bearer-only'?: boolean
+    'allowed-issuers'?: string[]|string
     realm: string
   }
 

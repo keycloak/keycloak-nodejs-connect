@@ -131,6 +131,16 @@ Config.prototype.configure = function configure (config) {
   this.realmUrl = this.authServerUrl + '/realms/' + this.realm
 
   /**
+   * Acceptable values for the `iss` Issuer claim in the JWT token.
+   * If not set, the token issuer is validated against the realm URL.
+   * @type {String[]}
+   */
+  this.allowedIssuers = resolveValue(config['allowed-issuers']) || [this.realmUrl]
+  if (typeof this.allowedIssuers === 'string') {
+    this.allowedIssuers = [this.allowedIssuers]
+  }
+
+  /**
    * Root realm admin URL.
    * @type {String} */
   this.realmAdminUrl = this.authServerUrl + '/admin/realms/' + this.realm
