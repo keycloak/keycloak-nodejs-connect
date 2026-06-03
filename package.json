@@ -79,5 +79,13 @@
     "type": "git",
     "url": "https://github.com/keycloak/keycloak-nodejs-connect.git"
   },
-  "bugs": "https://github.com/keycloak/keycloak-nodejs-connect/issues"
+  "bugs": "https://github.com/keycloak/keycloak-nodejs-connect/issues",
+  "overrides": {
+    "request": {
+      "form-data": "2.5.4"
+    },
+    "axios": {
+      "form-data": "4.0.4"
+    }
+  }
 }
